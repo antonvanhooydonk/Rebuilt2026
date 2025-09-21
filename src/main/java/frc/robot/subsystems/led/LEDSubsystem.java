@@ -33,9 +33,9 @@ public class LEDSubsystem extends SubsystemBase {
     // Set the default command to run on the LED strip 
     // when no other commands are using the LEDs.
     if (Utils.isRedAlliance()) {
-      setDefaultCommand(showRed().withName("DEFAULT"));
+      setDefaultCommand(showRedCommand().withName("DEFAULT"));
     } else {
-      setDefaultCommand(showBlue().withName("DEFAULT"));
+      setDefaultCommand(showBlueCommand().withName("DEFAULT"));
     }
   }
 
@@ -51,28 +51,28 @@ public class LEDSubsystem extends SubsystemBase {
   /**
    * Show a solid black colour on the LED strip.
    */
-  public Command showOff() {
+  public Command showOffCommand() {
     return run(() -> LEDPattern.solid(Color.kBlack).applyTo(buffer)).ignoringDisable(true);
   }
 
   /**
    * Show a solid blue colour on the LED strip.
    */
-  public Command showBlue() {
+  public Command showBlueCommand() {
     return run(() -> LEDPattern.solid(Color.kBlue).applyTo(buffer)).ignoringDisable(true);
   }
 
   /**
    * Show a solid red colour on the LED strip.
    */
-  public Command showRed() {
+  public Command showRedCommand() {
     return run(() -> LEDPattern.solid(Color.kRed).applyTo(buffer)).ignoringDisable(true);
   }
 
   /**
    * Show the Copper Hawk colours on the LED strip.
    */
-  public Command showCopperHawks() {
+  public Command showCopperHawksCommand() {
     return run(() -> 
       LEDPattern.gradient(
         GradientType.kContinuous, 
@@ -91,7 +91,7 @@ public class LEDSubsystem extends SubsystemBase {
   /**
    * Show a blinking green colour on the LED strip.
    */
-  public Command showBlinking() {
+  public Command showBlinkingCommand() {
     return run(() -> 
       LEDPattern.solid(Color.kGreen).blink(Seconds.of(0.25)).applyTo(buffer)
     )
