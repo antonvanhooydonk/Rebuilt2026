@@ -49,32 +49,24 @@ public class LEDSubsystem extends SubsystemBase {
   }
 
   /**
-   * Creates a command that runs a pattern on the entire LED strip.
-   * @param pattern the LED pattern to run
-   */
-  public Command runPattern(LEDPattern pattern) {
-    return run(() -> pattern.applyTo(buffer));
-  }
-
-  /**
    * Show a solid black colour on the LED strip.
    */
   public Command showOff() {
-    return run(() -> LEDPattern.solid(Color.kBlack).applyTo(buffer));
+    return run(() -> LEDPattern.solid(Color.kBlack).applyTo(buffer)).ignoringDisable(true);
   }
 
   /**
    * Show a solid blue colour on the LED strip.
    */
   public Command showBlue() {
-    return run(() -> LEDPattern.solid(Color.kBlue).applyTo(buffer));
+    return run(() -> LEDPattern.solid(Color.kBlue).applyTo(buffer)).ignoringDisable(true);
   }
 
   /**
    * Show a solid red colour on the LED strip.
    */
   public Command showRed() {
-    return run(() -> LEDPattern.solid(Color.kRed).applyTo(buffer));
+    return run(() -> LEDPattern.solid(Color.kRed).applyTo(buffer)).ignoringDisable(true);
   }
 
   /**
@@ -92,7 +84,8 @@ public class LEDSubsystem extends SubsystemBase {
         Meters.of(LEDConstants.kStripLengthMeters / buffer.getLength())
       )
       .applyTo(buffer)
-    );
+    )
+    .ignoringDisable(true);
   }
 
   /**
@@ -101,6 +94,8 @@ public class LEDSubsystem extends SubsystemBase {
   public Command showBlinking() {
     return run(() -> 
       LEDPattern.solid(Color.kGreen).blink(Seconds.of(0.25)).applyTo(buffer)
-    );
+    )
+    .repeatedly()
+    .withTimeout(1.0);
   }
 }

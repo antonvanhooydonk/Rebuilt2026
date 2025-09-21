@@ -10,8 +10,10 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DigitalInput;
+
 import frc.robot.Constants.CANConstants;
 import frc.robot.Constants.DIOConstants;
 
@@ -51,27 +53,27 @@ public class RollerSubsystem extends SubsystemBase {
     return !intakeBeamBreakSwitch.get();
   }
 
-  public void intakeCoral(){
+  public void intakeCoral() {
     rollerMotor.set(RollerConstants.IntakeCoralSpeed);
   }
 
-  public void outputCoral(){
+  public void outputCoral() {
     rollerMotor.set(RollerConstants.OutputCoralSpeed);
   } 
 
-  public void intakeAlgae(){
+  public void intakeAlgae() {
     rollerMotor.set(RollerConstants.IntakeAlgaeSpeed);
   }
 
-  public void outputAlgae(){
+  public void outputAlgae() {
     rollerMotor.set(RollerConstants.OutputAlgaeSpeed);
   } 
 
-  public void holdAlgae(){
+  public void holdAlgae() {
     rollerMotor.set(RollerConstants.HoldAlgaeSpeed);
   } 
   
-  public void stopRoller(){
+  public void stopRoller() {
     rollerMotor.set(0);
   }
 }

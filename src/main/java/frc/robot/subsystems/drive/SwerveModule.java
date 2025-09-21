@@ -105,7 +105,7 @@ public class SwerveModule {
     // Configure steering motor (we use a Neo550)
     configureSteerMotor();
 
-    // Get steering PID controller and encoder
+    // Get steering PID controller and relative encoder
     steerPIDController = steerMotor.getClosedLoopController();
     steerEncoder = steerMotor.getEncoder();    
 
@@ -239,14 +239,14 @@ public class SwerveModule {
 
     // Prevent jittering from noise that can appear when the swerve module is idle.
     // NOTE: may not be necessary
-    if (
-      Math.abs(desiredState.speedMetersPerSecond) < 0.001 && // less than 1 mm per sec
-			Math.abs(desiredState.angle.getRadians() - steerEncoder.getPosition()) < Rotation2d.fromDegrees(1).getRadians() // less than 1 degree
-    ) {
-			driveMotor.set(0);
-			steerMotor.set(0);
-      return;
-		}
+    // NOTE: Commented out to start since this may interfere with PID tuning
+    // if (
+    //   Math.abs(desiredState.speedMetersPerSecond) < 0.001 && // less than 1 mm per sec
+		// 	Math.abs(desiredState.angle.getRadians() - steerEncoder.getPosition()) < Rotation2d.fromDegrees(1).getRadians() // less than 1 degree
+    // ) {
+		// 	stop();
+    //   return;
+		// }
 
     // Set drive motor speed
     setDriveVelocity(desiredState.speedMetersPerSecond);

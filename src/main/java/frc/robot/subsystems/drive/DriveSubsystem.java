@@ -193,8 +193,8 @@ public class DriveSubsystem extends SubsystemBase {
       this::getChassisSpeeds, // ChassisSpeeds supplier
       this::driveWithChassisSpeeds, // Method that will drive the robot given ChassisSpeeds
       new PPHolonomicDriveController(
-        new PIDConstants(8.0, 0.0, 0.0), // Translation PID constants
-        new PIDConstants(5.0, 0.0, 0.0)  // Rotation PID constants
+        new PIDConstants(DriveConstants.kDriveKP, DriveConstants.kDriveKI, DriveConstants.kDriveKD), // Translation PID constants
+        new PIDConstants(DriveConstants.kSteerKP, DriveConstants.kSteerKI, DriveConstants.kSteerKD)  // Rotation PID constants
       ),
       robotConfig, // Robot configuration
       Utils::isRedAlliance, // Method to flip path based on alliance color

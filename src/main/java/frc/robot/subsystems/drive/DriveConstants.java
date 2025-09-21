@@ -44,14 +44,14 @@ public final class DriveConstants {
   public static final double kWheelLockTimeSeconds = 10.0; // seconds to lock wheels when robot is disabled
 
   // PID Constants for drive (tune these each year for the robot)
-  public static final double kDriveKP = 0.0020645;
+  public static final double kDriveKP = 0.0020645; // 1.0
   public static final double kDriveKI = 0.0;
   public static final double kDriveKD = 0.0;
 
   // PID Constants for steering (tune these each year for the robot)
-  public static final double kSteerKP = 0.01;
+  public static final double kSteerKP = 0.01; // 50.0
   public static final double kSteerKI = 0.0;
-  public static final double kSteerKD = 0.0;
+  public static final double kSteerKD = 0.0;  // 0.32
 
   // ------------------------------------------------------------
   // Define the swerve module constants

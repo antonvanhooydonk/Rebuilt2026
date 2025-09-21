@@ -92,7 +92,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    * Sets the elevator to a position relative to the 0 set by setZeroPoint(). 
    * @param height double that controls how many millimeters from the distance sensor
    */
-  public void setTargetPosition(double position){
+  public void setTargetPosition(double position) {
     targetPosition = position + zeroPoint;
     MotionMagicVoltage request = new MotionMagicVoltage(targetPosition);
     leftElevatorMotor.setControl(request);

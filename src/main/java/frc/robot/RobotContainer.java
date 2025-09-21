@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -55,13 +57,17 @@ public class RobotContainer {
   private final CommandGenericHID operatorController2 = new CommandGenericHID(2);
 
   private SendableChooser<Command> autoCommandChooser;
-  private SendableChooser<Double> autoDelayChooser;
+  private SendableChooser<Command> delayCommandChooser;
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {   
+  /** 
+   * The container for the robot. 
+   * Contains subsystems, OI devices, and commands. 
+   */
+  public RobotContainer() {
     // Initialize the default driving command.
-    //  The left stick controls translation of the robot.
-    //  Turning is controlled by the X axis of the right stick.
+    // The left stick controls translation of the robot.
+    // Turning is controlled by the X axis of the right stick.
+    // Drive field relative by default.
     driveSubsystem.setDefaultCommand(new RunCommand(
       () -> driveSubsystem.drive(
         driverController.getLeftY(),
@@ -100,19 +106,19 @@ public class RobotContainer {
     SmartDashboard.putData("Auto Command", autoCommandChooser);
 
     // Configure the available auto delay options
-    autoDelayChooser.setDefaultOption("0 delay", 0.0);
-    autoDelayChooser.addOption("1.0 second", 1.0);
-    autoDelayChooser.addOption("1.5 second", 1.5);
-    autoDelayChooser.addOption("2.0 seconds", 2.0);
-    autoDelayChooser.addOption("2.5 second", 2.5);
-    autoDelayChooser.addOption("3.0 seconds", 3.0);
-    autoDelayChooser.addOption("3.5 second", 3.5);
-    autoDelayChooser.addOption("4.0 seconds", 4.0);
-    autoDelayChooser.addOption("4.5 second", 4.5);
-    autoDelayChooser.addOption("5.0 seconds", 5.0);
+    delayCommandChooser.setDefaultOption("No delay", Commands.none());
+    delayCommandChooser.addOption("1.0 second", new WaitCommand(1.0));
+    delayCommandChooser.addOption("1.5 seconds", new WaitCommand(1.5));
+    delayCommandChooser.addOption("2.0 seconds", new WaitCommand(2.0));
+    delayCommandChooser.addOption("2.5 seconds", new WaitCommand(2.5));
+    delayCommandChooser.addOption("3.0 seconds", new WaitCommand(3.0));
+    delayCommandChooser.addOption("3.5 seconds", new WaitCommand(3.5));
+    delayCommandChooser.addOption("4.0 seconds", new WaitCommand(4.0));
+    delayCommandChooser.addOption("4.5 seconds", new WaitCommand(4.5));
+    delayCommandChooser.addOption("5.0 seconds", new WaitCommand(5.0));
     
     // Add delay chooser to dashboard
-    SmartDashboard.putData("Auto Delay", autoDelayChooser);
+    SmartDashboard.putData("Auto Delay", delayCommandChooser);
   }
 
   /**
@@ -207,11 +213,13 @@ public class RobotContainer {
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoCommandChooser.getSelected();
+    return new SequentialCommandGroup(
+      delayCommandChooser.getSelected(),  // run the selected delay command
+      autoCommandChooser.getSelected()    // then run the selected auto command
+    );
   }
 
   /**
