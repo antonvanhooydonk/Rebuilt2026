@@ -195,8 +195,11 @@ public class ThriftyBotEncoder {
    * Periodic method to be called from parent's periodic for diagnostics
    */
   public void periodic() {
+    // Check if the readings are valid
+    boolean valid = isValid();
+
     // Log warnings for invalid readings
-    if (!isValid()) {
+    if (!valid) {
       System.err.println(
         "WARNING: '" + name + "' readings may be invalid. " +
         "Voltage: " + String.format("%.3f", getRawVoltage()) + "V, " +
