@@ -163,6 +163,7 @@ public class SwerveModule {
       .smartCurrentLimit(DriveConstants.kSteerMotorMaxCurrent);
 
     // Set position conversion factor (rotations to radians)
+    // Set velocity conversion factor (rotations per minute to radians per second)
     steerConfig.encoder
       .positionConversionFactor(2 * Math.PI / DriveConstants.kSteerGearRatio)
       .velocityConversionFactor(2 * Math.PI / DriveConstants.kSteerGearRatio / 60.0);
