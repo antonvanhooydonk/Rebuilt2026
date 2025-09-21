@@ -211,7 +211,7 @@ public class SwerveModule {
    * @return Current SwerveModuleState
    */
   public SwerveModuleState getState() {
-    double velocity = driveMotor.getVelocity().getValueAsDouble() * DriveConstants.kWheelCircumference / DriveConstants.kDriveGearRatio;
+    double velocity = driveMotor.getVelocity().getValueAsDouble() * DriveConstants.kDriveRpsToMps;
     Rotation2d angle = new Rotation2d(steerEncoder.getPosition());
     return new SwerveModuleState(velocity, angle);
   }
@@ -221,7 +221,7 @@ public class SwerveModule {
    * @return Current SwerveModulePosition
    */
   public SwerveModulePosition getPosition() {
-    double distance = driveMotor.getPosition().getValueAsDouble() * DriveConstants.kWheelCircumference / DriveConstants.kDriveGearRatio;
+    double distance = driveMotor.getPosition().getValueAsDouble() * DriveConstants.kDriveRpsToMps;
     Rotation2d angle = new Rotation2d(steerEncoder.getPosition());
     return new SwerveModulePosition(distance, angle);
   }
@@ -263,7 +263,7 @@ public class SwerveModule {
    * @param velocityMetersPerSecond Desired velocity in m/s
    */
   private void setDriveVelocity(double velocityMetersPerSecond) {
-    double velocityRPS = velocityMetersPerSecond * DriveConstants.kDriveGearRatio / DriveConstants.kWheelCircumference;
+    double velocityRPS = velocityMetersPerSecond * DriveConstants.kDriveMpsToRps;
     driveMotor.setControl(driveVelocityRequest.withVelocity(velocityRPS));
   }
 
