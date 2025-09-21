@@ -109,7 +109,7 @@ public class DriveSubsystem extends SubsystemBase {
       DriveConstants.kFrontRightSteerMotorInverted,           // Steer motor inverted
       DriveConstants.kFrontRightAbsoluteEncoderID,            // Absolute encoder analog port
       DriveConstants.kFrontRightAbsoluteEncoderOffsetRadians, // Absolute encoder offset in radians (calibrate this)
-      DriveConstants.kFrontRightAbsoluteEncoderInverted,       // Absolute encoder inverted
+      DriveConstants.kFrontRightAbsoluteEncoderInverted,      // Absolute encoder inverted
       "FR"
     );
     
@@ -121,7 +121,7 @@ public class DriveSubsystem extends SubsystemBase {
       DriveConstants.kBackLeftSteerMotorInverted,             // Steer motor inverted
       DriveConstants.kBackLeftAbsoluteEncoderID,              // Absolute encoder analog port
       DriveConstants.kBackLeftAbsoluteEncoderOffsetRadians,   // Absolute encoder offset in radians (calibrate this)
-      DriveConstants.kBackLeftAbsoluteEncoderInverted,       // Absolute encoder inverted
+      DriveConstants.kBackLeftAbsoluteEncoderInverted,        // Absolute encoder inverted
       "BL"
     );
     
