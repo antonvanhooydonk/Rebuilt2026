@@ -91,45 +91,49 @@ public class DriveSubsystem extends SubsystemBase {
     
     // Initialize front left swerve module
     modules[0] = new SwerveModule(
-      DriveConstants.kFrontLeftDriveMotorID,            // Drive motor CAN ID
-      DriveConstants.kFrontLeftSteerMotorID,            // Steer motor CAN ID  
-      DriveConstants.kFrontLeftDriveMotorInverted,      // Drive motor inverted
-      DriveConstants.kFrontLeftSteerMotorInverted,      // Steer motor inverted
-      DriveConstants.kFrontLeftAbsoluteEncoderID,       // Absolute encoder analog port
-      DriveConstants.kFrontLeftAbsoluteEncoderOffset,   // Absolute encoder offset in radians (calibrate this)
+      DriveConstants.kFrontLeftDriveMotorID,                  // Drive motor CAN ID
+      DriveConstants.kFrontLeftSteerMotorID,                  // Steer motor CAN ID  
+      DriveConstants.kFrontLeftDriveMotorInverted,            // Drive motor inverted
+      DriveConstants.kFrontLeftSteerMotorInverted,            // Steer motor inverted
+      DriveConstants.kFrontLeftAbsoluteEncoderID,             // Absolute encoder analog port
+      DriveConstants.kFrontLeftAbsoluteEncoderOffsetRadians,  // Absolute encoder offset in radians (calibrate this)
+      DriveConstants.kFrontLeftAbsoluteEncoderInverted,       // Absolute encoder inverted
       "FL"
     );
     
     // Initialize front right swerve module
     modules[1] = new SwerveModule(
-      DriveConstants.kFrontRightDriveMotorID,           // Drive motor CAN ID
-      DriveConstants.kFrontRightSteerMotorID,           // Steer motor CAN ID  
-      DriveConstants.kFrontRightDriveMotorInverted,     // Drive motor inverted
-      DriveConstants.kFrontRightSteerMotorInverted,     // Steer motor inverted
-      DriveConstants.kFrontRightAbsoluteEncoderID,      // Absolute encoder analog port
-      DriveConstants.kFrontRightAbsoluteEncoderOffset,  // Absolute encoder offset in radians (calibrate this)
+      DriveConstants.kFrontRightDriveMotorID,                 // Drive motor CAN ID
+      DriveConstants.kFrontRightSteerMotorID,                 // Steer motor CAN ID  
+      DriveConstants.kFrontRightDriveMotorInverted,           // Drive motor inverted
+      DriveConstants.kFrontRightSteerMotorInverted,           // Steer motor inverted
+      DriveConstants.kFrontRightAbsoluteEncoderID,            // Absolute encoder analog port
+      DriveConstants.kFrontRightAbsoluteEncoderOffsetRadians, // Absolute encoder offset in radians (calibrate this)
+      DriveConstants.kFrontRightAbsoluteEncoderInverted,       // Absolute encoder inverted
       "FR"
     );
     
     // Initialize back left swerve module
     modules[2] = new SwerveModule(
-      DriveConstants.kBackLeftDriveMotorID,             // Drive motor CAN ID
-      DriveConstants.kBackLeftSteerMotorID,             // Steer motor CAN ID  
-      DriveConstants.kBackLeftDriveMotorInverted,       // Drive motor inverted
-      DriveConstants.kBackLeftSteerMotorInverted,       // Steer motor inverted
-      DriveConstants.kBackLeftAbsoluteEncoderID,        // Absolute encoder analog port
-      DriveConstants.kBackLeftAbsoluteEncoderOffset,    // Absolute encoder offset in radians (calibrate this)
+      DriveConstants.kBackLeftDriveMotorID,                   // Drive motor CAN ID
+      DriveConstants.kBackLeftSteerMotorID,                   // Steer motor CAN ID  
+      DriveConstants.kBackLeftDriveMotorInverted,             // Drive motor inverted
+      DriveConstants.kBackLeftSteerMotorInverted,             // Steer motor inverted
+      DriveConstants.kBackLeftAbsoluteEncoderID,              // Absolute encoder analog port
+      DriveConstants.kBackLeftAbsoluteEncoderOffsetRadians,   // Absolute encoder offset in radians (calibrate this)
+      DriveConstants.kBackLeftAbsoluteEncoderInverted,       // Absolute encoder inverted
       "BL"
     );
     
     // Initialize back right swerve module    
     modules[3] = new SwerveModule(
-      DriveConstants.kBackRightDriveMotorID,            // Drive motor CAN ID
-      DriveConstants.kBackRightSteerMotorID,            // Steer motor CAN ID  
-      DriveConstants.kBackRightDriveMotorInverted,      // Drive motor inverted
-      DriveConstants.kBackRightSteerMotorInverted,      // Steer motor inverted
-      DriveConstants.kBackRightAbsoluteEncoderID,       // Absolute encoder analog port
-      DriveConstants.kBackRightAbsoluteEncoderOffset,   // Absolute encoder offset in radians (calibrate this)
+      DriveConstants.kBackRightDriveMotorID,                  // Drive motor CAN ID
+      DriveConstants.kBackRightSteerMotorID,                  // Steer motor CAN ID  
+      DriveConstants.kBackRightDriveMotorInverted,            // Drive motor inverted
+      DriveConstants.kBackRightSteerMotorInverted,            // Steer motor inverted
+      DriveConstants.kBackRightAbsoluteEncoderID,             // Absolute encoder analog port
+      DriveConstants.kBackRightAbsoluteEncoderOffsetRadians,  // Absolute encoder offset in radians (calibrate this)
+      DriveConstants.kBackRightAbsoluteEncoderInverted,       // Absolute encoder inverted
       "BR"
     );
     
@@ -218,6 +222,11 @@ public class DriveSubsystem extends SubsystemBase {
     
     // Update dashboard
     updateDashboard();
+
+    // Call each swerve module's periodic
+    for (var module : modules) {
+      module.periodic();
+    }
   }
 
   /**
@@ -579,7 +588,7 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("FR Drive Temp", modules[1].getDriveTemperature());
     SmartDashboard.putNumber("BL Drive Temp", modules[2].getDriveTemperature());
     SmartDashboard.putNumber("BR Drive Temp", modules[3].getDriveTemperature());
-    
+
     SmartDashboard.putNumber("FL Steer Temp", modules[0].getSteerTemperature());
     SmartDashboard.putNumber("FR Steer Temp", modules[1].getSteerTemperature());
     SmartDashboard.putNumber("BL Steer Temp", modules[2].getSteerTemperature());

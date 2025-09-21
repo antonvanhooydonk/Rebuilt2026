@@ -23,9 +23,9 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import frc.robot.util.ThriftyBotEncoder;
 
 /**
  * Represents a single swerve drive module with a Kraken60 drive motor
@@ -35,27 +35,34 @@ public class SwerveModule {
   // Hardware
   private final TalonFX driveMotor;
   private final SparkMax steerMotor;
-  private final AnalogInput absoluteEncoder;
-  
+  private final ThriftyBotEncoder absoluteEncoder;
+
   // Controllers
   private final SparkClosedLoopController steerPIDController;
   private final RelativeEncoder steerEncoder;
-  
+
   // Control requests
   private final VelocityDutyCycle driveVelocityRequest = new VelocityDutyCycle(0);
-  
+
   // Module identification
-  private final String moduleName;
-  private final double absoluteEncoderOffset;
+  private final int driveMotorID;
+  private final int steerMotorID;
   private final boolean driveMotorInverted;
   private final boolean steerMotorInverted;
-  
+  private final int absoluteEncoderID;
+  private final double absoluteEncoderOffsetRadians;
+  private final boolean absoluteEncoderInverted;
+  private final String moduleName;
+
   /**
-   * Constructs a SwerveModule
-   * @param driveMotorID CAN ID of the Kraken60 drive motor
-   * @param steerMotorID CAN ID of the Neo550 steering motor
+   * Construct a SwerveModule with the given parameters
+   * @param driveMotorID CAN ID of the drive motor
+   * @param steerMotorID CAN ID of the steering motor
+   * @param driveMotorInverted Indicates that the drive motor is inverted
+   * @param steerMotorInverted Indicates that the steer motor is inverted
    * @param absoluteEncoderPort Analog port of the absolute encoder
-   * @param absoluteEncoderOffset Offset angle in radians for the absolute encoder
+   * @param absoluteEncoderOffsetRadians Offset angle in radians for the absolute encoder
+   * @param absoluteEncoderInverted Indicates that the absolute encoder is inverted
    * @param moduleName Name of the module for debugging
    */
   public SwerveModule(
@@ -64,30 +71,44 @@ public class SwerveModule {
     boolean driveMotorInverted,
     boolean steerMotorInverted,
     int absoluteEncoderID,
-    double absoluteEncoderOffset,
+    double absoluteEncoderOffsetRadians,
+    boolean absoluteEncoderInverted,
     String moduleName
   ) {
-    // Store module info
-    this.moduleName = moduleName;
+    // Cache module info
+    this.driveMotorID = driveMotorID;
+    this.steerMotorID = steerMotorID;
     this.driveMotorInverted = driveMotorInverted;
     this.steerMotorInverted = steerMotorInverted;
-    this.absoluteEncoderOffset = absoluteEncoderOffset;
-    
-    // Initialize hardware
-    driveMotor = new TalonFX(driveMotorID);
-    steerMotor = new SparkMax(steerMotorID, MotorType.kBrushless);
-    absoluteEncoder = new AnalogInput(absoluteEncoderID);
-    
-    // Configure drive motor (Kraken60)
+    this.absoluteEncoderID = absoluteEncoderID;
+    this.absoluteEncoderOffsetRadians = absoluteEncoderOffsetRadians;
+    this.absoluteEncoderInverted = absoluteEncoderInverted;
+    this.moduleName = moduleName;
+
+    // Initialize the drive motor (we use a Kraken60)
+    driveMotor = new TalonFX(this.driveMotorID);
+
+    // Initialize the steering motor (we use a Neo550) 
+    steerMotor = new SparkMax(this.steerMotorID, MotorType.kBrushless);
+
+    // Initialize the absolute encoder (we use a ThriftyBot)
+    absoluteEncoder = new ThriftyBotEncoder(
+      this.absoluteEncoderID, 
+      this.absoluteEncoderOffsetRadians, 
+      this.absoluteEncoderInverted,
+      this.moduleName + " Encoder"
+    );
+
+    // Configure drive motor (we use a KrakenX60)
     configureDriveMotor();
-    
-    // Configure steering motor (Neo550)
+
+    // Configure steering motor (we use a Neo550)
     configureSteerMotor();
-    
+
     // Get steering PID controller and encoder
     steerPIDController = steerMotor.getClosedLoopController();
     steerEncoder = steerMotor.getEncoder();    
-    
+
     // Reset encoders
     resetEncoders();
   }
@@ -99,27 +120,31 @@ public class SwerveModule {
     TalonFXConfiguration driveConfig = new TalonFXConfiguration();
 
     // Motor output configuration
-    driveConfig.MotorOutput.withNeutralMode(NeutralModeValue.Brake);
-    driveConfig.MotorOutput.withInverted(
-      driveMotorInverted 
-      ? InvertedValue.Clockwise_Positive
-      : InvertedValue.CounterClockwise_Positive
-    );
+    driveConfig.MotorOutput
+      .withNeutralMode(NeutralModeValue.Brake)
+      .withInverted(
+        driveMotorInverted 
+        ? InvertedValue.Clockwise_Positive
+        : InvertedValue.CounterClockwise_Positive
+      );
     
     // Current limits
-    driveConfig.CurrentLimits.withSupplyCurrentLimitEnable(true);
-    driveConfig.CurrentLimits.withSupplyCurrentLimit(DriveConstants.kDriveMotorMaxCurrent);
-    driveConfig.CurrentLimits.withSupplyCurrentLowerLimit(DriveConstants.kDriveMotorMaxCurrent * 0.75);
-    driveConfig.CurrentLimits.withSupplyCurrentLowerTime(1.0);
+    driveConfig.CurrentLimits
+      .withSupplyCurrentLimitEnable(true)
+      .withSupplyCurrentLimit(DriveConstants.kDriveMotorMaxCurrent)
+      .withSupplyCurrentLowerLimit(DriveConstants.kDriveMotorMaxCurrent * 0.75)
+      .withSupplyCurrentLowerTime(1.0);
     
     // Voltage compensation
-    driveConfig.Voltage.withPeakForwardVoltage(DriveConstants.kDriveMaxForwardVoltage);
-    driveConfig.Voltage.withPeakReverseVoltage(DriveConstants.kDriveMaxReverseVoltage);
+    driveConfig.Voltage
+      .withPeakForwardVoltage(DriveConstants.kDriveMaxForwardVoltage)
+      .withPeakReverseVoltage(DriveConstants.kDriveMaxReverseVoltage);
     
     // PID configuration for velocity control
-    driveConfig.Slot0.withKP(DriveConstants.kDriveKP);
-    driveConfig.Slot0.withKI(DriveConstants.kDriveKI);
-    driveConfig.Slot0.withKD(DriveConstants.kDriveKD);
+    driveConfig.Slot0
+      .withKP(DriveConstants.kDriveKP)
+      .withKI(DriveConstants.kDriveKI)
+      .withKD(DriveConstants.kDriveKD);
     
     // Apply the configuration to the motor
     driveMotor.getConfigurator().apply(driveConfig);
@@ -162,6 +187,15 @@ public class SwerveModule {
   }
 
   /**
+   * Periodic method to be called by the drive subsystem's periodic.
+   * Can put diagnostics, telemetry or state updates here.
+   */
+  public void periodic() {
+    // call the absolute encoder periodic method
+    absoluteEncoder.periodic();
+  }
+
+  /**
    * Resets the drive and steering encoders
    */
   public void resetEncoders() {
@@ -169,24 +203,7 @@ public class SwerveModule {
     driveMotor.setPosition(0);
     
     // Set the relative encoder to match the absolute encoder
-    steerEncoder.setPosition(getAbsoluteEncoderAngle());
-  }
-
-  /**
-   * Gets the current angle from the absolute encoder
-   * @return Angle in radians from -π to π
-   */
-  private double getAbsoluteEncoderAngle() {
-    double voltage = absoluteEncoder.getVoltage();
-    double angle = (voltage / RobotController.getVoltage5V()) * 2 * Math.PI;
-    angle -= absoluteEncoderOffset;
-    
-    // Normalize to -π to π
-    while (angle > Math.PI) angle -= 2 * Math.PI;
-    while (angle < -Math.PI) angle += 2 * Math.PI;
-    
-    // Return the absolute encorder's angle
-    return angle;
+    steerEncoder.setPosition(absoluteEncoder.getAngleRadians());
   }
 
   /**
@@ -218,7 +235,7 @@ public class SwerveModule {
     desiredState.optimize(getState().angle);
 
     // Smooth out the steering angle (may not need this?)
-    // desiredState.cosineScale(getState().angle);
+    desiredState.cosineScale(getState().angle);
 
     // Prevent jittering from noise that can appear when the swerve module is idle.
     // NOTE: may not be necessary
@@ -263,7 +280,10 @@ public class SwerveModule {
    * @param brake True for brake mode, false for coast mode
    */
   public void setMotorBrake(boolean brake) {
+    // Set drive motor neutral/idle mode
     driveMotor.setNeutralMode(brake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+    
+    // Set steering motor neutral/idle mode
     steerMotor.configure(
       new SparkMaxConfig().idleMode(brake ? IdleMode.kBrake : IdleMode.kCoast), 
       ResetMode.kNoResetSafeParameters, 
@@ -285,7 +305,7 @@ public class SwerveModule {
    * @return True if at target
    */
   public boolean isSteerAtTarget(double toleranceRadians) {
-    return Math.abs(steerEncoder.getPosition() - getAbsoluteEncoderAngle()) < toleranceRadians;
+    return Math.abs(steerEncoder.getPosition() - absoluteEncoder.getAngleRadians()) < toleranceRadians;
   }
   
   /**
@@ -313,7 +333,7 @@ public class SwerveModule {
     SmartDashboard.putNumber(moduleName + " Desired Angle", state.angle.getDegrees());
     SmartDashboard.putNumber(moduleName + " Current Speed", getState().speedMetersPerSecond);
     SmartDashboard.putNumber(moduleName + " Current Angle", getState().angle.getDegrees());
-    SmartDashboard.putNumber(moduleName + " Absolute Encoder", Math.toDegrees(getAbsoluteEncoderAngle()));
+    SmartDashboard.putNumber(moduleName + " Absolute Encoder", absoluteEncoder.getAngleDegrees());
     SmartDashboard.putNumber(moduleName + " Drive Current", driveMotor.getSupplyCurrent().getValueAsDouble());
     SmartDashboard.putNumber(moduleName + " Steer Current", steerMotor.getOutputCurrent());
   }
