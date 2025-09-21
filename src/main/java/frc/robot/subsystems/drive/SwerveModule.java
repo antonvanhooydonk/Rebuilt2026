@@ -179,7 +179,7 @@ public class SwerveModule {
       .i(DriveConstants.kSteerKI)
       .d(DriveConstants.kSteerKD);
 
-    // apply the configuration to the motor
+    // Apply the configuration to the motor
     steerMotor.configure(
       steerConfig, 
       ResetMode.kResetSafeParameters, 
