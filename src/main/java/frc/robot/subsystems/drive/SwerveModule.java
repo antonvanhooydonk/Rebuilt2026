@@ -191,7 +191,7 @@ public class SwerveModule {
    * Can put diagnostics, telemetry or state updates here.
    */
   public void periodic() {
-    // call the absolute encoder periodic method
+    // Call the absolute encoder periodic method
     absoluteEncoder.periodic();
   }
 
