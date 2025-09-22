@@ -39,6 +39,7 @@ public final class DriveConstants {
   public static final double kJoystickDeadband = 0.1; // maybe use 0.5?, joystick deadband, adjust as needed
   public static final double kSlewRateLimit = 0.75; // joystick slew rate, larger value = slower acceleration, adjust as needed
   public static final double kSlowModeScaler = 0.3; // scales speeds down in slow mode, 0.0 to 1.0
+  public static final boolean kStopJitter = false; // set to true to stop jittering from module noise
   public static final double kMaxSpeedMetersPerSecond = 3.5; // Units.feetToMeters(13)
   public static final double kMaxAccelMetersPerSecondSq = 4.5; // 4 to 6 is a reasonable range
   public static final double kMaxAngularSpeedRadiansPerSecond = Units.degreesToRadians(180);

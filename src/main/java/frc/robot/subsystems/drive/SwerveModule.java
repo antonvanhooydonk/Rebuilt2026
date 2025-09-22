@@ -238,16 +238,17 @@ public class SwerveModule {
     // Smooth out the steering angle (may not need this?)
     desiredState.cosineScale(getState().angle);
 
-    // Prevent jittering from noise that can appear when the swerve module is idle.
-    // NOTE: may not be necessary
-    // NOTE: Commented out to start since this may interfere with PID tuning
-    // if (
-    //   Math.abs(desiredState.speedMetersPerSecond) < 0.001 && // less than 1 mm per sec
-		// 	Math.abs(desiredState.angle.getRadians() - steerEncoder.getPosition()) < Rotation2d.fromDegrees(1).getRadians() // less than 1 degree
-    // ) {
-		// 	stop();
-    //   return;
-		// }
+    // Prevent jittering from noise that can appear when the 
+    // swerve module is idle. Disable during PID tuning.
+    if (DriveConstants.kStopJitter) {
+      if (
+        (Math.abs(desiredState.speedMetersPerSecond) < 0.001) && // less than 1 mm per sec
+        (Math.abs(desiredState.angle.getRadians() - steerEncoder.getPosition()) < Rotation2d.fromDegrees(1).getRadians()) // less than 1 degree
+      ) {
+        stop();
+        return;
+      }
+    }
 
     // Set drive motor speed
     setDriveVelocity(desiredState.speedMetersPerSecond);
