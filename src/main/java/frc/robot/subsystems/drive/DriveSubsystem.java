@@ -584,17 +584,6 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Slow Mode", slowMode);
     SmartDashboard.putBoolean("Gyro Connected", gyro.isConnected());
     
-    // Module temperatures
-    SmartDashboard.putNumber("FL Drive Temp", modules[0].getDriveTemperature());
-    SmartDashboard.putNumber("FR Drive Temp", modules[1].getDriveTemperature());
-    SmartDashboard.putNumber("BL Drive Temp", modules[2].getDriveTemperature());
-    SmartDashboard.putNumber("BR Drive Temp", modules[3].getDriveTemperature());
-
-    SmartDashboard.putNumber("FL Steer Temp", modules[0].getSteerTemperature());
-    SmartDashboard.putNumber("FR Steer Temp", modules[1].getSteerTemperature());
-    SmartDashboard.putNumber("BL Steer Temp", modules[2].getSteerTemperature());
-    SmartDashboard.putNumber("BR Steer Temp", modules[3].getSteerTemperature());
-    
     // Chassis speeds
     ChassisSpeeds speeds = getChassisSpeeds();
     SmartDashboard.putNumber("Chassis vX", speeds.vxMetersPerSecond);

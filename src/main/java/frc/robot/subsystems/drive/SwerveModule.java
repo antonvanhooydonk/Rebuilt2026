@@ -310,22 +310,6 @@ public class SwerveModule {
   }
   
   /**
-   * Gets the drive motor temperature
-   * @return Temperature in Celsius
-   */
-  public double getDriveTemperature() {
-    return driveMotor.getDeviceTemp().getValueAsDouble();
-  }
-  
-  /**
-   * Gets the steering motor temperature
-   * @return Temperature in Celsius
-   */
-  public double getSteerTemperature() {
-    return steerMotor.getMotorTemperature();
-  }
-  
-  /**
    * Updates SmartDashboard with module information
    * @param state Current desired state
    */
@@ -336,6 +320,8 @@ public class SwerveModule {
     SmartDashboard.putNumber(moduleName + " Current Angle", getState().angle.getDegrees());
     SmartDashboard.putNumber(moduleName + " Absolute Encoder", absoluteEncoder.getAngleDegrees());
     SmartDashboard.putNumber(moduleName + " Drive Current", driveMotor.getSupplyCurrent().getValueAsDouble());
+    SmartDashboard.putNumber(moduleName + " Drive Temp", driveMotor.getDeviceTemp().getValueAsDouble());
     SmartDashboard.putNumber(moduleName + " Steer Current", steerMotor.getOutputCurrent());
+    SmartDashboard.putNumber(moduleName + " Steer Temp", steerMotor.getMotorTemperature());
   }
 }
