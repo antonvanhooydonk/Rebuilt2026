@@ -1,6 +1,7 @@
 package frc.robot.util;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.RobotController;
@@ -81,7 +82,7 @@ public class ThriftyBotEncoder {
    * @return Angle in degrees (-180 to 180)
    */
   public double getAngleDegrees() {
-    return Math.toDegrees(getAngleRadians());
+    return Units.radiansToDegrees(getAngleRadians());
   }
   
   /**
@@ -135,7 +136,7 @@ public class ThriftyBotEncoder {
    */
   public void setOffset(double offsetRadians) {
     this.offsetRadians = offsetRadians;
-    System.out.println(name + "' offset updated to: " + Math.toDegrees(offsetRadians) + "°");
+    System.out.println(name + "' offset updated to: " + Units.radiansToDegrees(offsetRadians) + "°");
   }
   
   /**
@@ -160,7 +161,7 @@ public class ThriftyBotEncoder {
     this.offsetRadians = currentAngleRad;
     
     System.out.println(
-      name + "' calibrated. New offset: " + Math.toDegrees(offsetRadians) + "° (position: " + currentPosition + ")"
+      name + "' calibrated. New offset: " + Units.radiansToDegrees(offsetRadians) + "° (position: " + currentPosition + ")"
     );
   }
   

@@ -30,6 +30,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -598,6 +599,6 @@ public class DriveSubsystem extends SubsystemBase {
     ChassisSpeeds speeds = getChassisSpeeds();
     SmartDashboard.putNumber("Chassis vX", speeds.vxMetersPerSecond);
     SmartDashboard.putNumber("Chassis vY", speeds.vyMetersPerSecond);
-    SmartDashboard.putNumber("Chassis omega", Math.toDegrees(speeds.omegaRadiansPerSecond));
+    SmartDashboard.putNumber("Chassis omega", Units.radiansToDegrees(speeds.omegaRadiansPerSecond));
   }
 }
