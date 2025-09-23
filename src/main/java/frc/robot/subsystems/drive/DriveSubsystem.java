@@ -318,23 +318,17 @@ public class DriveSubsystem extends SubsystemBase {
     ySpeed = ySpeedLimiter.calculate(ySpeed);
     rot = rotLimiter.calculate(rot);
 
-    // Convert joystick's -1..1 to m/s and rad/s chassis speeds
+    // Convert joystick's -1..1 to m/s and rad/s velocitys
     double xSpeedMS = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedMS = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double rotSpeedRad = rot * DriveConstants.kMaxAngularSpeedRadiansPerSecond;
 
-    // Invert the translation speeds if we are on the red alliance
-    // NOTE: may need to do this?, maybe only for fieldRelative?, left here for reference
-    // if (Utils.isRedAlliance()) {
-    //   xSpeedMS = -xSpeedMS;
-    //   ySpeedMS = -ySpeedMS;
-    // }
-
-    // Create/convert inputs to robot-relative chassis speeds
+    // Convert input velocitys into robot-relative chassis speeds
     ChassisSpeeds chassisSpeeds;
     if (fieldRelative) {
+      int invert = Utils.isRedAlliance() ? -1 : 1;
       chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-        xSpeedMS, ySpeedMS, rotSpeedRad, getHeading()
+        xSpeedMS * invert, ySpeedMS * invert, rotSpeedRad, getHeading()
       );
     } else {
       chassisSpeeds = new ChassisSpeeds(xSpeedMS, ySpeedMS, rotSpeedRad);
