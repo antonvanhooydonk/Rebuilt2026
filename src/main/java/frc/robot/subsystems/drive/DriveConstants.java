@@ -28,7 +28,7 @@ public final class DriveConstants {
   public static final double kDriveMotorMaxCurrent = 40.0; // The max current draw in amps of a swerve module drive motor
   public static final double kDriveMaxForwardVoltage = 12.0; // Max voltage to apply to drive motors when driving forward
   public static final double kDriveMaxReverseVoltage = -12.0; // Max voltage to apply to drive motors when driving backward
-  public static final int kSteerMotorMaxCurrent = 20; // The max current draw in amps of a swerve module steer motor
+  public static final int    kSteerMotorMaxCurrent = 20; // The max current draw in amps of a swerve module steer motor
   public static final double kDriveGearRatio = 6.75; // Drive gear ratio (adjust for your setup)
   public static final double kSteerGearRatio = 21.4285714286; // Steering gear ratio
   public static final double kDriveRpsToMps = kWheelCircumference / kDriveGearRatio; // Convert drive motor rotations per second to meters per second
