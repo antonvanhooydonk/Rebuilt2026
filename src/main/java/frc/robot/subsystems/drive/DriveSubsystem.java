@@ -90,7 +90,7 @@ public class DriveSubsystem extends SubsystemBase {
     // Initialize gyroscope
     gyro = new AHRS(NavXComType.kMXP_SPI);
 
-    // If we need an offset (gyro mounted wrong etc..), set it here
+    // If we need a gyro offset (mounted wrong etc..), set it here
     // gyro.setAngleAdjustment(90);
     
     // Initialize front left swerve module
