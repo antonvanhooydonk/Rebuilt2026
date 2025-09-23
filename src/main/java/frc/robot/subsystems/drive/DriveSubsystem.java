@@ -89,6 +89,9 @@ public class DriveSubsystem extends SubsystemBase {
 
     // Initialize gyroscope
     gyro = new AHRS(NavXComType.kMXP_SPI);
+
+    // If we need an offset, set it here
+    // gyro.setAngleAdjustment(DriveConstants.kGyroOffsetDegrees);
     
     // Initialize front left swerve module
     modules[0] = new SwerveModule(
@@ -320,6 +323,13 @@ public class DriveSubsystem extends SubsystemBase {
     double ySpeedMS = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double rotSpeedRad = rot * DriveConstants.kMaxAngularSpeedRadiansPerSecond;
 
+    // Invert the translation speeds if we are on the red alliance
+    // NOTE: may need to do this?, maybe only for fieldRelative?, left here for reference
+    // if (Utils.isRedAlliance()) {
+    //   xSpeedMS = -xSpeedMS;
+    //   ySpeedMS = -ySpeedMS;
+    // }
+
     // Create/convert inputs to robot-relative chassis speeds
     ChassisSpeeds chassisSpeeds;
     if (fieldRelative) {
@@ -430,20 +440,6 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
-   * Zeros the gyroscope heading relative to the alliance color.
-   * NOTE: Should never need to call this if vision is working properly.
-   */
-  public void zeroHeadingWithAlliance() {
-    // Reset gyro to zero
-    zeroHeading();
-
-     // If on the red alliance, rotate heading 180 degrees
-    if (Utils.isRedAlliance()) {     
-      gyro.setAngleAdjustment(180.0);
-    }
-  }
-
-  /**
    * Gets the current raw gyro angle. This may not match the robot's heading
    * due to initial offset, or drift over time. Generally, this is only 
    * used as input into the swerve drive PoseEstimator, and then our 
@@ -451,8 +447,8 @@ public class DriveSubsystem extends SubsystemBase {
    * @return The current gyro angle as a Rotation2d, CCW positive
    */
   public Rotation2d getGyroAngle() {
-    return Rotation2d.fromDegrees(-gyro.getAngle()); // Negated for CCW positive
-    // return Rotation2d.fromDegrees(-gyro.getYaw()); // Negated for CCW positive
+    // Negate the angle b/c our NavX is CW positive
+    return Rotation2d.fromDegrees(-gyro.getAngle()); 
   }
 
   /**

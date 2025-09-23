@@ -34,6 +34,7 @@ public final class DriveConstants {
   public static final double kDriveRpsToMps = kWheelCircumference / kDriveGearRatio; // Convert drive motor rotations per second to meters per second
   public static final double kDriveMpsToRps = kDriveGearRatio / kWheelCircumference; // Convert drive motor meters per second to rotations per second 
   public static final double kPeriodicTimeSeconds = 0.13; // 20ms (default) + 110ms => 0.02 + 0.11 spark max velocity lag 
+  public static final double kGyroOffsetDegrees = 0.0; // Gyro offset, adjust as needed if the gyro 0 is not facing straight forward
 
   // Maximum speeds - adjust based on your robot capabilities
   public static final double kJoystickDeadband = 0.1; // maybe use 0.5?, joystick deadband, adjust as needed

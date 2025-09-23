@@ -132,7 +132,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Configure Xbox controller bindings
-    driverController.start().onTrue(new RunCommand(() -> driveSubsystem.zeroHeadingWithAlliance(), driveSubsystem));
+    driverController.start().onTrue(new RunCommand(() -> driveSubsystem.zeroHeading(), driveSubsystem).ignoringDisable(true));
     driverController.back().onTrue(Commands.none());
     driverController.a().onTrue(new MoveArmCommand(armSubsystem, ArmConstants.HomePosition));
     driverController.b().onTrue(Commands.none());
