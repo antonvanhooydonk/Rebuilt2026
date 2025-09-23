@@ -437,7 +437,7 @@ public class DriveSubsystem extends SubsystemBase {
    * Gets the current raw gyro angle. This may not match the robot's heading
    * due to initial offset, or drift over time. Generally, this is only 
    * used as input into the swerve drive PoseEstimator, and then our 
-   * robot can be driven using the PoseEstimator's heading.
+   * robot can be driven based on the PoseEstimator's heading.
    * @return The current gyro angle as a Rotation2d, CCW positive
    */
   public Rotation2d getGyroAngle() {
