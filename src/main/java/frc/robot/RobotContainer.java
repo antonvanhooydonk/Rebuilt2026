@@ -56,8 +56,8 @@ public class RobotContainer {
   private final CommandGenericHID opController1 = new CommandGenericHID(1);
   private final CommandGenericHID opController2 = new CommandGenericHID(2);
 
-  private SendableChooser<Command> autoCommandChooser;
-  private SendableChooser<Command> delayCommandChooser;
+  private SendableChooser<Command> autoCommandChooser = new SendableChooser<>();
+  private SendableChooser<Command> delayCommandChooser = new SendableChooser<>();
 
   /** 
    * The container for the robot. 
