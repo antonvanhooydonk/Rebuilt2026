@@ -12,8 +12,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.CANConstants;
 import frc.robot.Constants.DIOConstants;
 
@@ -42,6 +43,9 @@ public class RollerSubsystem extends SubsystemBase {
 
     // Apply the configuration to the motor controller
     rollerMotor.getConfigurator().apply(rollerMotorConfig);
+
+    // Initialize dashboard values
+    SmartDashboard.putData("Roller", this);
   }
 
   @Override
@@ -49,31 +53,61 @@ public class RollerSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
   }
  
+  /**
+   * Check if the beam break sensor is broken
+   * @return
+   */
   public boolean isBeamBreakBroke() {
     return !intakeBeamBreakSwitch.get();
   }
 
+  /**
+   * Intake coral at a fixed speed
+   */
   public void intakeCoral() {
     rollerMotor.set(RollerConstants.IntakeCoralSpeed);
   }
 
+  /**
+   * Output coral at a fixed speed
+   */
   public void outputCoral() {
     rollerMotor.set(RollerConstants.OutputCoralSpeed);
   } 
 
+  /**
+   * Intake algae at a fixed speed
+   */
   public void intakeAlgae() {
     rollerMotor.set(RollerConstants.IntakeAlgaeSpeed);
   }
 
+  /**
+   * Output algae at a fixed speed
+   */
   public void outputAlgae() {
     rollerMotor.set(RollerConstants.OutputAlgaeSpeed);
   } 
 
+  /**
+   * Hold algae
+   */
   public void holdAlgae() {
     rollerMotor.set(RollerConstants.HoldAlgaeSpeed);
   } 
   
+  /**
+   * Stop the roller motor
+   */
   public void stopRoller() {
     rollerMotor.set(0);
+  }
+
+  /**
+   * Initialize Sendable for SmartDashboard
+   */
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.addBooleanProperty("Beam Broken", this::isBeamBreakBroke, null);
   }
 }

@@ -166,9 +166,6 @@ public class VisionSubsystem extends SubsystemBase {
     
     // Process vision measurements using cached data
     updateVisionMeasurements();
-    
-    // Update dashboard using cached data
-    updateDashboard();
   }
 
   /**

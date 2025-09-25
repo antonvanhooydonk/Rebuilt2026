@@ -23,6 +23,8 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.util.ThriftyBotEncoder;
@@ -31,7 +33,7 @@ import frc.robot.util.ThriftyBotEncoder;
  * Represents a single swerve drive module with a Kraken60 drive motor
  * and a Neo550 steering motor with absolute encoder feedback
  */
-public class SwerveModule {
+public class SwerveModule implements Sendable {
   // Hardware
   private final TalonFX driveMotor;
   private final SparkMax steerMotor;
@@ -53,6 +55,7 @@ public class SwerveModule {
   private final double absoluteEncoderOffsetRadians;
   private final boolean absoluteEncoderInverted;
   private final String moduleName;
+  private SwerveModuleState targetState;
 
   /**
    * Construct a SwerveModule with the given parameters
@@ -111,6 +114,9 @@ public class SwerveModule {
 
     // Reset encoders
     resetEncoders();
+
+    // Initialize dashboard values
+    SmartDashboard.putData("Drive/Module/" + this.moduleName, this);
   }
 
   /**
@@ -208,6 +214,14 @@ public class SwerveModule {
   }
 
   /**
+   * Gets the target state of the swerve module
+   * @return
+   */
+  public SwerveModuleState getTargetState() {
+    return targetState;
+  }
+
+  /**
    * Gets the current state of the swerve module
    * @return Current SwerveModuleState
    */
@@ -255,9 +269,9 @@ public class SwerveModule {
     
     // Set steering angle
     setSteerAngle(desiredState.angle.getRadians());
-    
-    // Update dashboard
-    updateDashboard(desiredState);      
+
+    // Cache the target state
+    targetState = desiredState;
   }
 
   /**
@@ -311,18 +325,18 @@ public class SwerveModule {
   }
   
   /**
-   * Updates SmartDashboard with module information
-   * @param state Current desired state
+   * Initialize the data sent to SmartDashboard
    */
-  private void updateDashboard(SwerveModuleState state) {
-    SmartDashboard.putNumber(moduleName + " Desired Speed", state.speedMetersPerSecond);
-    SmartDashboard.putNumber(moduleName + " Desired Angle", state.angle.getDegrees());
-    SmartDashboard.putNumber(moduleName + " Current Speed", getState().speedMetersPerSecond);
-    SmartDashboard.putNumber(moduleName + " Current Angle", getState().angle.getDegrees());
-    SmartDashboard.putNumber(moduleName + " Absolute Encoder", absoluteEncoder.getAngleDegrees());
-    SmartDashboard.putNumber(moduleName + " Drive Current", driveMotor.getSupplyCurrent().getValueAsDouble());
-    SmartDashboard.putNumber(moduleName + " Drive Temp", driveMotor.getDeviceTemp().getValueAsDouble());
-    SmartDashboard.putNumber(moduleName + " Steer Current", steerMotor.getOutputCurrent());
-    SmartDashboard.putNumber(moduleName + " Steer Temp", steerMotor.getMotorTemperature());
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.addDoubleProperty("Desired Speed", () -> targetState.speedMetersPerSecond, null);
+    builder.addDoubleProperty("Desired Angle", () -> targetState.angle.getDegrees(), null);
+    builder.addDoubleProperty("Current Speed", () -> getState().speedMetersPerSecond, null);
+    builder.addDoubleProperty("Current Angle", () -> getState().angle.getDegrees(), null);
+    builder.addDoubleProperty("Absolute Encoder", () -> absoluteEncoder.getAngleDegrees(), null);
+    builder.addDoubleProperty("Drive Current", () -> driveMotor.getSupplyCurrent().getValueAsDouble(), null);
+    builder.addDoubleProperty("Drive Temp", () -> driveMotor.getDeviceTemp().getValueAsDouble(), null);
+    builder.addDoubleProperty("Steer Current", () -> steerMotor.getOutputCurrent(), null);
+    builder.addDoubleProperty("Steer Temp", () -> steerMotor.getMotorTemperature(), null);
   }
 }

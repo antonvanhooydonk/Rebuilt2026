@@ -31,6 +31,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -209,10 +211,27 @@ public class DriveSubsystem extends SubsystemBase {
     // IF USING CUSTOM PATHFINDER ADD THEM HERE
     PathfindingCommand.warmupCommand().schedule();
 
-    // Add field to dashboard
-    SmartDashboard.putData("Field", field2d);
+    // Add data to dashboard
+    SmartDashboard.putData("Drive", this);
+    SmartDashboard.putData("Drive/Field", field2d);
+    SmartDashboard.putData("Drive/Gyro", gyro);
+    SmartDashboard.putData("Drive/Swerve", new Sendable() {
+      @Override
+      public void initSendable(SendableBuilder builder) {
+        builder.setSmartDashboardType("SwerveDrive");
+        builder.addDoubleProperty("Front Left Angle", () -> modules[0].getState().angle.getRadians(), null);
+        builder.addDoubleProperty("Front Left Velocity", () -> modules[0].getState().speedMetersPerSecond, null);
+        builder.addDoubleProperty("Front Right Angle", () -> modules[1].getState().angle.getRadians(), null);
+        builder.addDoubleProperty("Front Right Velocity", () -> modules[1].getState().speedMetersPerSecond, null);
+        builder.addDoubleProperty("Back Left Angle", () -> modules[2].getState().angle.getRadians(), null);
+        builder.addDoubleProperty("Back Left Velocity", () -> modules[2].getState().speedMetersPerSecond, null);
+        builder.addDoubleProperty("Back Right Angle", () -> modules[3].getState().angle.getRadians(), null);
+        builder.addDoubleProperty("Back Right Velocity", () -> modules[3].getState().speedMetersPerSecond, null);
+        builder.addDoubleProperty("Robot Angle", () -> getHeading().getRadians(), null);
+      }
+    });
   }
-  
+
   @Override
   public void periodic() {
     // Update odometry
@@ -223,9 +242,6 @@ public class DriveSubsystem extends SubsystemBase {
     
     // Update field visualization
     field2d.setRobotPose(getPose());
-    
-    // Update dashboard
-    updateDashboard();
 
     // Call each swerve module's periodic
     for (var module : modules) {
@@ -564,20 +580,20 @@ public class DriveSubsystem extends SubsystemBase {
   /**
    * Updates SmartDashboard with subsystem information
    */
-  private void updateDashboard() {
+  @Override
+  public void initSendable(SendableBuilder builder) {
     // Robot telemetry
-    SmartDashboard.putString("Robot Pose", getPose().toString());
-    SmartDashboard.putNumber("Robot Heading", getHeading().getDegrees());
-    SmartDashboard.putNumber("Robot Pitch", getPitch());
-    SmartDashboard.putNumber("Robot Roll", getRoll());
-    SmartDashboard.putBoolean("Field Relative", fieldRelative);
-    SmartDashboard.putBoolean("Slow Mode", slowMode);
-    SmartDashboard.putBoolean("Gyro Connected", gyro.isConnected());
+    builder.addStringProperty("Robot Pose", () -> getPose().toString(), null);
+    builder.addDoubleProperty("Robot Heading", () -> getHeading().getDegrees(), null);
+    builder.addDoubleProperty("Robot Pitch", this::getPitch, null);
+    builder.addDoubleProperty("Robot Roll", this::getRoll, null);
+    builder.addBooleanProperty("Field Relative", () -> fieldRelative, null);
+    builder.addBooleanProperty("Slow Mode", () -> slowMode, null);
     
     // Chassis speeds
     ChassisSpeeds speeds = getChassisSpeeds();
-    SmartDashboard.putNumber("Chassis vX", speeds.vxMetersPerSecond);
-    SmartDashboard.putNumber("Chassis vY", speeds.vyMetersPerSecond);
-    SmartDashboard.putNumber("Chassis omega", Units.radiansToDegrees(speeds.omegaRadiansPerSecond));
+    builder.addDoubleProperty("Chassis vX", () -> speeds.vxMetersPerSecond, null);
+    builder.addDoubleProperty("Chassis vY", () -> speeds.vyMetersPerSecond, null);
+    builder.addDoubleProperty("Chassis omega", () -> Units.radiansToDegrees(speeds.omegaRadiansPerSecond), null);
   }
 }

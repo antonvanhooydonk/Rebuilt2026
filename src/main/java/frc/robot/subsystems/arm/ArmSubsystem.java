@@ -12,6 +12,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -40,16 +41,15 @@ public class ArmSubsystem extends SubsystemBase {
         .withCurrentLimits(new CurrentLimitsConfigs()
         .withSupplyCurrentLimit(30)
         .withSupplyCurrentLimitEnable(true));
+
+    // Apply the configuration to the motor
     armMotor.getConfigurator().apply(armMotorConfig);  
-    
-    // Initialize dashboard values
-    SmartDashboard.setDefaultNumber("Target Position", 0);
-    SmartDashboard.setDefaultNumber("Target Velocity", 0);
-    SmartDashboard.setDefaultBoolean("Control Mode", false);
-    SmartDashboard.setDefaultBoolean("Reset Encoder", false);
 
     // Cache the starting position as the zero point
     zeroPoint = armMotor.getPosition().getValueAsDouble();
+    
+    // Initialize dashboard values
+    SmartDashboard.putData("Arm", this);
   }
 
   /**
@@ -57,8 +57,6 @@ public class ArmSubsystem extends SubsystemBase {
    */
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Arm Pos", armMotor.getPosition().getValueAsDouble() );
-    SmartDashboard.putNumber("Arm Target",targetPos );
     isArmAtPose();
   }
 
@@ -78,9 +76,6 @@ public class ArmSubsystem extends SubsystemBase {
 
     // Send command to motor
     armMotor.setControl(voltReq);
-
-    // update dashboard
-    SmartDashboard.putNumber("Target Position", position);    
   }
 
   /**
@@ -89,15 +84,43 @@ public class ArmSubsystem extends SubsystemBase {
    * @return
    */
   public boolean isArmAtPose() {
-    boolean atPose = Math.abs(armMotor.getPosition().getValueAsDouble() - targetPos) < ElevatorConstants.ErrorThreshold; 
-    SmartDashboard.putNumber("Arm Error",  armMotor.getClosedLoopError().getValueAsDouble() );
-    SmartDashboard.putBoolean("Arm At Pose", atPose );
-    return atPose;
+    return Math.abs(armMotor.getPosition().getValueAsDouble() - targetPos) < ElevatorConstants.ErrorThreshold; 
   }
 
   /**
-   * Check if the arm is in algae mode
-   * 
+   * Get the current position of the arm
+   * @return
+   */
+  public double getPosition() {
+    return armMotor.getPosition().getValueAsDouble();
+  }
+
+  /**
+   * Get the target position of the arm adjusted for zero point
+   * @return
+   */
+  public double getTargetPosition() {
+    return targetPos - zeroPoint;
+  }
+
+  /**
+   * Get the current velocity of the arm
+   * @return
+   */
+  public double getVelocity() {
+    return armMotor.getVelocity().getValueAsDouble();
+  }
+
+  /**
+   * Get the current error of the closed loop PID control
+   * @return
+   */
+  public double getError() {
+    return armMotor.getClosedLoopError().getValueAsDouble();
+  }
+
+  /**
+   * Check if the arm is in algae mode 
    * @return
    */
   public boolean isArmInAlgaeMode() {
@@ -112,5 +135,18 @@ public class ArmSubsystem extends SubsystemBase {
 
     // default false
     return false;
+  }
+
+  /**
+   * Initialize Sendable for SmartDashboard
+   */
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.addDoubleProperty("Target Position", this::getPosition, null);
+    builder.addDoubleProperty("Target Position", this::getTargetPosition, null);
+    builder.addDoubleProperty("Target Velocity", this::getVelocity, null);
+    builder.addBooleanProperty("Algae Mode", this::isArmInAlgaeMode, null);
+    builder.addDoubleProperty("Error", this::getError, null);
+    builder.addBooleanProperty("At Pose", this::isArmAtPose, null);
   }
 }

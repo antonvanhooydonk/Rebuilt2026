@@ -2,6 +2,8 @@ package frc.robot.util;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.RobotController;
@@ -11,7 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * Wrapper class for Thrifty Bot absolute encoder attached to swerve steer motor.
  * Provides both raw AnalogInput access and processed AnalogEncoder functionality.
  */
-public class ThriftyBotEncoder {    
+public class ThriftyBotEncoder implements Sendable {    
   // Hardware components
   private final AnalogInput analogInput;
   private final AnalogEncoder analogEncoder;
@@ -44,7 +46,15 @@ public class ThriftyBotEncoder {
     // Initialize both analog input and encoder
     this.analogInput = new AnalogInput(analogPort);
     this.analogEncoder = new AnalogEncoder(analogInput);
+
+    // Initialize dashboard values
+    SmartDashboard.putData("Encoder/" + name, this);
   }
+
+  /**
+   * Periodic method to be called from parent's periodic for diagnostics
+   */
+  public void periodic() {}
   
   /**
    * Gets the current angle in radians using AnalogEncoder
@@ -136,7 +146,6 @@ public class ThriftyBotEncoder {
    */
   public void setOffset(double offsetRadians) {
     this.offsetRadians = offsetRadians;
-    System.out.println(name + "' offset updated to: " + Units.radiansToDegrees(offsetRadians) + "°");
   }
   
   /**
@@ -159,10 +168,6 @@ public class ThriftyBotEncoder {
     
     // Update the offset to make current position read as zero
     this.offsetRadians = currentAngleRad;
-    
-    System.out.println(
-      name + "' calibrated. New offset: " + Units.radiansToDegrees(offsetRadians) + "° (position: " + currentPosition + ")"
-    );
   }
   
   /**
@@ -193,20 +198,11 @@ public class ThriftyBotEncoder {
   }
 
   /**
-   * Periodic method to be called from parent's periodic for diagnostics
+   * Gets the current noise count for diagnostics
+   * @return
    */
-  public void periodic() {
-    // Check if the readings are valid
-    boolean valid = isValid();
-
-    // Log warnings for invalid readings
-    if (!valid) {
-      System.err.println(
-        "WARNING: '" + name + "' readings may be invalid. " +
-        "Voltage: " + String.format("%.3f", getRawVoltage()) + "V, " +
-        "Noise: " + noiseCount
-      );
-    }
+  public int getNoiseCount() {
+    return noiseCount;
   }
 
   /**
@@ -246,40 +242,20 @@ public class ThriftyBotEncoder {
   public void close() {
     analogInput.close();
     analogEncoder.close();
-    System.out.println(name + "' closed");
   }
   
   /**
-   * Gets diagnostic information about encoder health
-   * @return Diagnostic string
+   * Initialize the data sent to SmartDashboard
    */
-  public String getDiagnostics() {
-    double voltage = getRawVoltage();
-    double supplyVoltage = RobotController.getVoltage5V();
-    
-    StringBuilder diagnostics = new StringBuilder();
-    diagnostics.append("").append(name).append("':\n");
-    diagnostics.append("  Voltage: ").append(String.format("%.3f", voltage)).append("V\n");
-    diagnostics.append("  Supply: ").append(String.format("%.3f", supplyVoltage)).append("V\n");
-    diagnostics.append("  Angle: ").append(String.format("%.1f", getAngleDegrees())).append("°\n");
-    diagnostics.append("  Valid: ").append(isValid() ? "YES" : "NO").append("\n");
-    diagnostics.append("  Noise Count: ").append(noiseCount);
-    
-    return diagnostics.toString();
-  }
-  
-  /**
-   * Updates SmartDashboard with encoder information
-   */
-  public void updateDashboard() {
-    String prefix = "Encoder/" + name + "/";    
-    SmartDashboard.putNumber(prefix + "Angle (deg)", getAngleDegrees());
-    SmartDashboard.putNumber(prefix + "Angle (rad)", getAngleRadians());
-    SmartDashboard.putNumber(prefix + "Raw Voltage", getRawVoltage());
-    SmartDashboard.putNumber(prefix + "Supply Voltage", RobotController.getVoltage5V());
-    SmartDashboard.putNumber(prefix + "Absolute Position", getAbsolutePosition());
-    SmartDashboard.putBoolean(prefix + "Valid", isValid());
-    SmartDashboard.putBoolean(prefix + "Inverted", isInverted());
-    SmartDashboard.putNumber(prefix + "Noise Count", noiseCount);
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.addDoubleProperty("Angle (deg)", this::getAngleDegrees, null);
+    builder.addDoubleProperty("Angle (rad)", this::getAngleRadians, null);
+    builder.addDoubleProperty("Raw Voltage", this::getRawVoltage, null);
+    builder.addDoubleProperty("Supply Voltage", RobotController::getVoltage5V, null);
+    builder.addDoubleProperty("Absolute Position", this::getAbsolutePosition, null);
+    builder.addBooleanProperty("Valid", this::isValid, null);
+    builder.addBooleanProperty("Inverted", this::isInverted, null);
+    builder.addDoubleProperty("Noise Count", this::getNoiseCount, null);
   }
 }

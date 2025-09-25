@@ -139,12 +139,12 @@ public class RobotContainer {
     xboxController.x().onTrue(new MoveArmCommand(armSubsystem, ArmConstants.CoralMovingPosition));
     xboxController.y().onTrue(Commands.none());
     
-    xboxController.leftBumper()
-      .onTrue(driveSubsystem.driveToPoseCommand(FieldConstants.leftScoringPoses.get(visionSubsystem.getBestTarget("FRONT_CAMERA").get().getFiducialId()))
-      .andThen(new RumbleControllerCommand(xboxController, 2.0)));
-    xboxController.rightBumper()
-      .onTrue(driveSubsystem.driveToPoseCommand(FieldConstants.rightScoringPoses.get(visionSubsystem.getBestTarget("FRONT_CAMERA").get().getFiducialId()))
-      .andThen(new RumbleControllerCommand(xboxController, 2.0)));
+    // xboxController.leftBumper()
+    //   .onTrue(driveSubsystem.driveToPoseCommand(FieldConstants.leftScoringPoses.get(visionSubsystem.getBestTarget("FRONT_CAMERA").get().getFiducialId()))
+    //   .andThen(new RumbleControllerCommand(xboxController, 2.0)));
+    // xboxController.rightBumper()
+    //   .onTrue(driveSubsystem.driveToPoseCommand(FieldConstants.rightScoringPoses.get(visionSubsystem.getBestTarget("FRONT_CAMERA").get().getFiducialId()))
+    //   .andThen(new RumbleControllerCommand(xboxController, 2.0)));
 
     xboxController.rightTrigger().onTrue(new RunCommand(() -> driveSubsystem.setSlowMode(true), driveSubsystem));
     xboxController.rightTrigger().onFalse(new RunCommand(() -> driveSubsystem.setSlowMode(false), driveSubsystem));

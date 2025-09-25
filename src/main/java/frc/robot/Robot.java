@@ -4,13 +4,14 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 import frc.robot.subsystems.drive.DriveConstants;
-import frc.robot.util.Elastic;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -34,6 +35,9 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    // Start the camera server for streaming to the dashboard
+    CameraServer.startAutomaticCapture();
   }
 
   /**
@@ -50,6 +54,9 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+    // Send the remaing match time to the dashboard
+    SmartDashboard.putNumber("Match Time", Timer.getMatchTime());
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -82,9 +89,6 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
-
-    // Switch dashboard to the autonomous tab
-    Elastic.selectTab("Autonomous");
   }
 
   /** This function is called periodically during autonomous. */
@@ -100,9 +104,6 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-
-    // Switch dashboard to the teleoperated tab
-    Elastic.selectTab("Teleoperated");
   }
 
   /** This function is called periodically during operator control. */
@@ -113,9 +114,6 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-
-    // Switch dashboard to the test tab
-    Elastic.selectTab("Test");
   }
 
   /** This function is called periodically during test mode. */

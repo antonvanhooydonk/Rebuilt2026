@@ -18,6 +18,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.Constants.CANConstants;
@@ -33,7 +34,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   public ElevatorSubsystem() {
     leftElevatorMotor= new TalonFX(CANConstants.LeftElevatorID);
     rightElevatorMotor = new TalonFX(CANConstants.RightElevatorID);
-    targetPosition = 0;
 
     eleMotorConfig = new TalonFXConfiguration()
       .withMotorOutput(new MotorOutputConfigs()
@@ -58,13 +58,14 @@ public class ElevatorSubsystem extends SubsystemBase {
       //   .withForwardSoftLimitThreshold(0)
       //   .withReverseSoftLimitEnable(true)
       //   .withReverseSoftLimitThreshold(ElevatorConstants.MaxHeightPosition));
+
     eleMotorConfig.Slot0 = new Slot0Configs()
-        .withKP(1)
-        .withKD(0)
-        .withKG(0.0)
-        .withKA(0.0)
-        .withKV(0.0)
-        .withKS(0.0);   
+      .withKP(1)
+      .withKD(0)
+      .withKG(0.0)
+      .withKA(0.0)
+      .withKV(0.0)
+      .withKS(0.0);   
   
     // Apply the configuration settings
     leftElevatorMotor.getConfigurator().apply(eleMotorConfig);
@@ -73,9 +74,15 @@ public class ElevatorSubsystem extends SubsystemBase {
     // We want the right motor to follow the left motor
     rightElevatorMotor.setControl(new Follower(CANConstants.LeftElevatorID, false));
     
+    // Initialize the target position
+    targetPosition = 0;
+
     // We start the match with the elevator at the bottom, 
     // so set the current position as the zero point.
     setZeroPoint();
+
+    // Initialize dashboard values
+    SmartDashboard.putData("Elevator", this);
   }
 
   /**
@@ -83,9 +90,23 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Elevator Pos", leftElevatorMotor.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("Elevator Target", targetPosition);
     isAtTargetPosition();
+  }
+
+  /**
+   * Get the elevator's current position
+   * @return
+   */
+  public double getPosition() {
+    return leftElevatorMotor.getPosition().getValueAsDouble();
+  }
+
+  /**
+   * Get the elevator's target position
+   * @return
+   */
+  public double getTargetPosition() {
+    return targetPosition;
   }
 
   /**
@@ -103,10 +124,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return
    */
   public boolean isAtTargetPosition() {
-    boolean atPose = Math.abs(leftElevatorMotor.getPosition().getValueAsDouble() - targetPosition) < ElevatorConstants.ErrorThreshold; 
-    SmartDashboard.putNumber("Elevator Error", leftElevatorMotor.getClosedLoopError().getValueAsDouble());
-    SmartDashboard.putBoolean("Elevator At Pose", atPose);
-    return atPose;    
+    return Math.abs(getPosition() - targetPosition) < ElevatorConstants.ErrorThreshold;
   }
 
   /**
@@ -118,8 +136,8 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public boolean shouldStop() {
     if (
-      (targetPosition <= zeroPoint && leftElevatorMotor.getPosition().getValueAsDouble() <= zeroPoint) ||
-      (targetPosition >= ElevatorConstants.MaxHeightPosition + zeroPoint && leftElevatorMotor.getPosition().getValueAsDouble() >= ElevatorConstants.MaxHeightPosition + zeroPoint) || 
+      (targetPosition <= zeroPoint && getPosition() <= zeroPoint) ||
+      (targetPosition >= ElevatorConstants.MaxHeightPosition + zeroPoint && getPosition() >= ElevatorConstants.MaxHeightPosition + zeroPoint) || 
       isAtTargetPosition()
     ) {
       return true;
@@ -155,5 +173,24 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public double getZeroPoint() {
     return zeroPoint;
+  }
+
+  /**
+   * Get the value of elevator's closed loop error
+   * @return
+   */
+  public double getError() {
+    return leftElevatorMotor.getClosedLoopError().getValueAsDouble();
+  }
+
+  /**
+   * Initialize Sendable for SmartDashboard
+   */
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.addDoubleProperty("Error", this::getError, null);
+    builder.addDoubleProperty("Current Position", this::getPosition, null);
+    builder.addDoubleProperty("Target Position", this::getTargetPosition, null);
+    builder.addBooleanProperty("At Target Position", this::isAtTargetPosition, null);
   }
 }
