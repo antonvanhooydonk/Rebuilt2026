@@ -219,14 +219,14 @@ public class DriveSubsystem extends SubsystemBase {
       @Override
       public void initSendable(SendableBuilder builder) {
         builder.setSmartDashboardType("SwerveDrive");
-        builder.addDoubleProperty("Front Left Angle", () -> modules[0].getState().angle.getRadians(), null);
-        builder.addDoubleProperty("Front Left Velocity", () -> modules[0].getState().speedMetersPerSecond, null);
-        builder.addDoubleProperty("Front Right Angle", () -> modules[1].getState().angle.getRadians(), null);
-        builder.addDoubleProperty("Front Right Velocity", () -> modules[1].getState().speedMetersPerSecond, null);
-        builder.addDoubleProperty("Back Left Angle", () -> modules[2].getState().angle.getRadians(), null);
-        builder.addDoubleProperty("Back Left Velocity", () -> modules[2].getState().speedMetersPerSecond, null);
-        builder.addDoubleProperty("Back Right Angle", () -> modules[3].getState().angle.getRadians(), null);
-        builder.addDoubleProperty("Back Right Velocity", () -> modules[3].getState().speedMetersPerSecond, null);
+        builder.addDoubleProperty("FL Angle", () -> modules[0].getState().angle.getRadians(), null);
+        builder.addDoubleProperty("FL Velocity", () -> modules[0].getState().speedMetersPerSecond, null);
+        builder.addDoubleProperty("FR Angle", () -> modules[1].getState().angle.getRadians(), null);
+        builder.addDoubleProperty("FR Velocity", () -> modules[1].getState().speedMetersPerSecond, null);
+        builder.addDoubleProperty("BL Angle", () -> modules[2].getState().angle.getRadians(), null);
+        builder.addDoubleProperty("BL Velocity", () -> modules[2].getState().speedMetersPerSecond, null);
+        builder.addDoubleProperty("BR Angle", () -> modules[3].getState().angle.getRadians(), null);
+        builder.addDoubleProperty("BR Velocity", () -> modules[3].getState().speedMetersPerSecond, null);
         builder.addDoubleProperty("Robot Angle", () -> getHeading().getRadians(), null);
       }
     });
