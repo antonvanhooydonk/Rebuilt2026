@@ -434,14 +434,14 @@ public class VisionSubsystem extends SubsystemBase {
    */
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addBooleanProperty("Vision/Enabled", this::isEnabled, null);
-    builder.addBooleanProperty("Vision/Has Targets", this::hasTargets, null);
+    builder.addBooleanProperty("Enabled", this::isEnabled, null);
+    builder.addBooleanProperty("Has Targets", this::hasTargets, null);
     builder.addDoubleProperty("Total Targets", this::getTotalTargetCount, null);
     builder.addIntegerProperty("Measurements", () -> latestMeasurements.size(), null);
     
     // Individual camera status (using cached data)
     for (CameraData cameraData : cameras) {
-      String prefix = "Vision/Camera/" + cameraData.config.name + "/";
+      String prefix = "Camera/" + cameraData.config.name + "/";
       PhotonPipelineResult result = cameraData.getMostRecentResult();
       
       builder.addBooleanProperty(prefix + "Connected", () -> cameraData.camera.isConnected(), null);
@@ -460,8 +460,8 @@ public class VisionSubsystem extends SubsystemBase {
     // Latest measurements
     if (!latestMeasurements.isEmpty()) {
       VisionMeasurement latestMeasurement = latestMeasurements.get(latestMeasurements.size() - 1);
-      builder.addStringProperty("Vision/Latest Pose", () -> latestMeasurement.pose.toString(), null);
-      builder.addDoubleProperty("Vision/Latest Timestamp", () -> latestMeasurement.timestampSeconds, null);
+      builder.addStringProperty("Latest Pose", () -> latestMeasurement.pose.toString(), null);
+      builder.addDoubleProperty("Latest Timestamp", () -> latestMeasurement.timestampSeconds, null);
     }
   }
 }

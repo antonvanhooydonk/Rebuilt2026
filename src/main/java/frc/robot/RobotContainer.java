@@ -70,9 +70,9 @@ public class RobotContainer {
     // Drive field relative by default.
     driveSubsystem.setDefaultCommand(new RunCommand(() -> 
       driveSubsystem.drive(
-        xboxController.getLeftY(),
-        xboxController.getLeftX(),
-        xboxController.getRightX(),
+        -xboxController.getLeftY(),
+        -xboxController.getLeftX(),
+        -xboxController.getRightX(),
         true
       ),
       driveSubsystem

@@ -255,6 +255,9 @@ public class SwerveModule implements Sendable {
     // Smooth out the steering angle (may not need this?)
     desiredState.cosineScale(getState().angle);
 
+    // Cache the target state
+    targetState = desiredState;
+
     // Prevent jittering from noise that can appear when the 
     // swerve module is idle. Disable during PID tuning.
     if (DriveConstants.kStopJitter) {
@@ -272,9 +275,6 @@ public class SwerveModule implements Sendable {
     
     // Set steering angle
     setSteerAngle(desiredState.angle.getRadians());
-
-    // Cache the target state
-    targetState = desiredState;
   }
 
   /**
@@ -332,8 +332,8 @@ public class SwerveModule implements Sendable {
    */
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addDoubleProperty("Desired Speed", () -> targetState.speedMetersPerSecond, null);
-    builder.addDoubleProperty("Desired Angle", () -> targetState.angle.getDegrees(), null);
+    builder.addDoubleProperty("Target Speed", () -> targetState.speedMetersPerSecond, null);
+    builder.addDoubleProperty("Target Angle", () -> targetState.angle.getDegrees(), null);
     builder.addDoubleProperty("Current Speed", () -> getState().speedMetersPerSecond, null);
     builder.addDoubleProperty("Current Angle", () -> getState().angle.getDegrees(), null);
     builder.addDoubleProperty("Absolute Encoder", () -> absoluteEncoder.getAngleDegrees(), null);

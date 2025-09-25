@@ -30,7 +30,7 @@ public final class DriveConstants {
   public static final double kDriveMaxReverseVoltage = -12.0; // Max voltage to apply to drive motors when driving backward
   public static final int    kSteerMotorMaxCurrent = 20; // The max current draw in amps of a swerve module steer motor
   public static final double kDriveGearRatio = 6.75; // Drive gear ratio (adjust for your setup)
-  public static final double kSteerGearRatio = 21.4285714286; // Steering gear ratio
+  public static final double kSteerGearRatio = 21.4285714286; // Steering gear ratio (adjust for your setup)
   public static final double kDriveRpsToMps = kWheelCircumference / kDriveGearRatio; // Convert drive motor rotations per second to meters per second
   public static final double kDriveMpsToRps = kDriveGearRatio / kWheelCircumference; // Convert drive motor meters per second to rotations per second 
   public static final double kPeriodicTimeSeconds = 0.02; // 0.13; // 20ms (default) + 110ms => 0.02 + 0.11 spark max velocity lag 
@@ -42,7 +42,7 @@ public final class DriveConstants {
   public static final boolean kStopJitter = false; // set to true to stop jittering from module noise
   public static final double kMaxSpeedMetersPerSecond = 3.5; // Units.feetToMeters(13)
   public static final double kMaxAccelMetersPerSecondSq = 4.5; // 4 to 6 is a reasonable range
-  public static final double kMaxAngularSpeedRadiansPerSecond = Units.degreesToRadians(180);
+  public static final double kMaxAngularSpeedRadiansPerSecond = Units.degreesToRadians(540);
   public static final double kMaxAngularAccelRadiansPerSecondSq = 0.5; // 0.5 is a conservative default
   public static final double kWheelLockTimeSeconds = 10.0; // seconds to lock wheels when robot is disabled
 
@@ -67,7 +67,7 @@ public final class DriveConstants {
   public static final int kFrontLeftAbsoluteEncoderID = 0;
   public static final double kFrontLeftAbsoluteEncoderOffsetRadians = Units.degreesToRadians(7.8);
   public static final boolean kFrontLeftAbsoluteEncoderInverted = false;
-  public static final Translation2d kFrontLeftLocation = new Translation2d(11.5, 11.5);
+  public static final Translation2d kFrontLeftLocation = new Translation2d(Units.inchesToMeters(11.5), Units.inchesToMeters(11.5));
 
   // Front Right Module - Module 1
   public static final int kFrontRightDriveMotorID = 12;
@@ -77,7 +77,7 @@ public final class DriveConstants {
   public static final int kFrontRightAbsoluteEncoderID = 1;
   public static final double kFrontRightAbsoluteEncoderOffsetRadians = Units.degreesToRadians(119.7);
   public static final boolean kFrontRightAbsoluteEncoderInverted = false;
-  public static final Translation2d kFrontRightLocation = new Translation2d(11.5, -11.5);
+  public static final Translation2d kFrontRightLocation = new Translation2d(Units.inchesToMeters(11.5), Units.inchesToMeters(-11.5));
 
   // Rear Left Module - Module 2
   public static final int kBackLeftDriveMotorID = 14;
@@ -87,7 +87,7 @@ public final class DriveConstants {
   public static final int kBackLeftAbsoluteEncoderID = 3;
   public static final double kBackLeftAbsoluteEncoderOffsetRadians = Units.degreesToRadians(68.7);
   public static final boolean kBackLeftAbsoluteEncoderInverted = false;
-  public static final Translation2d kBackLeftLocation = new Translation2d(-11.5, 11.5);
+  public static final Translation2d kBackLeftLocation = new Translation2d(Units.inchesToMeters(-11.5), Units.inchesToMeters(11.5));
 
   // Rear Right Module - Module 3
   public static final int kBackRightDriveMotorID = 13;
@@ -97,5 +97,5 @@ public final class DriveConstants {
   public static final int kBackRightAbsoluteEncoderID = 2;
   public static final double kBackRightAbsoluteEncoderOffsetRadians = Units.degreesToRadians(297.5);
   public static final boolean kBackRightAbsoluteEncoderInverted = false;
-  public static final Translation2d kBackRightLocation = new Translation2d(-11.5, -11.5);
+  public static final Translation2d kBackRightLocation = new Translation2d(Units.inchesToMeters(-11.5), Units.inchesToMeters(-11.5));
 }

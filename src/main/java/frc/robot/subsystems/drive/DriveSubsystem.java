@@ -31,14 +31,13 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.robot.Robot;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem.VisionMeasurement;
 import frc.robot.util.Utils;
@@ -215,20 +214,17 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putData("Drive", this);
     SmartDashboard.putData("Drive/Field", field2d);
     SmartDashboard.putData("Drive/Gyro", gyro);
-    SmartDashboard.putData("Drive/Swerve", new Sendable() {
-      @Override
-      public void initSendable(SendableBuilder builder) {
-        builder.setSmartDashboardType("SwerveDrive");
-        builder.addDoubleProperty("FL Angle", () -> modules[0].getState().angle.getRadians(), null);
-        builder.addDoubleProperty("FL Velocity", () -> modules[0].getState().speedMetersPerSecond, null);
-        builder.addDoubleProperty("FR Angle", () -> modules[1].getState().angle.getRadians(), null);
-        builder.addDoubleProperty("FR Velocity", () -> modules[1].getState().speedMetersPerSecond, null);
-        builder.addDoubleProperty("BL Angle", () -> modules[2].getState().angle.getRadians(), null);
-        builder.addDoubleProperty("BL Velocity", () -> modules[2].getState().speedMetersPerSecond, null);
-        builder.addDoubleProperty("BR Angle", () -> modules[3].getState().angle.getRadians(), null);
-        builder.addDoubleProperty("BR Velocity", () -> modules[3].getState().speedMetersPerSecond, null);
-        builder.addDoubleProperty("Robot Angle", () -> getHeading().getRadians(), null);
-      }
+    SmartDashboard.putData("Drive/Swerve", builder -> {
+      builder.setSmartDashboardType("SwerveDrive");
+      builder.addDoubleProperty("Front Left Angle", () -> modules[0].getState().angle.getRadians(), null);
+      builder.addDoubleProperty("Front Left Velocity", () -> modules[0].getState().speedMetersPerSecond, null);
+      builder.addDoubleProperty("Front Right Angle", () -> modules[1].getState().angle.getRadians(), null);
+      builder.addDoubleProperty("Front Right Velocity", () -> modules[1].getState().speedMetersPerSecond, null);
+      builder.addDoubleProperty("Back Left Angle", () -> modules[2].getState().angle.getRadians(), null);
+      builder.addDoubleProperty("Back Left Velocity", () -> modules[2].getState().speedMetersPerSecond, null);
+      builder.addDoubleProperty("Back Right Angle", () -> modules[3].getState().angle.getRadians(), null);
+      builder.addDoubleProperty("Back Right Velocity", () -> modules[3].getState().speedMetersPerSecond, null);
+      builder.addDoubleProperty("Robot Angle", () -> getHeading().getRadians(), null);
     });
   }
 
@@ -360,6 +356,12 @@ public class DriveSubsystem extends SubsystemBase {
    * @param speeds The desired robot-relative speeds
    */
   public void driveWithChassisSpeeds(ChassisSpeeds speeds) {
+    // By-pass the setpoint generator if necessary
+    if (Robot.isSimulation() || setpointGenerator == null) {
+      setModuleStates(kinematics.toSwerveModuleStates(speeds));
+      return;
+    }
+
     // Note: It is important to not discretize speeds, that is,
     // call SwerveDriveKinematics.desaturateWheelSpeeds(), 
     // before or after using the setpoint generator, as 
