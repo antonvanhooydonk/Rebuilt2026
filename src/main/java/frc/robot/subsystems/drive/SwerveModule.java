@@ -115,6 +115,9 @@ public class SwerveModule implements Sendable {
     // Reset encoders
     resetEncoders();
 
+    // Initialize target state
+    targetState = getState();
+
     // Initialize dashboard values
     SmartDashboard.putData("Drive/Module/" + this.moduleName, this);
   }
