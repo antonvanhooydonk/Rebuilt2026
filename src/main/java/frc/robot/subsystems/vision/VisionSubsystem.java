@@ -18,6 +18,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -157,6 +158,9 @@ public class VisionSubsystem extends SubsystemBase {
     if (cameras.isEmpty()) {
       System.err.println("No cameras initialized!");
     }
+
+    // Initialize dashboard values
+    SmartDashboard.putData("Vision", this);
   }
 
   @Override
@@ -426,37 +430,38 @@ public class VisionSubsystem extends SubsystemBase {
   }
 
   /**
-   * Update dashboard with vision information (using cached data)
+   * Initialize Sendable for SmartDashboard
    */
-  private void updateDashboard() {
-    SmartDashboard.putBoolean("Vision/Enabled", isEnabled());
-    SmartDashboard.putBoolean("Vision/Has Targets", hasTargets());
-    SmartDashboard.putNumber("Vision/Total Targets", getTotalTargetCount());
-    SmartDashboard.putNumber("Vision/Measurements", latestMeasurements.size());
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.addBooleanProperty("Vision/Enabled", this::isEnabled, null);
+    builder.addBooleanProperty("Vision/Has Targets", this::hasTargets, null);
+    builder.addDoubleProperty("Total Targets", this::getTotalTargetCount, null);
+    builder.addIntegerProperty("Measurements", () -> latestMeasurements.size(), null);
     
     // Individual camera status (using cached data)
     for (CameraData cameraData : cameras) {
-      String prefix = "Vision/" + cameraData.config.name + "/";
+      String prefix = "Vision/Camera/" + cameraData.config.name + "/";
       PhotonPipelineResult result = cameraData.getMostRecentResult();
       
-      SmartDashboard.putBoolean(prefix + "Connected", cameraData.camera.isConnected());
-      SmartDashboard.putBoolean(prefix + "Has Targets", result.hasTargets());
-      SmartDashboard.putNumber(prefix + "Target Count", result.getTargets().size());
-      SmartDashboard.putNumber(prefix + "Unread Results", cameraData.cachedUnreadResults.size());
+      builder.addBooleanProperty(prefix + "Connected", () -> cameraData.camera.isConnected(), null);
+      builder.addBooleanProperty(prefix + "Has Targets", () -> result.hasTargets(), null);
+      builder.addDoubleProperty(prefix + "Target Count", () -> result.getTargets().size(), null);
+      builder.addDoubleProperty(prefix + "Unread Results", () -> cameraData.cachedUnreadResults.size(), null);
       
       if (result.hasTargets()) {
         PhotonTrackedTarget bestTarget = result.getBestTarget();
-        SmartDashboard.putNumber(prefix + "Best Target ID", bestTarget.getFiducialId());
-        SmartDashboard.putNumber(prefix + "Best Target Distance", bestTarget.getBestCameraToTarget().getTranslation().getNorm());
-        SmartDashboard.putNumber(prefix + "Best Target Ambiguity", bestTarget.getPoseAmbiguity());
+        builder.addDoubleProperty(prefix + "Best Target ID", () -> bestTarget.getFiducialId(), null);
+        builder.addDoubleProperty(prefix + "Best Target Distance", () -> bestTarget.getBestCameraToTarget().getTranslation().getNorm(), null);
+        builder.addDoubleProperty(prefix + "Best Target Ambiguity", () -> bestTarget.getPoseAmbiguity(), null);
       }
     }
     
     // Latest measurements
     if (!latestMeasurements.isEmpty()) {
       VisionMeasurement latestMeasurement = latestMeasurements.get(latestMeasurements.size() - 1);
-      SmartDashboard.putString("Vision/Latest Pose", latestMeasurement.pose.toString());
-      SmartDashboard.putNumber("Vision/Latest Timestamp", latestMeasurement.timestampSeconds);
+      builder.addStringProperty("Vision/Latest Pose", () -> latestMeasurement.pose.toString(), null);
+      builder.addDoubleProperty("Vision/Latest Timestamp", () -> latestMeasurement.timestampSeconds, null);
     }
   }
 }
