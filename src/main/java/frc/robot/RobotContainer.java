@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import frc.robot.Constants.Controller1Constants;
 import frc.robot.Constants.Controller2Constants;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.commands.arm.MoveArmCommand;
 import frc.robot.commands.elevator.MoveElevatorCommand;
 import frc.robot.commands.roller.HoldAlgaeCommand;
@@ -36,6 +35,7 @@ import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.roller.RollerSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
+import frc.robot.util.Utils;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -139,12 +139,12 @@ public class RobotContainer {
     xboxController.x().onTrue(new MoveArmCommand(armSubsystem, ArmConstants.CoralMovingPosition));
     xboxController.y().onTrue(Commands.none());
     
-    // xboxController.leftBumper()
-    //   .onTrue(driveSubsystem.driveToPoseCommand(FieldConstants.leftScoringPoses.get(visionSubsystem.getBestTarget("FRONT_CAMERA").get().getFiducialId()))
-    //   .andThen(new RumbleControllerCommand(xboxController, 2.0)));
-    // xboxController.rightBumper()
-    //   .onTrue(driveSubsystem.driveToPoseCommand(FieldConstants.rightScoringPoses.get(visionSubsystem.getBestTarget("FRONT_CAMERA").get().getFiducialId()))
-    //   .andThen(new RumbleControllerCommand(xboxController, 2.0)));
+    xboxController.leftBumper()
+      .onTrue(driveSubsystem.driveToPoseCommand(Utils.getLeftScoringPose(visionSubsystem, "FRONT_CAMERA"))
+      .andThen(new RumbleControllerCommand(xboxController, 2.0)));
+    xboxController.rightBumper()
+      .onTrue(driveSubsystem.driveToPoseCommand(Utils.getRightScoringPose(visionSubsystem, "FRONT_CAMERA"))
+      .andThen(new RumbleControllerCommand(xboxController, 2.0)));
 
     xboxController.rightTrigger().onTrue(new RunCommand(() -> driveSubsystem.setSlowMode(true), driveSubsystem));
     xboxController.rightTrigger().onFalse(new RunCommand(() -> driveSubsystem.setSlowMode(false), driveSubsystem));

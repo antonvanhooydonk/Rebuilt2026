@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.subsystems.vision.VisionSubsystem;
@@ -280,6 +281,12 @@ public class DriveSubsystem extends SubsystemBase {
    * @return Command to aim at the target pose
    */
   public Command aimAtTargetCommand(Pose2d targetPose) {
+    // Check for null target pose
+    if (targetPose == null) {
+      return Commands.none();
+    }
+
+    // Create a command that will rotate the robot to face the target pose
     return run(() -> driveWithChassisSpeeds(new ChassisSpeeds(
       0.0,  
       0.0,
@@ -293,6 +300,11 @@ public class DriveSubsystem extends SubsystemBase {
    * @return Command to drive via PathPlanner to the target pose
    */
   public Command driveToPoseCommand(Pose2d targetPose) {
+    // Check for null target pose
+    if (targetPose == null) {
+      return Commands.none();
+    }
+
     // Create the constraints to use while pathfinding
     PathConstraints constraints = new PathConstraints(
       DriveConstants.kMaxSpeedMetersPerSecond, 
