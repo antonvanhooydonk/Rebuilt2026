@@ -239,11 +239,6 @@ public class DriveSubsystem extends SubsystemBase {
     
     // Update field visualization
     field2d.setRobotPose(getPose());
-
-    // Call each swerve module's periodic
-    for (var module : modules) {
-      module.periodic();
-    }
   }
 
   /**

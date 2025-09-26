@@ -50,11 +50,6 @@ public class ThriftyBotEncoder implements Sendable {
     // Initialize dashboard values
     SmartDashboard.putData("Encoder/" + name, this);
   }
-
-  /**
-   * Periodic method to be called from parent's periodic for diagnostics
-   */
-  public void periodic() {}
   
   /**
    * Gets the current angle in radians using AnalogEncoder

@@ -197,15 +197,6 @@ public class SwerveModule implements Sendable {
   }
 
   /**
-   * Periodic method to be called by the drive subsystem's periodic.
-   * Can put diagnostics, telemetry or state updates here.
-   */
-  public void periodic() {
-    // Call the absolute encoder periodic method
-    absoluteEncoder.periodic();
-  }
-
-  /**
    * Resets the drive and steering encoders
    */
   public void resetEncoders() {
