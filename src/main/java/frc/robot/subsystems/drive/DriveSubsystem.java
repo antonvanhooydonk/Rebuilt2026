@@ -91,14 +91,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     // Initialize gyro
     gyro = new AHRS(NavXComType.kMXP_SPI);
-    Utils.logInfo("Calibrating gyro, do not move robot");
-    while (gyro.isCalibrating()) {
-      Timer.delay(0.01);
-    }
-    Utils.logInfo("Calibration complete");
-    if (!gyro.isMagnetometerCalibrated()) {
-      Utils.logError("NavX not fully calibrated. You may have issues!");
-    }
+    waitForGyroCalibration();
 
     // If we need a gyro offset (mounted wrong etc..), set it here
     // gyro.setAngleAdjustment(90);
@@ -257,6 +250,29 @@ public class DriveSubsystem extends SubsystemBase {
     }
   }
 
+  /**
+   * Waits for gyro calibration to complete with timeout
+   */
+  private void waitForGyroCalibration() {
+    int waitCount = 0;
+
+    while (gyro.isCalibrating()) {
+      Timer.delay(0.01);
+      waitCount++;
+      
+      // Print every second
+      if (waitCount % 100 == 0) { 
+        Utils.logInfo("Still calibrating NavX... (" + (waitCount/100) + "s)");
+      }
+      
+      // 20 seconds timeout
+      if (waitCount > 2000) { 
+        Utils.logError("NavX calibration timeout!");
+        break;
+      }
+    }
+  }
+  
   /**
    * Updates pose estimation using vision measurements from VisionSubsystem
    */

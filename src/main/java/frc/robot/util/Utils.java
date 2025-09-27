@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.vision.VisionSubsystem;
+import frc.robot.util.Elastic.Notification;
+import frc.robot.util.Elastic.NotificationLevel;
 
 public final class Utils {
   /**
@@ -24,6 +26,7 @@ public final class Utils {
    */
   public static void logError(String msg) {
     System.err.println(msg);
+    Elastic.sendNotification(new Notification(NotificationLevel.ERROR, "Error", msg));
   }
 
   /**
