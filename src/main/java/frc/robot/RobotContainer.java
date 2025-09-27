@@ -68,6 +68,7 @@ public class RobotContainer {
     // The left stick controls translation of the robot.
     // Turning is controlled by the X axis of the right stick.
     // Drive field relative by default.
+    // See: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
     driveSubsystem.setDefaultCommand(new RunCommand(() -> 
       driveSubsystem.drive(
         -xboxController.getLeftY(),
@@ -139,10 +140,10 @@ public class RobotContainer {
     xboxController.y().onTrue(Commands.none());
     
     xboxController.leftBumper()
-      .onTrue(driveSubsystem.driveToPoseCommand(Utils.getLeftScoringPose(visionSubsystem, "FRONT_CAMERA"))
+      .whileTrue(driveSubsystem.driveToPoseCommand(Utils.getLeftScoringPose(visionSubsystem, "FRONT_CAMERA"))
       .andThen(new RumbleControllerCommand(xboxController, 2.0)));
     xboxController.rightBumper()
-      .onTrue(driveSubsystem.driveToPoseCommand(Utils.getRightScoringPose(visionSubsystem, "FRONT_CAMERA"))
+      .whileTrue(driveSubsystem.driveToPoseCommand(Utils.getRightScoringPose(visionSubsystem, "FRONT_CAMERA"))
       .andThen(new RumbleControllerCommand(xboxController, 2.0)));
 
     xboxController.rightTrigger().onTrue(new RunCommand(() -> driveSubsystem.setSlowMode(true), driveSubsystem));
