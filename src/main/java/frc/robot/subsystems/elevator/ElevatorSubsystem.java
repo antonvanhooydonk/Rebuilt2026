@@ -17,9 +17,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.Constants.CANConstants;
 
@@ -90,7 +90,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   @Override
   public void periodic() {
-    isAtTargetPosition();
+
   }
 
   /**
@@ -161,18 +161,18 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   /**
-   * Sets the current position of the elevator as the zero point
-   */
-  public void setZeroPoint( ){
-    zeroPoint = leftElevatorMotor.getPosition().getValueAsDouble();
-  }
-
-  /**
    * Get the value of zeroPoint
    * @return
    */
   public double getZeroPoint() {
     return zeroPoint;
+  }
+
+  /**
+   * Sets the current position of the elevator as the zero point
+   */
+  public void setZeroPoint( ){
+    zeroPoint = leftElevatorMotor.getPosition().getValueAsDouble();
   }
 
   /**
