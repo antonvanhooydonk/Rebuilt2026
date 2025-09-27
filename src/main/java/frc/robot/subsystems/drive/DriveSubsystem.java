@@ -91,6 +91,9 @@ public class DriveSubsystem extends SubsystemBase {
 
     // Initialize gyroscope
     gyro = new AHRS(NavXComType.kMXP_SPI);
+    while (gyro.isCalibrating()) {
+      Timer.delay(0.01);
+    }
 
     // If we need a gyro offset (mounted wrong etc..), set it here
     // gyro.setAngleAdjustment(90);
@@ -451,10 +454,10 @@ public class DriveSubsystem extends SubsystemBase {
    * NOTE: Should never need to call this if vision is working properly.
    */
   public void zeroHeading() {
-    // Reset gyro to zero
-    gyro.reset();
+    // Reset gyro yaw to zero
+    gyro.zeroYaw();
 
-    // reset pose estimator
+    // Reset pose estimator
     resetPose(poseEstimator.getEstimatedPosition());
   }
 
@@ -467,7 +470,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public Rotation2d getGyroAngle() {
     // Negate the angle b/c our NavX is CW positive
-    return Rotation2d.fromDegrees(-gyro.getAngle()); 
+    return Rotation2d.fromDegrees(-gyro.getYaw()); 
   }
 
   /**
