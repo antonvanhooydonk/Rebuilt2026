@@ -72,9 +72,8 @@ public class RobotContainer {
       driveSubsystem.drive(
         -xboxController.getLeftY(),
         -xboxController.getLeftX(),
-        -xboxController.getRightX(),
-        true
-      ),
+        -xboxController.getRightX()
+      ), 
       driveSubsystem
     ));
 

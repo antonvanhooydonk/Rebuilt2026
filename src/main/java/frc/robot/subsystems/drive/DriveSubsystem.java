@@ -349,9 +349,8 @@ public class DriveSubsystem extends SubsystemBase {
    * @param xSpeed Speed in x direction (-1 to 1)
    * @param ySpeed Speed in y direction (-1 to 1)
    * @param rot Rotation speed (-1 to 1)
-   * @param fieldRelative True if the inputs are field relative, false if robot-relative
    */
-  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+  public void drive(double xSpeed, double ySpeed, double rot) {
     // Apply deadband to the raw joystick inputs.
     // This ignores noise from the joystick when it's in the neutral position.
     xSpeed = Math.abs(xSpeed) > DriveConstants.kJoystickDeadband ? xSpeed : 0;
