@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.CANConstants;
 import frc.robot.subsystems.elevator.ElevatorConstants;
+import frc.robot.util.Utils;
 
 public class ArmSubsystem extends SubsystemBase {
   private TalonFX armMotor;
@@ -50,6 +51,9 @@ public class ArmSubsystem extends SubsystemBase {
     
     // Initialize dashboard values
     SmartDashboard.putData("Arm", this);
+
+    // Output initialization progress
+    Utils.logInfo("Arm subsystem intialized");
   }
 
   /**

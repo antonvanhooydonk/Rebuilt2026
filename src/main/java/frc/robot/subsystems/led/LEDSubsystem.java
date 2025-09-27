@@ -37,6 +37,9 @@ public class LEDSubsystem extends SubsystemBase {
     } else {
       setDefaultCommand(showBlueCommand().withName("DEFAULT"));
     }
+
+    // Output initialization progress
+    Utils.logInfo("LED subsystem intialized");
   }
 
   /**

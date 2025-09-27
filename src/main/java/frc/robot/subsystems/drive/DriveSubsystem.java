@@ -89,10 +89,15 @@ public class DriveSubsystem extends SubsystemBase {
     // Store vision subsystem reference
     this.visionSubsystem = visionSubsystem;
 
-    // Initialize gyroscope
+    // Initialize gyro
     gyro = new AHRS(NavXComType.kMXP_SPI);
+    Utils.logInfo("Calibrating gyro, do not move robot");
     while (gyro.isCalibrating()) {
       Timer.delay(0.01);
+    }
+    Utils.logInfo("Calibration complete");
+    if (!gyro.isMagnetometerCalibrated()) {
+      Utils.logError("NavX not fully calibrated. You may have issues!");
     }
 
     // If we need a gyro offset (mounted wrong etc..), set it here
@@ -173,7 +178,7 @@ public class DriveSubsystem extends SubsystemBase {
         DriveConstants.kMaxSpeedMetersPerSecond, 
         DriveConstants.kWheelCOF, 
         DCMotor.getKrakenX60(1).withReduction(DriveConstants.kDriveGearRatio), 
-        DriveConstants.kDriveMotorMaxCurrent,
+        DriveConstants.kDriveMotorCurrentLimit,
         1
       ),
       DriveConstants.kFrontLeftLocation, 
@@ -230,6 +235,9 @@ public class DriveSubsystem extends SubsystemBase {
       builder.addDoubleProperty("Back Right Velocity", () -> modules[3].getState().speedMetersPerSecond, null);
       builder.addDoubleProperty("Robot Angle", () -> getHeading().getRadians(), null);
     });
+
+    // Output initialization progress
+    Utils.logInfo("Drive subsystem intialized");
   }
 
   @Override
@@ -242,6 +250,11 @@ public class DriveSubsystem extends SubsystemBase {
     
     // Update field visualization
     field2d.setRobotPose(getPose());
+    
+    // Call each swerve module's periodic
+    for (var module : modules) {
+      module.periodic();
+    }
   }
 
   /**

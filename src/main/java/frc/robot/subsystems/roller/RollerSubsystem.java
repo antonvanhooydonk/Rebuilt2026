@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.CANConstants;
 import frc.robot.Constants.DIOConstants;
+import frc.robot.util.Utils;
 
 public class RollerSubsystem extends SubsystemBase {
   private TalonFX rollerMotor;
@@ -46,6 +47,9 @@ public class RollerSubsystem extends SubsystemBase {
 
     // Initialize dashboard values
     SmartDashboard.putData("Roller", this);
+
+    // Output initialization progress
+    Utils.logInfo("Roller subsystem intialized");
   }
 
   @Override

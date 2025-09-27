@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.util.sendable.SendableBuilder;
 
 import frc.robot.Constants.CANConstants;
+import frc.robot.util.Utils;
 
 public class ElevatorSubsystem extends SubsystemBase {
   private TalonFX leftElevatorMotor;
@@ -83,6 +84,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // Initialize dashboard values
     SmartDashboard.putData("Elevator", this);
+
+    // Output initialization progress
+    Utils.logInfo("Elevator subsystem intialized");
   }
 
   /**

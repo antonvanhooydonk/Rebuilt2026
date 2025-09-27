@@ -13,6 +13,20 @@ import frc.robot.subsystems.vision.VisionSubsystem;
 
 public final class Utils {
   /**
+   * Log robot info message to console or other notification systems.
+   */
+  public static void logInfo(String msg) {
+    System.out.println(msg);
+  }
+
+  /**
+   * Log robot error message to console or other notification systems.
+   */
+  public static void logError(String msg) {
+    System.err.println(msg);
+  }
+
+  /**
    * Determine if the robot is currently on the red alliance.
    * @return True if the robot is on the red alliance, false otherwise.
    */

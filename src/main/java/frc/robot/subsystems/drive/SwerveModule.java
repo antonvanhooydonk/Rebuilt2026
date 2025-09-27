@@ -28,6 +28,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.util.ThriftyBotEncoder;
+import frc.robot.util.Utils;
 
 /**
  * Represents a single swerve drive module with a Kraken60 drive motor
@@ -120,6 +121,16 @@ public class SwerveModule implements Sendable {
 
     // Initialize dashboard values
     SmartDashboard.putData("Drive/Module/" + this.moduleName, this);
+
+    // Output initialization progress
+    Utils.logInfo(this.moduleName + " swerve module intialized");
+  }
+
+  /**
+   * Called periodically by the parent subsystem
+   */
+  public void periodic() {
+    checkEncoderSync();
   }
 
   /**
@@ -140,20 +151,23 @@ public class SwerveModule implements Sendable {
     // Current limits
     driveConfig.CurrentLimits
       .withSupplyCurrentLimitEnable(true)
-      .withSupplyCurrentLimit(DriveConstants.kDriveMotorMaxCurrent)
-      .withSupplyCurrentLowerLimit(DriveConstants.kDriveMotorMaxCurrent * 0.75)
-      .withSupplyCurrentLowerTime(1.0);
+      .withSupplyCurrentLimit(DriveConstants.kDriveMotorCurrentLimit)
+      .withSupplyCurrentLowerLimit(DriveConstants.kDriveMotorCurrentLowerLimit)
+      .withSupplyCurrentLowerTime(0.1);
     
     // Voltage compensation
     driveConfig.Voltage
       .withPeakForwardVoltage(DriveConstants.kDriveMaxForwardVoltage)
       .withPeakReverseVoltage(DriveConstants.kDriveMaxReverseVoltage);
     
-    // PID configuration for velocity control
+    // Velocity PID (runs on onboard motor controller)
     driveConfig.Slot0
       .withKP(DriveConstants.kDriveKP)
       .withKI(DriveConstants.kDriveKI)
-      .withKD(DriveConstants.kDriveKD);
+      .withKD(DriveConstants.kDriveKD)
+      .withKS(DriveConstants.kDriveKS)
+      .withKV(DriveConstants.kDriveKV)
+      .withKA(DriveConstants.kDriveKA);
     
     // Apply the configuration to the motor
     driveMotor.getConfigurator().apply(driveConfig);
@@ -169,7 +183,8 @@ public class SwerveModule implements Sendable {
     steerConfig
       .idleMode(IdleMode.kBrake)
       .inverted(steerMotorInverted ? true : false)
-      .smartCurrentLimit(DriveConstants.kSteerMotorMaxCurrent);
+      .smartCurrentLimit(DriveConstants.kSteerMotorMaxCurrent)
+      .voltageCompensation(12.0);
 
     // Set position conversion factor (rotations to radians)
     // Set velocity conversion factor (rotations per minute to radians per second)
@@ -180,13 +195,22 @@ public class SwerveModule implements Sendable {
     // Closed-loop PID configuration
     steerConfig.closedLoop
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+      .outputRange(-1.0, 1.0)
       .positionWrappingEnabled(true)
       .positionWrappingMinInput(-Math.PI)
       .positionWrappingMaxInput(Math.PI)
-      .outputRange(-1.0, 1.0)
       .p(DriveConstants.kSteerKP)
       .i(DriveConstants.kSteerKI)
-      .d(DriveConstants.kSteerKD);
+      .d(DriveConstants.kSteerKD)
+      .velocityFF(DriveConstants.kSteerFF);
+
+    // Configure MAXMotion
+    // Not currently used, but could be useful in the future.
+    // Be sure to change the setSteerAngle() method to use SparkMax.ControlType.kMAXMotionPositionControl
+    // steerConfig.closedLoop.maxMotion
+    //   .allowedClosedLoopError(0)
+    //   .maxVelocity(DriveConstants.kMaxAngularSpeedRadiansPerSecond)
+    //   .maxAcceleration(DriveConstants.kMaxAngularAccelRadiansPerSecondSq);
 
     // Apply the configuration to the motor
     steerMotor.configure(
@@ -205,6 +229,20 @@ public class SwerveModule implements Sendable {
     
     // Set the relative encoder to match the absolute encoder
     steerEncoder.setPosition(absoluteEncoder.getAngleRadians());
+  }
+
+  /**
+   * Check relative encoder is synced to absolute encoder
+   */
+  public void checkEncoderSync() {
+    double absoluteAngle = absoluteEncoder.getAngleRadians();
+    double relativeAngle = steerEncoder.getPosition();
+    double error = Math.abs(absoluteAngle - relativeAngle);
+    
+    // Re-sync if error is > 5 degrees (indicates encoder drift)
+    if (error > Math.toRadians(5.0)) { 
+      resetEncoders();
+    }
   }
 
   /**
@@ -244,22 +282,23 @@ public class SwerveModule implements Sendable {
     desiredState.optimize(getState().angle);
 
     // Smooth out the steering angle (may not need this?)
-    desiredState.cosineScale(getState().angle);
+    // desiredState.cosineScale(getState().angle);
 
     // Cache the target state
     targetState = desiredState;
 
     // Prevent jittering from noise that can appear when the 
     // swerve module is idle. Disable during PID tuning.
-    if (DriveConstants.kStopJitter) {
-      if (
-        (Math.abs(desiredState.speedMetersPerSecond) < 0.001) && // less than 1 mm per sec
-        (Math.abs(desiredState.angle.getRadians() - steerEncoder.getPosition()) < Rotation2d.fromDegrees(1).getRadians()) // less than 1 degree
-      ) {
-        stop();
-        return;
-      }
-    }
+    // (may not need this?)
+    // if (DriveConstants.kStopJitter) {
+    //   if (
+    //     (Math.abs(desiredState.speedMetersPerSecond) < 0.001) && // less than 1 mm per sec
+    //     (Math.abs(desiredState.angle.getRadians() - steerEncoder.getPosition()) < Rotation2d.fromDegrees(1).getRadians()) // less than 1 degree
+    //   ) {
+    //     stop();
+    //     return;
+    //   }
+    // }
 
     // Set drive motor speed
     setDriveVelocity(desiredState.speedMetersPerSecond);

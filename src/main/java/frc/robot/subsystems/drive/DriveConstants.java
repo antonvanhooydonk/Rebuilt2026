@@ -25,7 +25,8 @@ public final class DriveConstants {
   public static final double kWheelCOF = 1.19; // could try 1.0 to 1.3, coefficient of friction of wheel on carpet
   public static final double kRobotMassKg = Units.lbsToKilograms(134);
   public static final double kRobotMOI = 6.884; // kg m^2, moment of inertia about center of robot
-  public static final double kDriveMotorMaxCurrent = 40.0; // The max current draw in amps of a swerve module drive motor
+  public static final double kDriveMotorCurrentLimit = 60.0; // The max current draw in amps of a swerve module drive motor
+  public static final double kDriveMotorCurrentLowerLimit = 40.0; // The lower limit current draw in amps of a swerve module drive motor
   public static final double kDriveMaxForwardVoltage = 12.0; // Max voltage to apply to drive motors when driving forward
   public static final double kDriveMaxReverseVoltage = -12.0; // Max voltage to apply to drive motors when driving backward
   public static final int    kSteerMotorMaxCurrent = 20; // The max current draw in amps of a swerve module steer motor
@@ -37,7 +38,7 @@ public final class DriveConstants {
 
   // Maximum speeds - adjust based on your robot capabilities
   public static final double kJoystickDeadband = 0.1; // maybe use 0.5?, joystick deadband, adjust as needed
-  public static final double kSlewRateLimit = 0.75; // joystick slew rate, 1/kSlewRateLimit = time to get to full sped
+  public static final double kSlewRateLimit = 3; // joystick slew rate, 1/kSlewRateLimit = time to get to full sped
   public static final double kSlowModeScaler = 0.3; // scales speeds down in slow mode, 0.0 to 1.0
   public static final boolean kStopJitter = false; // set to true to stop jittering from module noise
   public static final double kMaxSpeedMetersPerSecond = 3.5; // Units.feetToMeters(13)
@@ -47,14 +48,23 @@ public final class DriveConstants {
   public static final double kWheelLockTimeSeconds = 10.0; // seconds to lock wheels when robot is disabled
 
   // PID Constants for drive (tune these each year for the robot)
-  public static final double kDriveKP = 0.0020645; // 1.0
+  // Tuning Process:
+  // 1. Characterize with SysId tool
+  // 2. Start with feedforward only (kP = 0)
+  // 3. Add minimal P gain if needed (usually 0.05 - 0.2)
+  // 4. Avoid I and D unless absolutely necessary
+  public static final double kDriveKP = 0.0020645;
   public static final double kDriveKI = 0.0;
   public static final double kDriveKD = 0.0;
+  public static final double kDriveKS = 0.1;  // Static friction
+  public static final double kDriveKV = 2.7;  // Velocity feedforward
+  public static final double kDriveKA = 0.3;  // Acceleration feedforward
 
   // PID Constants for steering (tune these each year for the robot)
   public static final double kSteerKP = 0.01; // 50.0
   public static final double kSteerKI = 0.0;
   public static final double kSteerKD = 0.0;  // 0.32
+  public static final double kSteerFF = 0.0;  // 0.0 to 0.2, feedforward to help with static friction
 
   // ------------------------------------------------------------
   // Define the swerve module constants
