@@ -130,7 +130,7 @@ public class SwerveModule implements Sendable {
    * Called periodically by the parent subsystem
    */
   public void periodic() {
-    checkEncoderSync();
+    syncEncoders();
   }
 
   /**
@@ -234,7 +234,7 @@ public class SwerveModule implements Sendable {
   /**
    * Check relative encoder is synced to absolute encoder
    */
-  public void checkEncoderSync() {
+  public void syncEncoders() {
     double absoluteAngle = absoluteEncoder.getAngleRadians();
     double relativeAngle = steerEncoder.getPosition();
     double error = Math.abs(absoluteAngle - relativeAngle);
