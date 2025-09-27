@@ -395,7 +395,7 @@ public class DriveSubsystem extends SubsystemBase {
       DriveConstants.kPeriodicTimeSeconds   // The loop time of the robot code, in seconds
     );
 
-    // Set each module state
+    // Set each module state directly from the setpoint
     SwerveModuleState[] desiredStates = currentSetpoint.moduleStates();
     for (int i = 0; i < 4; i++) {
       modules[i].setDesiredState(desiredStates[i]);

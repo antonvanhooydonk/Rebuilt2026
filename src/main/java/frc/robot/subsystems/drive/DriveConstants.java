@@ -29,7 +29,7 @@ public final class DriveConstants {
   public static final double kDriveMotorCurrentLowerLimit = 40.0; // The lower limit current draw in amps of a swerve module drive motor
   public static final double kDriveMaxForwardVoltage = 12.0; // Max voltage to apply to drive motors when driving forward
   public static final double kDriveMaxReverseVoltage = -12.0; // Max voltage to apply to drive motors when driving backward
-  public static final int    kSteerMotorMaxCurrent = 20; // The max current draw in amps of a swerve module steer motor
+  public static final int    kSteerMotorMaxCurrent = 30; // The max current draw in amps of a swerve module steer motor
   public static final double kDriveGearRatio = 6.75; // Drive gear ratio (adjust for your setup)
   public static final double kSteerGearRatio = 21.4285714286; // Steering gear ratio (adjust for your setup)
   public static final double kDriveRpsToMps = kWheelCircumference / kDriveGearRatio; // Convert drive motor rotations per second to meters per second
@@ -61,10 +61,15 @@ public final class DriveConstants {
   public static final double kDriveKA = 0.3;  // Acceleration feedforward
 
   // PID Constants for steering (tune these each year for the robot)
-  public static final double kSteerKP = 0.01; // 50.0
+  // Tuning Process:
+  // 1. Start with P only (I=0, D=0)
+  // 2. Increase P until fast response without overshoot
+  // 3. Add small D if oscillating (typically 0.01-0.1)
+  // 4. Avoid I unless steady-state error (very rare in steering)
+  public static final double kSteerKP = 0.5; // 0.01
   public static final double kSteerKI = 0.0;
   public static final double kSteerKD = 0.0;  // 0.32
-  public static final double kSteerFF = 0.0;  // 0.0 to 0.2, feedforward to help with static friction
+  public static final double kSteerFF = 0.0;  // 0.0 to 0.2, feedforward to help with static friction. Rev recommends 0
 
   // ------------------------------------------------------------
   // Define the swerve module constants
