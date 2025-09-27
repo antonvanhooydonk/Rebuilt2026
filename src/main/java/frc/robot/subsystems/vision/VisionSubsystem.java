@@ -148,9 +148,9 @@ public class VisionSubsystem extends SubsystemBase {
         // Add to camera list
         cameras.add(new CameraData(camera, poseEstimator, config));
 
-        System.out.println("Initialized camera: " + config.name);          
+        Utils.logInfo("Initialized camera: " + config.name);
       } catch (Exception e) {
-        System.err.println("Failed to initialize camera " + config.name + ": " + e.getMessage());
+        Utils.logError("Failed to initialize camera " + config.name + ": " + e.getMessage());
       }
     }
     
@@ -185,7 +185,7 @@ public class VisionSubsystem extends SubsystemBase {
       try {
         cameraData.updateCache();
       } catch (Exception e) {
-        System.err.println("Error updating cache for " + cameraData.config.name + ": " + e.getMessage());
+        Utils.logError("Error updating cache for " + cameraData.config.name + ": " + e.getMessage());
       }
     }
   }
@@ -238,7 +238,7 @@ public class VisionSubsystem extends SubsystemBase {
           }
         }          
       } catch (Exception e) {
-        System.err.println("Error processing vision for " + cameraData.config.name + ": " + e.getMessage());
+        Utils.logError("Error processing vision for " + cameraData.config.name + ": " + e.getMessage());
       }
     }
     
@@ -319,16 +319,12 @@ public class VisionSubsystem extends SubsystemBase {
    * Log target information periodically
    */
   private void logTargets(PhotonPipelineResult result, String cameraName) {
-    double currentTime = Timer.getFPGATimestamp();
-    
+    double currentTime = Timer.getFPGATimestamp();    
     if (currentTime - lastTargetLogTimestamp > VisionConstants.kTargetLogTimeSeconds) {
-      System.out.printf("[%s] Detected %d targets: ", cameraName, result.getTargets().size());
-      
+      Utils.logInfo(cameraName + " detected " + result.getTargets().size() + " targets:");      
       for (PhotonTrackedTarget target : result.getTargets()) {
-        System.out.printf("ID=%d ", target.getFiducialId());
-      }
-      System.out.println();
-      
+        Utils.logInfo("ID=" + target.getFiducialId());
+      }      
       lastTargetLogTimestamp = currentTime;
     }
   }
@@ -348,9 +344,9 @@ public class VisionSubsystem extends SubsystemBase {
    */
   public Optional<PhotonTrackedTarget> getBestTarget(String cameraName) {
     return cameras.stream()
-        .filter(data -> data.config.name.equals(cameraName))
-        .findFirst()
-        .flatMap(CameraData::getBestTargetFromCache);
+      .filter(data -> data.config.name.equals(cameraName))
+      .findFirst()
+      .flatMap(CameraData::getBestTargetFromCache);
   }
 
   /**
@@ -359,10 +355,10 @@ public class VisionSubsystem extends SubsystemBase {
    */
   public Optional<PhotonTrackedTarget> getBestTarget() {
     return cameras.stream()
-        .map(CameraData::getBestTargetFromCache)
-        .filter(Optional::isPresent)
-        .map(Optional::get)
-        .findFirst();
+      .map(CameraData::getBestTargetFromCache)
+      .filter(Optional::isPresent)
+      .map(Optional::get)
+      .findFirst();
   }
 
   /**
@@ -413,10 +409,10 @@ public class VisionSubsystem extends SubsystemBase {
    */
   public int getUnreadResultCount(String cameraName) {
     return cameras.stream()
-        .filter(data -> data.config.name.equals(cameraName))
-        .findFirst()
-        .map(data -> data.cachedUnreadResults.size())
-        .orElse(0);
+      .filter(data -> data.config.name.equals(cameraName))
+      .findFirst()
+      .map(data -> data.cachedUnreadResults.size())
+      .orElse(0);
   }
 
   /**
@@ -426,10 +422,10 @@ public class VisionSubsystem extends SubsystemBase {
    */
   public PhotonPipelineResult getLatestResult(String cameraName) {
     return cameras.stream()
-        .filter(data -> data.config.name.equals(cameraName))
-        .findFirst()
-        .map(CameraData::getLatestResult)
-        .orElse(new PhotonPipelineResult());
+      .filter(data -> data.config.name.equals(cameraName))
+      .findFirst()
+      .map(CameraData::getLatestResult)
+      .orElse(new PhotonPipelineResult());
   }
 
   /**
