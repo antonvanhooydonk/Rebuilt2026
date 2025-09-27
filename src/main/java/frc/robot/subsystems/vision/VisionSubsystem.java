@@ -77,17 +77,16 @@ public class VisionSubsystem extends SubsystemBase {
      */
     public void updateCache() {
       cachedUnreadResults = camera.getAllUnreadResults();
-      cachedLatestResult = camera.getLatestResult();
     }
         
     /**
      * Gets the most recent result from cache
      */
-    public PhotonPipelineResult getMostRecentResult() {
+    public PhotonPipelineResult getLatestResult() {
       if (!cachedUnreadResults.isEmpty()) {
         return cachedUnreadResults.get(cachedUnreadResults.size() - 1);
       }
-      return cachedLatestResult != null ? cachedLatestResult : new PhotonPipelineResult();
+      return new PhotonPipelineResult();
     }
     
     /**
@@ -104,7 +103,7 @@ public class VisionSubsystem extends SubsystemBase {
      * Gets target count from most recent cached result
      */
     public int getTargetCountFromCache() {
-      PhotonPipelineResult mostRecent = getMostRecentResult();
+      PhotonPipelineResult mostRecent = getLatestResult();
       return mostRecent.getTargets().size();
     }
         
@@ -112,7 +111,7 @@ public class VisionSubsystem extends SubsystemBase {
      * Gets best target from most recent cached result
      */
     public Optional<PhotonTrackedTarget> getBestTargetFromCache() {
-      PhotonPipelineResult mostRecent = getMostRecentResult();
+      PhotonPipelineResult mostRecent = getLatestResult();
       return mostRecent.hasTargets() ? Optional.of(mostRecent.getBestTarget()) : Optional.empty();
     }
   }
@@ -425,11 +424,11 @@ public class VisionSubsystem extends SubsystemBase {
    * @param cameraName Name of the camera
    * @return Most recent PhotonPipelineResult, or empty result if camera not found
    */
-  public PhotonPipelineResult getMostRecentResult(String cameraName) {
+  public PhotonPipelineResult getLatestResult(String cameraName) {
     return cameras.stream()
         .filter(data -> data.config.name.equals(cameraName))
         .findFirst()
-        .map(CameraData::getMostRecentResult)
+        .map(CameraData::getLatestResult)
         .orElse(new PhotonPipelineResult());
   }
 
@@ -446,7 +445,7 @@ public class VisionSubsystem extends SubsystemBase {
     // Individual camera status (using cached data)
     for (CameraData cameraData : cameras) {
       String prefix = "Camera/" + cameraData.config.name + "/";
-      PhotonPipelineResult result = cameraData.getMostRecentResult();
+      PhotonPipelineResult result = cameraData.getLatestResult();
       
       builder.addBooleanProperty(prefix + "Connected", () -> cameraData.camera.isConnected(), null);
       builder.addBooleanProperty(prefix + "Has Targets", () -> result.hasTargets(), null);
