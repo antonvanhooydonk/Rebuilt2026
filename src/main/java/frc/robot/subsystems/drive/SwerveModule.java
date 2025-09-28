@@ -23,6 +23,7 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -56,6 +57,8 @@ public class SwerveModule implements Sendable {
   private final double absoluteEncoderOffsetRadians;
   private final boolean absoluteEncoderInverted;
   private final String moduleName;
+
+  // Target state
   private SwerveModuleState targetState;
 
   /**
@@ -284,27 +287,19 @@ public class SwerveModule implements Sendable {
     // Smooth out the steering angle (may not need this?)
     // desiredState.cosineScale(getState().angle);
 
-    // Cache the target state
-    targetState = desiredState;
-
-    // Prevent jittering from noise that can appear when the 
-    // swerve module is idle. Disable during PID tuning.
-    // (may not need this?)
-    // if (DriveConstants.kStopJitter) {
-    //   if (
-    //     (Math.abs(desiredState.speedMetersPerSecond) < 0.001) && // less than 1 mm per sec
-    //     (Math.abs(desiredState.angle.getRadians() - steerEncoder.getPosition()) < Rotation2d.fromDegrees(1).getRadians()) // less than 1 degree
-    //   ) {
-    //     stop();
-    //     return;
-    //   }
-    // }
+    // Apply anti-jitter if enabled
+    if (DriveConstants.kAntiJitter) {
+      desiredState = applyAntiJitter(desiredState);
+    }
 
     // Set drive motor speed
     setDriveVelocity(desiredState.speedMetersPerSecond);
     
     // Set steering angle
     setSteerAngle(desiredState.angle.getRadians());
+
+    // Cache the target state
+    targetState = desiredState;
   }
 
   /**
@@ -322,6 +317,38 @@ public class SwerveModule implements Sendable {
    */
   private void setSteerAngle(double angleRadians) {
     steerPIDController.setReference(angleRadians, SparkMax.ControlType.kPosition);
+  }
+
+  /**
+   * Applies anti-jitter filtering to the new state
+   * @param newState The desired SwerveModuleState to filter
+   * @return The filtered SwerveModuleState
+   */
+  private SwerveModuleState applyAntiJitter(SwerveModuleState newState) {
+    // Configurable anti-jitter parameters (move to constants)
+    double speedDeadband = 0.01; // m/s
+    double angleDeadband = Units.degreesToRadians(2.0); // radians
+    double minSpeedForSteering = 0.1; // m/s
+
+    // Calculate the differences between new state and the last target state
+    double speedDiff = Math.abs(newState.speedMetersPerSecond - targetState.speedMetersPerSecond);
+    double angleDiff = Math.abs(newState.angle.minus(targetState.angle).getRadians());
+    
+    // Apply speed filtering
+    double finalSpeed = (speedDiff < speedDeadband) 
+      ? targetState.speedMetersPerSecond 
+      : newState.speedMetersPerSecond;
+    
+    // Apply angle filtering with speed consideration
+    Rotation2d finalAngle;
+    if (Math.abs(finalSpeed) > minSpeedForSteering || angleDiff > angleDeadband) {
+      finalAngle = newState.angle;
+    } else {
+      finalAngle = targetState.angle;
+    }
+    
+    // Return the filtered state
+    return new SwerveModuleState(finalSpeed, finalAngle);
   }
 
   /**
