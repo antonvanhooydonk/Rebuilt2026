@@ -257,6 +257,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   private void waitForGyroCalibration() {
     int waitCount = 0;
+    boolean timeout = false;
 
     while (gyro.isCalibrating()) {
       Timer.delay(0.01);
@@ -269,9 +270,20 @@ public class DriveSubsystem extends SubsystemBase {
       
       // 20 seconds timeout
       if (waitCount > 2000) { 
-        Utils.logError("NavX calibration timeout!");
+        timeout = true;
         break;
       }
+    }
+
+    // Print calibration complete message
+    if (timeout) {
+      Utils.logError("NavX calibration completed with timeout.");
+    }
+    else if (!gyro.isMagnetometerCalibrated()) {
+      Utils.logError("NavX calibration complete. Magnetometer not calibrated!");
+    }
+    else {
+      Utils.logInfo("NavX calibration complete successfully.");
     }
   }
   
