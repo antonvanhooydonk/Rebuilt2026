@@ -156,7 +156,7 @@ public class VisionSubsystem extends SubsystemBase {
     
     // Warn if no cameras initialized
     if (cameras.isEmpty()) {
-      System.err.println("No cameras initialized!");
+      Utils.logError("No cameras initialized!");
     }
 
     // Initialize dashboard values
