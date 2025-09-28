@@ -265,7 +265,7 @@ public class DriveSubsystem extends SubsystemBase {
       
       // Print every second
       if (waitCount % 100 == 0) { 
-        Utils.logInfo("Calibrating NavX... (" + (waitCount/100) + "s). Do not move the robot!");
+        Utils.logInfo("Calibrating gyro... (" + (waitCount/100) + "s). Do not move the robot!");
       }
       
       // 20 seconds timeout
@@ -277,13 +277,13 @@ public class DriveSubsystem extends SubsystemBase {
 
     // Print calibration complete message
     if (timeout) {
-      Utils.logError("NavX calibration completed with timeout.");
+      Utils.logError("Gyro calibration completed with timeout.");
     }
     else if (!gyro.isMagnetometerCalibrated()) {
-      Utils.logError("NavX calibration complete. Magnetometer not calibrated!");
+      Utils.logError("Gyro calibration complete. Magnetometer not calibrated!");
     }
     else {
-      Utils.logInfo("NavX calibration complete successfully.");
+      Utils.logInfo("Gyro calibration complete successfully.");
     }
   }
   
