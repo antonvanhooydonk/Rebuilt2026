@@ -243,7 +243,7 @@ public class SwerveModule implements Sendable {
     double error = Math.abs(absoluteAngle - relativeAngle);
     
     // Re-sync if error is > 5 degrees (indicates encoder drift)
-    if (error > Math.toRadians(5.0)) { 
+    if (error > Units.degreesToRadians(5.0)) { 
       resetEncoders();
     }
   }
