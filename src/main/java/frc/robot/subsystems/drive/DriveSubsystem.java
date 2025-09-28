@@ -20,6 +20,7 @@ import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -38,6 +39,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.Robot;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem.VisionMeasurement;
@@ -353,9 +355,9 @@ public class DriveSubsystem extends SubsystemBase {
   public void drive(double xSpeed, double ySpeed, double rot) {
     // Apply deadband to the raw joystick inputs.
     // This ignores noise from the joystick when it's in the neutral position.
-    xSpeed = Math.abs(xSpeed) > DriveConstants.kJoystickDeadband ? xSpeed : 0;
-    ySpeed = Math.abs(ySpeed) > DriveConstants.kJoystickDeadband ? ySpeed : 0;
-    rot = Math.abs(rot) > DriveConstants.kJoystickDeadband ? rot : 0;
+    xSpeed = MathUtil.applyDeadband(xSpeed, DriveConstants.kJoystickDeadband);
+    ySpeed = MathUtil.applyDeadband(ySpeed, DriveConstants.kJoystickDeadband);
+    rot = MathUtil.applyDeadband(rot, DriveConstants.kJoystickDeadband);
 
     // Square the inputs (while preserving sign) for finer control at low speeds.
     // Cubing is used in "slow" mode because it gives even finer control. 
