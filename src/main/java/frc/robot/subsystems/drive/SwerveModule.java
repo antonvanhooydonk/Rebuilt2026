@@ -92,10 +92,10 @@ public class SwerveModule implements Sendable {
     this.absoluteEncoderInverted = absoluteEncoderInverted;
     this.moduleName = moduleName;
 
-    // Initialize the drive motor (we use a Kraken60)
+    // Initialize the drive motor (we use a Kraken x60)
     driveMotor = new TalonFX(this.driveMotorID);
 
-    // Initialize the steering motor (we use a Neo550) 
+    // Initialize the steering motor (we use a Neo) 
     steerMotor = new SparkMax(this.steerMotorID, MotorType.kBrushless);
 
     // Initialize the absolute encoder (we use a ThriftyBot)
