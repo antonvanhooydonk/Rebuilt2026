@@ -284,9 +284,6 @@ public class SwerveModule implements Sendable {
     // Optimize the desired state to avoid spinning more than 90 degrees
     desiredState.optimize(getState().angle);
 
-    // Smooth out the steering angle (may not need this?)
-    // desiredState.cosineScale(getState().angle);
-
     // Apply anti-jitter if enabled
     if (DriveConstants.kAntiJitter) {
       desiredState = applyAntiJitter(desiredState);
