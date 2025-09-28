@@ -38,7 +38,7 @@ public final class DriveConstants {
 
   // Maximum speeds - adjust based on your robot capabilities
   public static final double kJoystickDeadband = 0.1; // maybe use 0.5?, joystick deadband, adjust as needed
-  public static final double kSlewRateLimit = 3; // joystick slew rate, 1/kSlewRateLimit = time to get to full sped
+  public static final double kSlewRateLimit = 2; // joystick slew rate, 1/kSlewRateLimit = time to get to full sped
   public static final double kSlowModeScaler = 0.3; // scales speeds down in slow mode, 0.0 to 1.0
   public static final boolean kStopJitter = false; // set to true to stop jittering from module noise
   public static final double kMaxSpeedMetersPerSecond = 3.5; // Units.feetToMeters(13)
