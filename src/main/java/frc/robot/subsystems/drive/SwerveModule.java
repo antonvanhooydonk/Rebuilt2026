@@ -58,7 +58,7 @@ public class SwerveModule implements Sendable {
   private final boolean absoluteEncoderInverted;
   private final String moduleName;
 
-  // Target state
+  // Previous target/desired state
   private SwerveModuleState targetState;
 
   /**
