@@ -130,7 +130,7 @@ public class SwerveModule implements Sendable {
   }
 
   /**
-   * Called periodically by the parent subsystem
+   * Called periodically by the drive subsystem
    */
   public void periodic() {
     syncEncoders();
