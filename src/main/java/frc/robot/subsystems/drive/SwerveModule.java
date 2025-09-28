@@ -32,8 +32,8 @@ import frc.robot.util.ThriftyBotEncoder;
 import frc.robot.util.Utils;
 
 /**
- * Represents a single swerve drive module with a Kraken60 drive motor
- * and a Neo550 steering motor with absolute encoder feedback
+ * Represents a single swerve drive module with a Kraken x60 drive motor,
+ * and a Neo steering motor with a ThriftyBot absolute encoder attached.
  */
 public class SwerveModule implements Sendable {
   // Hardware
