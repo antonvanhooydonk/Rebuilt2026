@@ -156,7 +156,7 @@ public class SwerveModule implements Sendable {
       .withSupplyCurrentLimitEnable(true)
       .withSupplyCurrentLimit(DriveConstants.kDriveMotorCurrentLimit)
       .withSupplyCurrentLowerLimit(DriveConstants.kDriveMotorCurrentLowerLimit)
-      .withSupplyCurrentLowerTime(0.1);
+      .withSupplyCurrentLowerTime(1.0);
     
     // Voltage compensation
     driveConfig.Voltage
