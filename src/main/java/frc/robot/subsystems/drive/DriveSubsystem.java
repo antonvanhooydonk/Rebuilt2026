@@ -299,7 +299,7 @@ public class DriveSubsystem extends SubsystemBase {
           )
         );          
       } catch (Exception e) {
-        System.err.println("Error adding vision measurement: " + e.getMessage());
+        Utils.logError("Error adding vision measurement: " + e.getMessage());
       }
     }
   }
