@@ -32,8 +32,8 @@ public final class DriveConstants {
   public static final int    kSteerMotorMaxCurrent = 30; // The max current draw in amps of a swerve module steer motor
   public static final double kDriveGearRatio = 6.75; // Drive gear ratio (adjust for your setup)
   public static final double kSteerGearRatio = 21.4285714286; // Steering gear ratio (adjust for your setup)
-  public static final double kDriveRpsToMps = kWheelCircumference / kDriveGearRatio; // Convert drive motor rotations per second to meters per second
-  public static final double kDriveMpsToRps = kDriveGearRatio / kWheelCircumference; // Convert drive motor meters per second to rotations per second 
+  public static final double kDriveRPStoMPS = kWheelCircumference / kDriveGearRatio; // Convert drive motor rotations per second to meters per second
+  public static final double kDriveMPStoRPS = kDriveGearRatio / kWheelCircumference; // Convert drive motor meters per second to rotations per second 
   public static final double kPeriodicTimeSeconds = 0.02; // 0.13; // 20ms (default) + 110ms => 0.02 + 0.11 spark max velocity lag 
 
   // Maximum speeds - adjust based on your robot capabilities

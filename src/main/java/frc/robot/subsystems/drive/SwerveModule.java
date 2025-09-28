@@ -261,7 +261,7 @@ public class SwerveModule implements Sendable {
    * @return Current SwerveModuleState
    */
   public SwerveModuleState getState() {
-    double velocity = driveMotor.getVelocity().getValueAsDouble() * DriveConstants.kDriveRpsToMps;
+    double velocity = driveMotor.getVelocity().getValueAsDouble() * DriveConstants.kDriveRPStoMPS;
     Rotation2d angle = new Rotation2d(steerEncoder.getPosition());
     return new SwerveModuleState(velocity, angle);
   }
@@ -271,7 +271,7 @@ public class SwerveModule implements Sendable {
    * @return Current SwerveModulePosition
    */
   public SwerveModulePosition getPosition() {
-    double distance = driveMotor.getPosition().getValueAsDouble() * DriveConstants.kDriveRpsToMps;
+    double distance = driveMotor.getPosition().getValueAsDouble() * DriveConstants.kDriveRPStoMPS;
     Rotation2d angle = new Rotation2d(steerEncoder.getPosition());
     return new SwerveModulePosition(distance, angle);
   }
@@ -304,7 +304,7 @@ public class SwerveModule implements Sendable {
    * @param velocityMetersPerSecond Desired velocity in m/s
    */
   private void setDriveVelocity(double velocityMetersPerSecond) {
-    double velocityRPS = velocityMetersPerSecond * DriveConstants.kDriveMpsToRps;
+    double velocityRPS = velocityMetersPerSecond * DriveConstants.kDriveMPStoRPS;
     driveMotor.setControl(driveVelocityRequest.withVelocity(velocityRPS));
   }
 
@@ -323,7 +323,7 @@ public class SwerveModule implements Sendable {
    */
   private SwerveModuleState applyAntiJitter(SwerveModuleState newState) {
     // Configurable anti-jitter parameters (move to constants)
-    double speedDeadband = 0.01; // m/s
+    double speedDeadband = 0.001; // 1mm in m/s
     double angleDeadband = Units.degreesToRadians(2.0); // radians
     double minSpeedForSteering = 0.1; // m/s
 
