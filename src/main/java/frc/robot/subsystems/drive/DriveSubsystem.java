@@ -357,8 +357,9 @@ public class DriveSubsystem extends SubsystemBase {
     ySpeed = Math.abs(ySpeed) > DriveConstants.kJoystickDeadband ? ySpeed : 0;
     rot = Math.abs(rot) > DriveConstants.kJoystickDeadband ? rot : 0;
 
-    // Then cube or square the inputs (while preserving sign) for finer control at low speeds.
-    // Cubing gives finer control than squaring, but squaring is still better than linear.
+    // Square the inputs (while preserving sign) for finer control at low speeds.
+    // Cubing is used in "slow mode because it gives even finer control. 
+    // Joystick input is linear by default. May need to remove cubing?
     xSpeed = Math.copySign(Math.pow(xSpeed, (slowMode ? 3 : 2)), xSpeed);
     ySpeed = Math.copySign(Math.pow(ySpeed, (slowMode ? 3 : 2)), ySpeed);
     rot = Math.copySign(Math.pow(rot, (slowMode ? 3 : 2)), rot);
