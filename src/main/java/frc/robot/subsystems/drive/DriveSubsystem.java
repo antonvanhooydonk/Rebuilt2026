@@ -264,7 +264,7 @@ public class DriveSubsystem extends SubsystemBase {
       
       // Print every second
       if (waitCount % 100 == 0) { 
-        Utils.logInfo("Still calibrating NavX... (" + (waitCount/100) + "s)");
+        Utils.logInfo("Calibrating NavX... (" + (waitCount/100) + "s). Do not move the robot!");
       }
       
       // 20 seconds timeout
