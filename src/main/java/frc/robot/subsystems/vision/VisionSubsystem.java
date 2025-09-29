@@ -91,7 +91,11 @@ public class VisionSubsystem extends SubsystemBase {
      * @return
      */
     public double[] getStandardDeviations() {
-      return standardDeviations;
+      return new double[] { 
+        standardDeviations[0],
+        standardDeviations[1],
+        standardDeviations[2]
+      };
     }
   }
 
