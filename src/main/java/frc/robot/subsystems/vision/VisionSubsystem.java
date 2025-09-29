@@ -215,7 +215,7 @@ public class VisionSubsystem extends SubsystemBase {
           EstimatedRobotPose estimatedPose = poseResult.get();
           
           // Skip further processing if the pose estimate is not valid
-          if (!isValidPose(estimatedPose, result)) continue;
+          if (!isValidPose(result, estimatedPose)) continue;
           
           // Calculate standard deviations
           double[] stdDevs = calculateStandardDeviations(result, estimatedPose);
@@ -249,7 +249,7 @@ public class VisionSubsystem extends SubsystemBase {
   /**
    * Validates a pose estimate to reject obviously incorrect measurements
    */
-  private boolean isValidPose(EstimatedRobotPose estimatedPose, PhotonPipelineResult result) {
+  private boolean isValidPose(PhotonPipelineResult result, EstimatedRobotPose estimatedPose) {
     // Check pose ambiguity for single tag estimates
     if (result.getTargets().size() == 1) {
       PhotonTrackedTarget target = result.getBestTarget();
