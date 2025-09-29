@@ -642,8 +642,8 @@ public class DriveSubsystem extends SubsystemBase {
     builder.addDoubleProperty("Robot Heading", () -> getHeading().getDegrees(), null);
     builder.addDoubleProperty("Robot Pitch", this::getPitch, null);
     builder.addDoubleProperty("Robot Roll", this::getRoll, null);
-    builder.addBooleanProperty("Field Relative", () -> fieldRelative, null);
-    builder.addBooleanProperty("Slow Mode", () -> slowMode, null);
+    builder.addBooleanProperty("Field Relative", this::isFieldRelative, null);
+    builder.addBooleanProperty("Slow Mode", this::isSlowMode, null);
     
     // Chassis speeds
     ChassisSpeeds speeds = getChassisSpeeds();
