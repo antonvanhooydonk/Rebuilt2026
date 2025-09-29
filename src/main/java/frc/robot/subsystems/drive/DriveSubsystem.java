@@ -301,14 +301,11 @@ public class DriveSubsystem extends SubsystemBase {
     for (VisionMeasurement measurement : measurements) {
       try {
         // Add vision measurement to pose estimator
+        double[] stdDevs = measurement.getStandardDeviations();
         poseEstimator.addVisionMeasurement(
-          measurement.pose,
-          measurement.timestampSeconds,
-          VecBuilder.fill(
-            measurement.standardDeviations[0], 
-            measurement.standardDeviations[1], 
-            measurement.standardDeviations[2]
-          )
+          measurement.getPose(),
+          measurement.getTimestampSeconds(),
+          VecBuilder.fill(stdDevs[0], stdDevs[1], stdDevs[2])
         );          
       } catch (Exception e) {
         Utils.logError("Error adding vision measurement: " + e.getMessage());

@@ -34,57 +34,114 @@ import frc.robot.util.Utils;
 public class VisionSubsystem extends SubsystemBase {
   // Camera configuration class
   public static class CameraConfig {
-    public final String name;
-    public final Transform3d robotToCamera;
+    private final String name;
+    private final Transform3d robotToCamera;
     
     public CameraConfig(String name, Transform3d robotToCamera) {
       this.name = name;
       this.robotToCamera = robotToCamera;
     }
+
+    /**
+     * Gets the camera name
+     * @return
+     */
+    public String getName() {
+      return name;
+    }
+
+    /**
+     * Gets the robot-to-camera transform
+     * @return
+     */
+    public Transform3d getRobotToCamera() {
+      return robotToCamera;
+    }
   }
 
   // Vision measurement data class
   public static class VisionMeasurement {
-    public final Pose2d pose;
-    public final double timestampSeconds;
-    public final double[] standardDeviations;
+    private final Pose2d pose;
+    private final double timestampSeconds;
+    private final double[] standardDeviations;
 
     public VisionMeasurement(Pose2d pose, double timestampSeconds, double[] standardDeviations) {
       this.pose = pose;
       this.timestampSeconds = timestampSeconds;
       this.standardDeviations = standardDeviations;
     }
+
+    /**
+     * Gets the estimated pose
+     * @return
+     */
+    public Pose2d getPose() {
+      return pose;
+    }
+
+    /**
+     * Gets the timestamp of the measurement
+     * @return
+     */
+    public double getTimestampSeconds() {
+      return timestampSeconds;
+    }
+
+    /**
+     * Gets the standard deviations for x, y, and theta
+     * @return
+     */
+    public double[] getStandardDeviations() {
+      return standardDeviations;
+    }
   }
 
   // Camera data class with cached results
-  private static class CameraData {
-    public final PhotonCamera camera;
-    public final PhotonPoseEstimator poseEstimator;
-    public final CameraConfig config;
+  private static class Camera {
+    private final CameraConfig config;
+    private final PhotonCamera camera;
+    private final PhotonPoseEstimator poseEstimator;
     
     // Cached data from current periodic cycle
-    public List<PhotonPipelineResult> cachedUnreadResults = new ArrayList<>();
-    public PhotonPipelineResult cachedLatestResult = null;
+    private List<PhotonPipelineResult> cachedResults = new ArrayList<>();
     
-    public CameraData(PhotonCamera camera, PhotonPoseEstimator poseEstimator, CameraConfig config) {
+    /**
+     * Construct a new Camera instance
+     * @param config The camera configuration
+     */
+    public Camera(CameraConfig config) {
+      // Initialize PhotonCamera
+      PhotonCamera camera = new PhotonCamera(config.name);
+
+      // Initialize PhotonPoseEstimator
+      PhotonPoseEstimator poseEstimator = new PhotonPoseEstimator(
+        FieldConstants.fieldLayout,
+        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+        config.robotToCamera
+      );
+
+      // Set fallback strategy for multi-tag ambiguity
+      poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+
+      // Assign to fields
+      this.config = config;
       this.camera = camera;
       this.poseEstimator = poseEstimator;
-      this.config = config;
     }
         
     /**
      * Updates cached results - CALL ONLY ONCE PER PERIODIC CYCLE
      */
     public void updateCache() {
-      cachedUnreadResults = camera.getAllUnreadResults();
+      cachedResults = camera.getAllUnreadResults();
     }
         
     /**
      * Gets the most recent result from cache
      */
     public PhotonPipelineResult getLatestResult() {
-      if (!cachedUnreadResults.isEmpty()) {
-        return cachedUnreadResults.get(cachedUnreadResults.size() - 1);
+      if (!cachedResults.isEmpty()) {
+        return cachedResults.get(cachedResults.size() - 1);
       }
       return new PhotonPipelineResult();
     }
@@ -92,17 +149,17 @@ public class VisionSubsystem extends SubsystemBase {
     /**
      * Checks if any cached results have targets
      */
-    public boolean hasTargetsInCache() {
-      if (!cachedUnreadResults.isEmpty()) {
-        return cachedUnreadResults.stream().anyMatch(PhotonPipelineResult::hasTargets);
+    public boolean hasTargets() {
+      if (!cachedResults.isEmpty()) {
+        return cachedResults.stream().anyMatch(PhotonPipelineResult::hasTargets);
       }
-      return cachedLatestResult != null && cachedLatestResult.hasTargets();
+      return false;
     }
         
     /**
      * Gets target count from most recent cached result
      */
-    public int getTargetCountFromCache() {
+    public int getTargetCount() {
       PhotonPipelineResult mostRecent = getLatestResult();
       return mostRecent.getTargets().size();
     }
@@ -110,14 +167,46 @@ public class VisionSubsystem extends SubsystemBase {
     /**
      * Gets best target from most recent cached result
      */
-    public Optional<PhotonTrackedTarget> getBestTargetFromCache() {
+    public Optional<PhotonTrackedTarget> getBestTarget() {
       PhotonPipelineResult mostRecent = getLatestResult();
       return mostRecent.hasTargets() ? Optional.of(mostRecent.getBestTarget()) : Optional.empty();
+    }
+
+    /**
+     * Gets the camera name
+     * @return The camera's name
+     */
+    public String getName() {
+      return config.name;
+    }
+
+    /**
+     * Gets the PhotonCamera instance
+     * @return
+     */
+    public PhotonCamera getCamera() {
+      return camera;
+    }
+
+    /**
+     * Gets the PhotonPoseEstimator instance
+     * @return
+     */
+    public PhotonPoseEstimator getPoseEstimator() {
+      return poseEstimator;
+    }
+
+    /**
+     * Gets the cached results
+     * @return
+     */
+    public List<PhotonPipelineResult> getCachedResults() {
+      return cachedResults;
     }
   }
 
   // Camera data storage
-  private final List<CameraData> cameras = new ArrayList<>();
+  private final List<Camera> cameras = new ArrayList<>();
 
   // Latest vision measurements (updated each periodic cycle)
   private final List<VisionMeasurement> latestMeasurements = new ArrayList<>();
@@ -132,21 +221,8 @@ public class VisionSubsystem extends SubsystemBase {
     // Process each camera config
     for (CameraConfig config : VisionConstants.kCameraConfigs) {
       try {
-        // Initialize PhotonCamera
-        PhotonCamera camera = new PhotonCamera(config.name);
-        
-        // Initialize PhotonPoseEstimator
-        PhotonPoseEstimator poseEstimator = new PhotonPoseEstimator(
-          FieldConstants.fieldLayout,
-          PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-          config.robotToCamera
-        );
-        
-        // Set fallback strategy for multi-tag ambiguity
-        poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
-        
-        // Add to camera list
-        cameras.add(new CameraData(camera, poseEstimator, config));
+        // Add each to camera the list
+        cameras.add(new Camera(config));
 
         Utils.logInfo("Initialized camera: " + config.name);
       } catch (Exception e) {
@@ -181,11 +257,11 @@ public class VisionSubsystem extends SubsystemBase {
    * place where getAllUnreadResults() gets called!
    */
   private void updateCameraCache() {
-    for (CameraData cameraData : cameras) {
+    for (Camera camera : cameras) {
       try {
-        cameraData.updateCache();
+        camera.updateCache();
       } catch (Exception e) {
-        Utils.logError("Error updating cache for " + cameraData.config.name + ": " + e.getMessage());
+        Utils.logError("Error updating cache for " + camera.getName() + ": " + e.getMessage());
       }
     }
   }
@@ -198,15 +274,15 @@ public class VisionSubsystem extends SubsystemBase {
     latestMeasurements.clear();
     
     // Process each camera's cached unread results
-    for (CameraData cameraData : cameras) {
+    for (Camera camera : cameras) {
       try {
         // Process ALL cached unread results
-        for (PhotonPipelineResult result : cameraData.cachedUnreadResults) {
+        for (PhotonPipelineResult result : camera.getCachedResults()) {
           // Skip further processing if result has no targets
           if (!result.hasTargets()) continue;
           
           // Get pose estimate
-          Optional<EstimatedRobotPose> poseResult = cameraData.poseEstimator.update(result);  
+          Optional<EstimatedRobotPose> poseResult = camera.getPoseEstimator().update(result);
           
           // Skip further processing if no pose result was returned
           if (poseResult.isEmpty()) continue;
@@ -218,7 +294,7 @@ public class VisionSubsystem extends SubsystemBase {
           if (!isValidPose(result, estimatedPose)) continue;
           
           // Calculate standard deviations
-          double[] stdDevs = calculateStandardDeviations(result, estimatedPose);
+          double[] stdDevs = calculateStandardDeviations(result);
           
           // Create measurement
           VisionMeasurement measurement = new VisionMeasurement(
@@ -233,21 +309,24 @@ public class VisionSubsystem extends SubsystemBase {
           latestMeasurements.add(measurement);
           
           // Log targets periodically (only for the most recent result)
-          if (result == cameraData.cachedUnreadResults.get(cameraData.cachedUnreadResults.size() - 1)) {
-            logTargets(result, cameraData.config.name);
+          if (result == camera.getCachedResults().get(camera.getCachedResults().size() - 1)) {
+            logTargets(result, camera.getName());
           }
         }          
       } catch (Exception e) {
-        Utils.logError("Error processing vision for " + cameraData.config.name + ": " + e.getMessage());
+        Utils.logError("Error processing vision for " + camera.getName() + ": " + e.getMessage());
       }
     }
     
     // Sort measurements by timestamp to ensure chronological processing
-    latestMeasurements.sort((a, b) -> Double.compare(a.timestampSeconds, b.timestampSeconds));
+    latestMeasurements.sort((a, b) -> Double.compare(a.getTimestampSeconds(), b.getTimestampSeconds()));
   }
 
   /**
    * Validates a pose estimate to reject obviously incorrect measurements
+   * @param result The photon camera pipeline result validate
+   * @param estimatedPose The estimated robot pose from the camera
+   * @return True if the pose is valid
    */
   private boolean isValidPose(PhotonPipelineResult result, EstimatedRobotPose estimatedPose) {
     // Check pose ambiguity for single tag estimates
@@ -283,8 +362,10 @@ public class VisionSubsystem extends SubsystemBase {
 
   /**
    * Calculate standard deviations based on target quality
+   * @param result The photon camera pipeline result to calculate standard deviations for
+   * @return Array of standard deviations for x, y, and theta
    */
-  private double[] calculateStandardDeviations(PhotonPipelineResult result, EstimatedRobotPose estimatedPose) {
+  private double[] calculateStandardDeviations(PhotonPipelineResult result) {
     // Number of targets used in the estimate
     int numTargets = result.getTargets().size();
     
@@ -317,6 +398,8 @@ public class VisionSubsystem extends SubsystemBase {
 
   /**
    * Log target information periodically
+   * @param result The photon camera pipeline result to log
+   * @param cameraName The name of the camera
    */
   private void logTargets(PhotonPipelineResult result, String cameraName) {
     double currentTime = Timer.getFPGATimestamp();    
@@ -344,9 +427,9 @@ public class VisionSubsystem extends SubsystemBase {
    */
   public Optional<PhotonTrackedTarget> getBestTarget(String cameraName) {
     return cameras.stream()
-      .filter(data -> data.config.name.equals(cameraName))
+      .filter(camera -> camera.getName().equals(cameraName))
       .findFirst()
-      .flatMap(CameraData::getBestTargetFromCache);
+      .flatMap(Camera::getBestTarget);
   }
 
   /**
@@ -355,7 +438,7 @@ public class VisionSubsystem extends SubsystemBase {
    */
   public Optional<PhotonTrackedTarget> getBestTarget() {
     return cameras.stream()
-      .map(CameraData::getBestTargetFromCache)
+      .map(Camera::getBestTarget)
       .filter(Optional::isPresent)
       .map(Optional::get)
       .findFirst();
@@ -366,7 +449,7 @@ public class VisionSubsystem extends SubsystemBase {
    * @return True if any targets are visible
    */
   public boolean hasTargets() {
-    return cameras.stream().anyMatch(CameraData::hasTargetsInCache);
+    return cameras.stream().anyMatch(Camera::hasTargets);
   }
 
   /**
@@ -374,7 +457,7 @@ public class VisionSubsystem extends SubsystemBase {
    * @return Total number of visible targets
    */
   public int getTotalTargetCount() {
-    return cameras.stream().mapToInt(CameraData::getTargetCountFromCache).sum();
+    return cameras.stream().mapToInt(Camera::getTargetCount).sum();
   }
 
   /**
@@ -382,7 +465,7 @@ public class VisionSubsystem extends SubsystemBase {
    * @return List of camera names
    */
   public List<String> getCameraNames() {
-    return cameras.stream().map(data -> data.config.name).toList();
+    return cameras.stream().map(camera -> camera.getName()).toList();
   }
 
   /**
@@ -409,9 +492,9 @@ public class VisionSubsystem extends SubsystemBase {
    */
   public int getUnreadResultCount(String cameraName) {
     return cameras.stream()
-      .filter(data -> data.config.name.equals(cameraName))
+      .filter(camera -> camera.getName().equals(cameraName))
       .findFirst()
-      .map(data -> data.cachedUnreadResults.size())
+      .map(camera -> camera.getCachedResults().size())
       .orElse(0);
   }
 
@@ -422,9 +505,9 @@ public class VisionSubsystem extends SubsystemBase {
    */
   public PhotonPipelineResult getLatestResult(String cameraName) {
     return cameras.stream()
-      .filter(data -> data.config.name.equals(cameraName))
+      .filter(camera -> camera.getName().equals(cameraName))
       .findFirst()
-      .map(CameraData::getLatestResult)
+      .map(Camera::getLatestResult)
       .orElse(new PhotonPipelineResult());
   }
 
@@ -439,14 +522,14 @@ public class VisionSubsystem extends SubsystemBase {
     builder.addIntegerProperty("Measurements", () -> latestMeasurements.size(), null);
     
     // Individual camera status (using cached data)
-    for (CameraData cameraData : cameras) {
-      String prefix = "Camera/" + cameraData.config.name + "/";
-      PhotonPipelineResult result = cameraData.getLatestResult();
+    for (Camera camera : cameras) {
+      String prefix = "Camera/" + camera.getName() + "/";
+      PhotonPipelineResult result = camera.getLatestResult();
       
-      builder.addBooleanProperty(prefix + "Connected", () -> cameraData.camera.isConnected(), null);
+      builder.addBooleanProperty(prefix + "Connected", () -> camera.getCamera().isConnected(), null);
       builder.addBooleanProperty(prefix + "Has Targets", () -> result.hasTargets(), null);
       builder.addDoubleProperty(prefix + "Target Count", () -> result.getTargets().size(), null);
-      builder.addDoubleProperty(prefix + "Unread Results", () -> cameraData.cachedUnreadResults.size(), null);
+      builder.addDoubleProperty(prefix + "Unread Results", () -> camera.cachedResults.size(), null);
       
       if (result.hasTargets()) {
         PhotonTrackedTarget bestTarget = result.getBestTarget();
