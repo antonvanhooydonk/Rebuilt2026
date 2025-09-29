@@ -49,7 +49,9 @@ public final class VisionConstants {
   public static final double kZMargin = 0.75; // meters
   
   // Standard deviation calculation constants
-  public static final double kSingleTagStdDevFactor = 4.0;
-  public static final double kMultiTagStdDevFactor = 0.5;
-  public static final double kMaxDistanceMeters = 6.0;
+  public static final double kSingleTagBaseXYstdDev = 0.7; // meters
+  public static final double kMultiTagBaseXYstdDev = 0.3; // meters
+  public static final double kSingleTagBaseThetaStdDev = Units.degreesToRadians(20.0); // radians
+  public static final double kMultiTagBaseThetaStdDev = Units.degreesToRadians(10.0); // radians
+  public static final double kMaxDistanceMeters = 6.0; // anything over this is max std dev
 }

@@ -37,11 +37,11 @@ public final class DriveConstants {
   public static final double kPeriodicTimeSeconds = 0.02; // 0.13; // 20ms (default) + 110ms => 0.02 + 0.11 spark max velocity lag 
 
   // Maximum speeds - adjust based on your robot capabilities
-  public static final double kJoystickDeadband = 0.1; // maybe use 0.5?, joystick deadband, adjust as needed
-  public static final double kSlewRateLimit = 2; // joystick slew rate, 1/kSlewRateLimit = time to get to full sped
+  public static final double kJoystickDeadband = 0.1; // maybe use 0.5?, joystick deadband
+  public static final double kSlewRateLimit = 1.25; // joystick slew rate, 1/kSlewRateLimit = time to get to full sped
   public static final double kSlowModeScaler = 0.3; // scales speeds down in slow mode, 0.0 to 1.0
   public static final boolean kAntiJitter = false; // set to true to stop jittering from module noise
-  public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(13); // adjust as needed
+  public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(13); // max translation speed in meters per second, 12-16 ft/s is reasonable
   public static final double kMaxAccelMetersPerSecondSq = 4.5; // 4 to 6 is a reasonable range
   public static final double kMaxAngularSpeedRadiansPerSecond = Units.degreesToRadians(540);
   public static final double kMaxAngularAccelRadiansPerSecondSq = Units.degreesToRadians(720); // 0.5 is a conservative default

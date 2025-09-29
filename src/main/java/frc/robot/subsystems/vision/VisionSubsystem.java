@@ -377,22 +377,47 @@ public class VisionSubsystem extends SubsystemBase {
         
     // Clamp distance to reasonable range
     avgDistance = Math.min(avgDistance, VisionConstants.kMaxDistanceMeters);
+
+    /** 
+      * Recommended Tuning Process:
+      * 1. Start conservative (divide by 10-15)
+      * 2. Test pose estimation accuracy in known locations
+      * 3. Adjust based on results:      
+      *    - If vision corrections are too weak => increase divisor (30 => 50)
+      *    - If vision corrections fight odometry => decrease divisor (30 => 15)
+      * 4. Validate with field testing
+      *
+      * Physical Meaning:
+      *   The "/ 30" essentially means: "For every meter of distance, square it 
+      *   and divide by 30 to get the uncertainty multiplier."
+      *   At 3 meters: (3²/30) = 0.3, so uncertainty increases by 30%
+      *   At 5 meters: (5²/30) = 0.83, so uncertainty increases by 83%
+      */
+
+    // Base standard deviations (empirically determined)
+    double baseXYStdDev, baseThetaStdDev;
     
-    // Declare standard deviations
-    double xyStdDev, thetaStdDev;
-    
-    // Adjust standard deviations based on number of targets and distance
+    // Set base standard deviation based on number of targets
     if (numTargets == 1) {
       // Single tag - less reliable
-      xyStdDev = VisionConstants.kSingleTagStdDevFactor * (1 + (avgDistance * avgDistance / 30));
-      thetaStdDev = Units.degreesToRadians(12) * (1 + (avgDistance * avgDistance / 30));
+      baseXYStdDev = VisionConstants.kSingleTagBaseXYstdDev;
+      baseThetaStdDev = VisionConstants.kSingleTagBaseThetaStdDev;
     } else {
-      // Multi tag - more reliable
-      xyStdDev = VisionConstants.kMultiTagStdDevFactor * (1 + (avgDistance * avgDistance / 30));
-      thetaStdDev = Units.degreesToRadians(6) * (1 + (avgDistance * avgDistance / 30));
+      // Multi tag - more reliable  
+      baseXYStdDev = VisionConstants.kMultiTagBaseXYstdDev;
+      baseThetaStdDev = VisionConstants.kMultiTagBaseThetaStdDev;
     }
     
-    // Return standard deviations for x, y, and theta
+    // Distance-based uncertainty scaling factors
+    // These values are tuned based on testing with your specific setup
+    double xyDistanceScale = 1.0 + (avgDistance * avgDistance / 20.0);    // More aggressive
+    double thetaDistanceScale = 1.0 + (avgDistance * avgDistance / 40.0); // Less aggressive for rotation
+    
+    // Calculate final standard deviations
+    double xyStdDev = baseXYStdDev * xyDistanceScale;
+    double thetaStdDev = baseThetaStdDev * thetaDistanceScale;
+    
+    // Return as array [x, y, theta]
     return new double[] {xyStdDev, xyStdDev, thetaStdDev};
   }
 
