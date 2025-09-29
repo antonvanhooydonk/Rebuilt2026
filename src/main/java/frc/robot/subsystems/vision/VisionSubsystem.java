@@ -17,7 +17,6 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -111,13 +110,13 @@ public class VisionSubsystem extends SubsystemBase {
      */
     public Camera(CameraConfig config) {
       // Initialize PhotonCamera
-      PhotonCamera camera = new PhotonCamera(config.name);
+      PhotonCamera camera = new PhotonCamera(config.getName());
 
       // Initialize PhotonPoseEstimator
       PhotonPoseEstimator poseEstimator = new PhotonPoseEstimator(
         FieldConstants.fieldLayout,
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-        config.robotToCamera
+        config.getRobotToCamera()
       );
 
       // Set fallback strategy for multi-tag ambiguity
@@ -160,16 +159,16 @@ public class VisionSubsystem extends SubsystemBase {
      * Gets target count from most recent cached result
      */
     public int getTargetCount() {
-      PhotonPipelineResult mostRecent = getLatestResult();
-      return mostRecent.getTargets().size();
+      PhotonPipelineResult latestResult = getLatestResult();
+      return latestResult.getTargets().size();
     }
         
     /**
      * Gets best target from most recent cached result
      */
     public Optional<PhotonTrackedTarget> getBestTarget() {
-      PhotonPipelineResult mostRecent = getLatestResult();
-      return mostRecent.hasTargets() ? Optional.of(mostRecent.getBestTarget()) : Optional.empty();
+      PhotonPipelineResult latestResult = getLatestResult();
+      return latestResult.hasTargets() ? Optional.of(latestResult.getBestTarget()) : Optional.empty();
     }
 
     /**
@@ -177,7 +176,7 @@ public class VisionSubsystem extends SubsystemBase {
      * @return The camera's name
      */
     public String getName() {
-      return config.name;
+      return config.getName();
     }
 
     /**
@@ -224,9 +223,9 @@ public class VisionSubsystem extends SubsystemBase {
         // Add each to camera the list
         cameras.add(new Camera(config));
 
-        Utils.logInfo("Initialized camera: " + config.name);
+        Utils.logInfo("Initialized camera: " + config.getName());
       } catch (Exception e) {
-        Utils.logError("Failed to initialize camera " + config.name + ": " + e.getMessage());
+        Utils.logError("Failed to initialize camera " + config.getName() + ": " + e.getMessage());
       }
     }
     
@@ -554,7 +553,7 @@ public class VisionSubsystem extends SubsystemBase {
       builder.addBooleanProperty(prefix + "Connected", () -> camera.getCamera().isConnected(), null);
       builder.addBooleanProperty(prefix + "Has Targets", () -> result.hasTargets(), null);
       builder.addDoubleProperty(prefix + "Target Count", () -> result.getTargets().size(), null);
-      builder.addDoubleProperty(prefix + "Unread Results", () -> camera.cachedResults.size(), null);
+      builder.addDoubleProperty(prefix + "Unread Results", () -> camera.getCachedResults().size(), null);
       
       if (result.hasTargets()) {
         PhotonTrackedTarget bestTarget = result.getBestTarget();
@@ -567,8 +566,8 @@ public class VisionSubsystem extends SubsystemBase {
     // Latest measurements
     if (!latestMeasurements.isEmpty()) {
       VisionMeasurement latestMeasurement = latestMeasurements.get(latestMeasurements.size() - 1);
-      builder.addStringProperty("Latest Pose", () -> latestMeasurement.pose.toString(), null);
-      builder.addDoubleProperty("Latest Timestamp", () -> latestMeasurement.timestampSeconds, null);
+      builder.addStringProperty("Latest Pose", () -> latestMeasurement.getPose().toString(), null);
+      builder.addDoubleProperty("Latest Timestamp", () -> latestMeasurement.getTimestampSeconds(), null);
     }
   }
 }
