@@ -5,6 +5,10 @@
 package frc.robot.subsystems.drive;
 
 import java.util.List;
+import java.util.Optional;
+
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.targeting.PhotonPipelineResult;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -42,6 +46,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Robot;
 import frc.robot.subsystems.vision.VisionSubsystem;
+import frc.robot.subsystems.vision.VisionSubsystem.Camera;
 import frc.robot.subsystems.vision.VisionSubsystem.VisionMeasurement;
 import frc.robot.util.Utils;
 
@@ -82,6 +87,7 @@ public class DriveSubsystem extends SubsystemBase {
   // Current robot state
   private boolean fieldRelative = true;
   private boolean slowMode = false;
+  private boolean resetPoseRequired = false;
   
   /**
    * Creates a new SwerveSubsystem
@@ -237,6 +243,21 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // Force field-relative driving off if gyro is not connected
+    if (!gyro.isConnected()) {
+      fieldRelative = false;
+      resetPoseRequired = true;
+    }
+
+    // If gyro has reconnected, reset the pose to vision
+    if (resetPoseRequired && gyro.isConnected()) {
+      if (resetPoseToVision()) {
+        fieldRelative = true;
+        resetPoseRequired = false;
+        Utils.logInfo("Robot pose reset to vision");
+      }
+    }
+
     // Update odometry
     poseEstimator.updateWithTime(Timer.getFPGATimestamp(), getGyroAngle(), getModulePositions());
     
@@ -509,6 +530,11 @@ public class DriveSubsystem extends SubsystemBase {
    * @return The current gyro angle as a Rotation2d, CCW positive
    */
   public Rotation2d getGyroAngle() {
+    // Return 0 if gyro is not connected
+    if (!gyro.isConnected()) {
+      return Rotation2d.fromDegrees(0);
+    }
+
     // Negate the angle b/c our NavX is CW positive
     return Rotation2d.fromDegrees(-gyro.getYaw()); 
   }
@@ -555,6 +581,35 @@ public class DriveSubsystem extends SubsystemBase {
     poseEstimator.resetPosition(getGyroAngle(), getModulePositions(), pose);
   }
 
+  /**
+   * Resets the robot pose to the current vision estimate (if available)
+   * @return True if pose was reset successfully
+   */
+  public boolean resetPoseToVision() {
+    // Exit early if vision subsystem is not available or is disabled
+    if (visionSubsystem == null || !visionSubsystem.isEnabled()) return false;
+    
+    // Get the front camera
+    Optional<Camera> camera = visionSubsystem.getCamera("FRONT_CAMERA");
+    if (camera.isEmpty()) return false;
+
+    // Get latest vision result
+    PhotonPipelineResult result = camera.get().getLatestResult();
+    if (!result.hasTargets()) return false;
+    
+    // Get the best pose estimate from the camera
+    Optional<EstimatedRobotPose> poseResult = camera.get().getPoseEstimator().update(result);
+        
+    // Reset pose if we have a valid result
+    if (poseResult.isPresent()) {
+      resetPose(poseResult.get().estimatedPose.toPose2d());
+      return true;
+    }
+    
+    // No valid vision pose
+    return false;
+  }
+  
   /**
    * Gets the current chassis speeds
    * @return Current ChassisSpeeds

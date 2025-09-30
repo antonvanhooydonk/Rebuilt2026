@@ -100,7 +100,7 @@ public class VisionSubsystem extends SubsystemBase {
   }
 
   // Camera data class with cached results
-  private static class Camera {
+  public static class Camera {
     private final CameraConfig config;
     private final PhotonCamera camera;
     private final PhotonPoseEstimator poseEstimator;
@@ -438,6 +438,17 @@ public class VisionSubsystem extends SubsystemBase {
       }      
       lastTargetLogTimestamp = currentTime;
     }
+  }
+
+  /**
+   * Get a vision system camera by name.
+   * @param cameraName Name of the camera
+   * @return Optional containing the camera
+   */
+  public Optional<Camera> getCamera(String cameraName) {
+    return cameras.stream()
+      .filter(camera -> camera.getName().equals(cameraName))
+      .findFirst();
   }
 
   /**
