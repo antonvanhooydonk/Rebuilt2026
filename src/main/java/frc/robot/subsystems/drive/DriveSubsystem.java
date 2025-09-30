@@ -597,7 +597,7 @@ public class DriveSubsystem extends SubsystemBase {
     PhotonPipelineResult result = camera.get().getLatestResult();
     if (!result.hasTargets()) return false;
     
-    // Get the best pose estimate from the camera
+    // Get the pose estimate from the camera
     Optional<EstimatedRobotPose> poseResult = camera.get().getPoseEstimator().update(result);
         
     // Reset pose if we have a valid result
