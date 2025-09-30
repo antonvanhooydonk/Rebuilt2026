@@ -250,12 +250,10 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     // If gyro has reconnected, reset the pose to vision
-    if (resetPoseRequired && gyro.isConnected()) {
-      if (resetPoseToVision()) {
-        fieldRelative = true;
-        resetPoseRequired = false;
-        Utils.logInfo("Robot pose reset to vision");
-      }
+    if (resetPoseRequired && gyro.isConnected() && resetPoseToVision()) {
+      fieldRelative = true;
+      resetPoseRequired = false;
+      Utils.logInfo("Robot pose reset to vision");
     }
 
     // Update odometry
