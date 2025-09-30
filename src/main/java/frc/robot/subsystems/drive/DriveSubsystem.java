@@ -243,7 +243,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Force field-relative driving off if gyro is not connected
+    // Disable field-relative driving if gyro is not connected
     if (!gyro.isConnected()) {
       fieldRelative = false;
       resetPoseRequired = true;
