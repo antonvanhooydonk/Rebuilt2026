@@ -5,10 +5,6 @@
 package frc.robot.subsystems.drive;
 
 import java.util.List;
-import java.util.Optional;
-
-import org.photonvision.EstimatedRobotPose;
-import org.photonvision.targeting.PhotonPipelineResult;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -23,6 +19,7 @@ import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
+import com.studica.frc.AHRS.NavXUpdateRate;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
@@ -37,6 +34,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -46,7 +44,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Robot;
 import frc.robot.subsystems.vision.VisionSubsystem;
-import frc.robot.subsystems.vision.VisionSubsystem.Camera;
 import frc.robot.subsystems.vision.VisionSubsystem.VisionMeasurement;
 import frc.robot.util.Utils;
 
@@ -69,6 +66,8 @@ public class DriveSubsystem extends SubsystemBase {
   
   // Gyroscope
   private final AHRS gyro;
+  private boolean gyroConnected = true;
+  private int gyroDisconnectCount = 0;
   
   // Kinematics and odometry
   private final SwerveDriveKinematics kinematics;
@@ -87,7 +86,6 @@ public class DriveSubsystem extends SubsystemBase {
   // Current robot state
   private boolean fieldRelative = true;
   private boolean slowMode = false;
-  private boolean resetPoseRequired = false;
   
   /**
    * Creates a new SwerveSubsystem
@@ -98,7 +96,7 @@ public class DriveSubsystem extends SubsystemBase {
     this.visionSubsystem = visionSubsystem;
 
     // Initialize gyro
-    gyro = new AHRS(NavXComType.kMXP_SPI);
+    gyro = new AHRS(NavXComType.kMXP_SPI, NavXUpdateRate.k50Hz);
     waitForGyroCalibration();
 
     // If we need a gyro offset (mounted wrong etc..), set it here
@@ -243,17 +241,20 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Disable field-relative driving if gyro is not connected
-    if (!gyro.isConnected()) {
-      fieldRelative = false;
-      resetPoseRequired = true;
-    }
-
-    // If gyro has reconnected, reset the pose to vision
-    if (resetPoseRequired && gyro.isConnected() && resetPoseToVision()) {
-      fieldRelative = true;
-      resetPoseRequired = false;
-      Utils.logInfo("Robot pose reset to vision");
+    // Simple debounced gryo disconnect detection
+    if (gyro.isConnected()) {
+      gyroDisconnectCount = 0;
+      gyroConnected = true;
+    } else {
+      gyroDisconnectCount++;
+      if (gyroDisconnectCount > 10) {
+        if (gyroConnected) {
+          // First time detecting disconnect
+          System.err.println("Gyro disconnected - switching to robot-relative");
+          DriverStation.reportError("Gyro disconnected", false);
+        }
+        gyroConnected = false;
+      }
     }
 
     // Update odometry
@@ -375,7 +376,10 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
-   * Drive the robot using joystick inputs
+   * Drive the robot using joystick inputs.
+   * This function applies deadband, squaring (default) / cubing (in slow mode) 
+   * and slew rate limiting. Joystick inputs are scaled up to speeds in m/s and rad/s.
+   * Field relative driving is automatically disabled if the gyro is disconnected. 
    * @param xSpeed Speed in x direction (-1 to 1)
    * @param ySpeed Speed in y direction (-1 to 1)
    * @param rot Rotation speed (-1 to 1)
@@ -403,6 +407,11 @@ public class DriveSubsystem extends SubsystemBase {
     double xSpeedMS = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedMS = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double rotSpeedRad = rot * DriveConstants.kMaxAngularSpeedRadiansPerSecond;
+
+    // Force robot-relative if gyro disconnected
+    if (fieldRelative && !gyroConnected) {
+      fieldRelative = false;
+    }
 
     // Convert input velocitys into robot-relative chassis speeds
     ChassisSpeeds chassisSpeeds;
@@ -528,9 +537,9 @@ public class DriveSubsystem extends SubsystemBase {
    * @return The current gyro angle as a Rotation2d, CCW positive
    */
   public Rotation2d getGyroAngle() {
-    // Return 0 if gyro is not connected
-    if (!gyro.isConnected()) {
-      return Rotation2d.fromDegrees(0);
+      // Return zero if gyro is disconnected - effectively forces robot-relative driving
+    if (!gyroConnected) {
+      return new Rotation2d();
     }
 
     // Negate the angle b/c our NavX is CW positive
@@ -579,35 +588,6 @@ public class DriveSubsystem extends SubsystemBase {
     poseEstimator.resetPosition(getGyroAngle(), getModulePositions(), pose);
   }
 
-  /**
-   * Resets the robot pose to the current vision estimate (if available)
-   * @return True if pose was reset successfully
-   */
-  public boolean resetPoseToVision() {
-    // Exit early if vision subsystem is not available or is disabled
-    if (visionSubsystem == null || !visionSubsystem.isEnabled()) return false;
-    
-    // Get the front camera
-    Optional<Camera> camera = visionSubsystem.getCamera("FRONT_CAMERA");
-    if (camera.isEmpty()) return false;
-
-    // Get latest vision result
-    PhotonPipelineResult result = camera.get().getLatestResult();
-    if (!result.hasTargets()) return false;
-    
-    // Get the pose estimate from the camera
-    Optional<EstimatedRobotPose> poseResult = camera.get().getPoseEstimator().update(result);
-        
-    // Reset pose if we have a valid result
-    if (poseResult.isPresent()) {
-      resetPose(poseResult.get().estimatedPose.toPose2d());
-      return true;
-    }
-    
-    // No valid vision pose
-    return false;
-  }
-  
   /**
    * Gets the current chassis speeds
    * @return Current ChassisSpeeds
