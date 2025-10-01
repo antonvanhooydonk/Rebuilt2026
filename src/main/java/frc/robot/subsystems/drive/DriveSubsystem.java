@@ -250,7 +250,7 @@ public class DriveSubsystem extends SubsystemBase {
       if (gyroDisconnectCount > 10) {
         if (gyroConnected) {
           // First time detecting disconnect
-          System.err.println("Gyro disconnected - switching to robot-relative");
+          Utils.logError("Gyro disconnected - switching to robot-relative");
           DriverStation.reportError("Gyro disconnected", false);
         }
         gyroConnected = false;
@@ -376,7 +376,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
-   * Drive the robot using joystick inputs.
+   * Drive the robot using the raw joystick inputs.
    * This function applies deadband, squaring (default) / cubing (in slow mode) 
    * and slew rate limiting. Joystick inputs are scaled up to speeds in m/s and rad/s.
    * Field relative driving is automatically disabled if the gyro is disconnected. 
