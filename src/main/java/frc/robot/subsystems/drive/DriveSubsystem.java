@@ -249,9 +249,7 @@ public class DriveSubsystem extends SubsystemBase {
       gyroDisconnectCount++;
       if (gyroDisconnectCount > 10) {
         if (gyroConnected) {
-          // First time detecting disconnect
-          Utils.logError("Gyro disconnected - switching to robot-relative");
-          DriverStation.reportError("Gyro disconnected", false);
+          Utils.logError("Gyro disconnected - switching to robot-relative"); // first time
         }
         gyroConnected = false;
       }

@@ -26,6 +26,7 @@ public final class Utils {
    */
   public static void logError(String msg) {
     System.err.println(msg);
+    DriverStation.reportError(msg, false);
     Elastic.sendNotification(new Notification(NotificationLevel.ERROR, "Error", msg));
   }
 
