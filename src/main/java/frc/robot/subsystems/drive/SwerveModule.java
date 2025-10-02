@@ -5,6 +5,7 @@
 package frc.robot.subsystems.drive;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -18,6 +19,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkLowLevel.PeriodicFrame;
 import com.revrobotics.spark.SparkClosedLoopController;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -144,6 +146,7 @@ public class SwerveModule implements Sendable {
 
     // Motor output configuration
     driveConfig.MotorOutput
+      .withDutyCycleNeutralDeadband(0.001)  // 0.1% deadband (tight control)
       .withNeutralMode(NeutralModeValue.Brake)
       .withInverted(
         driveMotorInverted 
@@ -156,12 +159,15 @@ public class SwerveModule implements Sendable {
       .withSupplyCurrentLimitEnable(true)
       .withSupplyCurrentLimit(DriveConstants.kDriveMotorCurrentLimit)
       .withSupplyCurrentLowerLimit(DriveConstants.kDriveMotorCurrentLowerLimit)
-      .withSupplyCurrentLowerTime(1.0);
+      .withSupplyCurrentLowerTime(1.0)
+      .withStatorCurrentLimitEnable(true)
+      .withStatorCurrentLimit(120);
     
     // Voltage compensation
     driveConfig.Voltage
       .withPeakForwardVoltage(DriveConstants.kDriveMaxForwardVoltage)
-      .withPeakReverseVoltage(DriveConstants.kDriveMaxReverseVoltage);
+      .withPeakReverseVoltage(DriveConstants.kDriveMaxReverseVoltage)
+      .withSupplyVoltageTimeConstant(0.02);
     
     // Velocity PID (runs on onboard motor controller)
     driveConfig.Slot0
@@ -174,6 +180,21 @@ public class SwerveModule implements Sendable {
     
     // Apply the configuration to the motor
     driveMotor.getConfigurator().apply(driveConfig);
+
+    // -------------------------------------------------------
+    // OPTIMIZE CAN STATUS FRAMES for reduced lag
+
+    // HIGH PRIORITY - Critical for control (100Hz = 10ms)
+    driveMotor.getVelocity().setUpdateFrequency(100.0);     // Velocity feedback
+    driveMotor.getPosition().setUpdateFrequency(100.0);     // Position feedback
+    
+    // MEDIUM PRIORITY - Useful for monitoring (50Hz = 20ms)
+    driveMotor.getMotorVoltage().setUpdateFrequency(50.0);  // Motor voltage
+    driveMotor.getSupplyCurrent().setUpdateFrequency(50.0); // Supply current
+    driveMotor.getTorqueCurrent().setUpdateFrequency(50.0); // Stator/torque current
+    
+    // LOW PRIORITY - Reduce CAN traffic (4Hz = 250ms)
+    driveMotor.getDeviceTemp().setUpdateFrequency(4.0);     // Temperature
   }
 
   /**
@@ -206,6 +227,16 @@ public class SwerveModule implements Sendable {
       .i(DriveConstants.kSteerKI)
       .d(DriveConstants.kSteerKD)
       .velocityFF(DriveConstants.kSteerFF);
+
+    // OPTIMIZE CAN STATUS FRAMES for reduced lag
+    steerConfig.signals
+      .primaryEncoderPositionPeriodMs(10)   // Position: 100Hz (was Status2)
+      .primaryEncoderVelocityPeriodMs(10)   // Velocity: 100Hz (was Status2)
+      .appliedOutputPeriodMs(100)           // Applied output: 10Hz (was Status0)
+      .faultsPeriodMs(200)                  // Faults: 5Hz (was Status1)
+      .analogVoltagePeriodMs(500)           // Analog: unused (was Status3)
+      .externalOrAltEncoderPosition(500)    // Alt encoder: unused (was Status4)
+      .externalOrAltEncoderVelocity(500);   // Alt encoder: unused (was Status4)    
 
     // Configure MAXMotion
     // Not currently used, but could be useful in the future.
