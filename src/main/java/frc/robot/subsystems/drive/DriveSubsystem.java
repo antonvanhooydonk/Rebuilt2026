@@ -240,19 +240,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Simple debounced gryo disconnect detection
-    if (gyro.isConnected()) {
-      gyroDisconnectCount = 0;
-      gyroConnected = true;
-    } else {
-      gyroDisconnectCount++;
-      if (gyroDisconnectCount > 10) {
-        if (gyroConnected) {
-          Utils.logError("Gyro disconnected - switching to robot-relative"); // first time
-        }
-        gyroConnected = false;
-      }
-    }
+    // Check if the gyro is connected
+    checkGyroIsConnected();
 
     // Update odometry
     poseEstimator.updateWithTime(Timer.getFPGATimestamp(), getGyroAngle(), getModulePositions());
@@ -304,6 +293,24 @@ public class DriveSubsystem extends SubsystemBase {
     }
   }
   
+  /**
+   * Simple debounced gryo disconnect detection
+   */
+  private void checkGyroIsConnected() {
+    if (gyro.isConnected()) {
+      gyroDisconnectCount = 0;
+      gyroConnected = true;
+    } else {
+      gyroDisconnectCount++;
+      if (gyroDisconnectCount > 10) {
+        if (gyroConnected) {
+          Utils.logError("Gyro disconnected - switching to robot-relative"); // first time
+        }
+        gyroConnected = false;
+      }
+    }
+  }
+
   /**
    * Updates pose estimation using vision measurements from VisionSubsystem
    */
