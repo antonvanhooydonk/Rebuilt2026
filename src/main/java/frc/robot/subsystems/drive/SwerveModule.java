@@ -60,7 +60,7 @@ public class SwerveModule implements Sendable {
   private final String moduleName;
 
   // Previous target/desired state
-  private SwerveModuleState targetState;
+  private SwerveModuleState lastState;
 
   private double lastMoveAtTime = 0;
 
@@ -123,7 +123,7 @@ public class SwerveModule implements Sendable {
     resetEncoders();
 
     // Initialize target state
-    targetState = getState();
+    lastState = getState();
 
     // Initialize dashboard values
     SmartDashboard.putData("Drive/Module/" + this.moduleName, this);
@@ -286,8 +286,8 @@ public class SwerveModule implements Sendable {
    * Gets the target state of the swerve module
    * @return
    */
-  public SwerveModuleState getTargetState() {
-    return targetState;
+  public SwerveModuleState getLastState() {
+    return lastState;
   }
 
   /**
@@ -330,7 +330,7 @@ public class SwerveModule implements Sendable {
     setSteerAngle(desiredState.angle.getRadians());
 
     // Cache the target state
-    targetState = desiredState;
+    lastState = desiredState;
 
     // Record last time the robot was commanded to move
     if (desiredState.speedMetersPerSecond > 0.001) {
@@ -367,12 +367,12 @@ public class SwerveModule implements Sendable {
     double minSpeedForSteering = 0.1; // m/s
 
     // Calculate the differences between new state and the last target state
-    double speedDiff = Math.abs(newState.speedMetersPerSecond - targetState.speedMetersPerSecond);
-    double angleDiff = Math.abs(newState.angle.minus(targetState.angle).getRadians());
+    double speedDiff = Math.abs(newState.speedMetersPerSecond - lastState.speedMetersPerSecond);
+    double angleDiff = Math.abs(newState.angle.minus(lastState.angle).getRadians());
     
     // Apply speed filtering
     double finalSpeed = (speedDiff < speedDeadband) 
-      ? targetState.speedMetersPerSecond 
+      ? lastState.speedMetersPerSecond 
       : newState.speedMetersPerSecond;
     
     // Apply angle filtering with speed consideration
@@ -380,7 +380,7 @@ public class SwerveModule implements Sendable {
     if (Math.abs(finalSpeed) > minSpeedForSteering || angleDiff > angleDeadband) {
       finalAngle = newState.angle;
     } else {
-      finalAngle = targetState.angle;
+      finalAngle = lastState.angle;
     }
     
     // Return the filtered state
@@ -425,8 +425,8 @@ public class SwerveModule implements Sendable {
    */
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addDoubleProperty("Target Speed", () -> targetState.speedMetersPerSecond, null);
-    builder.addDoubleProperty("Target Angle", () -> targetState.angle.getDegrees(), null);
+    builder.addDoubleProperty("Last Target Speed", () -> lastState.speedMetersPerSecond, null);
+    builder.addDoubleProperty("Last Target Angle", () -> lastState.angle.getDegrees(), null);
     builder.addDoubleProperty("Current Speed", () -> getState().speedMetersPerSecond, null);
     builder.addDoubleProperty("Current Angle", () -> getState().angle.getDegrees(), null);
     builder.addDoubleProperty("Absolute Encoder", () -> absoluteEncoder.getAngleDegrees(), null);
