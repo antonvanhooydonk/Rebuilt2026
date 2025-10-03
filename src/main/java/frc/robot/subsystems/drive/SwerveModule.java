@@ -26,6 +26,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.util.ThriftyBotEncoder;
@@ -60,6 +61,8 @@ public class SwerveModule implements Sendable {
 
   // Previous target/desired state
   private SwerveModuleState targetState;
+
+  private double lastMoveAtTime = 0;
 
   /**
    * Construct a SwerveModule with the given parameters
@@ -270,9 +273,11 @@ public class SwerveModule implements Sendable {
     double absoluteAngle = absoluteEncoder.getAngleRadians();
     double relativeAngle = steerEncoder.getPosition();
     double error = Math.abs(absoluteAngle - relativeAngle);
+    double timeSinceLastMove = Timer.getFPGATimestamp() - lastMoveAtTime;
     
-    // Re-sync if error is > 5 degrees (indicates encoder drift)
-    if (error > Units.degreesToRadians(5.0)) { 
+    // Re-sync if the robot has been still for 0.5 seconds 
+    // and error is > 5 degrees (indicates encoder drift)
+    if (timeSinceLastMove > 0.5 && error > Units.degreesToRadians(5.0)) { 
       resetEncoders();
     }
   }
@@ -326,6 +331,11 @@ public class SwerveModule implements Sendable {
 
     // Cache the target state
     targetState = desiredState;
+
+    // Record last time the robot was commanded to move
+    if (desiredState.speedMetersPerSecond > 0.001) {
+      lastMoveAtTime = Timer.getFPGATimestamp();
+    }
   }
 
   /**
