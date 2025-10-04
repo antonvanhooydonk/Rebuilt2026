@@ -146,9 +146,9 @@ public class ArmSubsystem extends SubsystemBase {
    */
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addDoubleProperty("Target Position", this::getPosition, null);
+    builder.addDoubleProperty("Current Position", this::getPosition, null);
     builder.addDoubleProperty("Target Position", this::getTargetPosition, null);
-    builder.addDoubleProperty("Target Velocity", this::getVelocity, null);
+    builder.addDoubleProperty("Velocity", this::getVelocity, null);
     builder.addBooleanProperty("Algae Mode", this::isArmInAlgaeMode, null);
     builder.addDoubleProperty("Error", this::getError, null);
     builder.addBooleanProperty("At Pose", this::isArmAtPose, null);

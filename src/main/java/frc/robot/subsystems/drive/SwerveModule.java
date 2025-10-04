@@ -106,7 +106,7 @@ public class SwerveModule implements Sendable {
       this.absoluteEncoderID, 
       this.absoluteEncoderOffsetRadians, 
       this.absoluteEncoderInverted,
-      this.moduleName + " Encoder"
+      this.moduleName
     );
 
     // Configure drive motor (we use a KrakenX60)
@@ -126,7 +126,7 @@ public class SwerveModule implements Sendable {
     lastState = getState();
 
     // Initialize dashboard values
-    SmartDashboard.putData("Drive/Module/" + this.moduleName, this);
+    SmartDashboard.putData("Drive/Modules/" + this.moduleName, this);
 
     // Output initialization progress
     Utils.logInfo(this.moduleName + " swerve module intialized");
@@ -429,7 +429,7 @@ public class SwerveModule implements Sendable {
     builder.addDoubleProperty("Last Target Angle", () -> lastState.angle.getDegrees(), null);
     builder.addDoubleProperty("Current Speed", () -> getState().speedMetersPerSecond, null);
     builder.addDoubleProperty("Current Angle", () -> getState().angle.getDegrees(), null);
-    builder.addDoubleProperty("Absolute Encoder", () -> absoluteEncoder.getAngleDegrees(), null);
+    builder.addDoubleProperty("Absolute Encoder (deg)", () -> absoluteEncoder.getAngleDegrees(), null);
     builder.addDoubleProperty("Drive Current", () -> driveMotor.getSupplyCurrent().getValueAsDouble(), null);
     builder.addDoubleProperty("Drive Temp", () -> driveMotor.getDeviceTemp().getValueAsDouble(), null);
     builder.addDoubleProperty("Steer Current", () -> steerMotor.getOutputCurrent(), null);

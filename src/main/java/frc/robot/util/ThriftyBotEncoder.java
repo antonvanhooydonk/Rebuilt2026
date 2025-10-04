@@ -48,7 +48,7 @@ public class ThriftyBotEncoder implements Sendable {
     this.analogEncoder = new AnalogEncoder(analogInput);
 
     // Initialize dashboard values
-    SmartDashboard.putData("Encoder/" + name, this);
+    SmartDashboard.putData("Absolute Encoder/" + name, this);
   }
   
   /**
