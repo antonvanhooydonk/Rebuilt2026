@@ -86,6 +86,20 @@
                   "data_type": "double",
                   "show_submit_button": false
                 }
+              },
+              {
+                "title": "Current Position",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Elevator/Current Position",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
               }
             ]
           },
@@ -132,20 +146,17 @@
                 }
               },
               {
-                "title": "Algae Mode",
+                "title": "Current Position",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 150.0,
                 "height": 150.0,
-                "type": "Boolean Box",
+                "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Arm/Algae Mode",
+                  "topic": "/SmartDashboard/Arm/Current Position",
                   "period": 0.06,
-                  "data_type": "boolean",
-                  "true_color": 4283215696,
-                  "false_color": 4286348412,
-                  "true_icon": "None",
-                  "false_icon": "None"
+                  "data_type": "double",
+                  "show_submit_button": false
                 }
               }
             ]
@@ -209,7 +220,7 @@
             "properties": {
               "topic": "/SmartDashboard/Drive/Gyro",
               "period": 0.06,
-              "counter_clockwise_positive": false
+              "counter_clockwise_positive": true
             }
           },
           {
@@ -868,7 +879,7 @@
             "properties": {
               "topic": "/SmartDashboard/Drive/Gyro",
               "period": 0.06,
-              "counter_clockwise_positive": false
+              "counter_clockwise_positive": true
             }
           },
           {
