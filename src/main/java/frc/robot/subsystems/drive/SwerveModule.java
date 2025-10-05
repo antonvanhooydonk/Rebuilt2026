@@ -163,7 +163,7 @@ public class SwerveModule implements Sendable {
       .withSupplyCurrentLowerTime(1.0)
       .withStatorCurrentLimitEnable(true)
       .withStatorCurrentLimit(120);
-    
+
     // Voltage compensation
     driveConfig.Voltage
       .withPeakForwardVoltage(DriveConstants.kDriveMaxForwardVoltage)
