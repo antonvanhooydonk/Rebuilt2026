@@ -329,13 +329,13 @@ public class SwerveModule implements Sendable {
     // Set steering angle
     setSteerAngle(desiredState.angle.getRadians());
 
-    // Cache the target state
-    lastState = desiredState;
-
     // Record last time the robot was commanded to move
     if (desiredState.speedMetersPerSecond > 0.001) {
       lastMoveAtTime = Timer.getFPGATimestamp();
     }
+
+    // Cache the target state
+    lastState = desiredState;
   }
 
   /**
