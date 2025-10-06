@@ -40,6 +40,9 @@ public final class DriveConstants {
   public static final double kJoystickDeadband = 0.1; // maybe use 0.5?, joystick deadband
   public static final double kSlewRateLimit = 3.0; // joystick slew rate, start at 3.0, decrease if too twitchy, increase if too sluggish 
   public static final boolean kAntiJitter = true; // set to true to stop jittering from module noise
+  public static final double kAntiJitterSpeedDeadband = 0.001; // 1mm in m/s
+  public static final double kAntiJitterAngleDeadband = Units.degreesToRadians(2.0); // radians
+  public static final double kAntiJitterMinTurningSpeed = 0.1; // m/s
   public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(13); // max translation speed in meters per second, 12-16 ft/s is reasonable
   public static final double kMaxAccelMetersPerSecondSq = 4.5; // 4 to 6 is a reasonable range
   public static final double kMaxAngularSpeedRadiansPerSecond = Units.degreesToRadians(540);

@@ -361,23 +361,21 @@ public class SwerveModule implements Sendable {
    * @return The filtered SwerveModuleState
    */
   private SwerveModuleState applyAntiJitter(SwerveModuleState newState) {
-    // Configurable anti-jitter parameters (move to constants)
-    double speedDeadband = 0.001; // 1mm in m/s
-    double angleDeadband = Units.degreesToRadians(2.0); // radians
-    double minSpeedForSteering = 0.1; // m/s
-
     // Calculate the differences between new state and the last target state
     double speedDiff = Math.abs(newState.speedMetersPerSecond - lastState.speedMetersPerSecond);
     double angleDiff = Math.abs(newState.angle.minus(lastState.angle).getRadians());
     
     // Apply speed filtering
-    double finalSpeed = (speedDiff < speedDeadband) 
+    double finalSpeed = (speedDiff < DriveConstants.kAntiJitterSpeedDeadband) 
       ? lastState.speedMetersPerSecond 
       : newState.speedMetersPerSecond;
     
     // Apply angle filtering with speed consideration
     Rotation2d finalAngle;
-    if (Math.abs(finalSpeed) > minSpeedForSteering || angleDiff > angleDeadband) {
+    if (
+      Math.abs(finalSpeed) > DriveConstants.kAntiJitterMinTurningSpeed || 
+      angleDiff > DriveConstants.kAntiJitterAngleDeadband
+    ) {
       finalAngle = newState.angle;
     } else {
       finalAngle = lastState.angle;
