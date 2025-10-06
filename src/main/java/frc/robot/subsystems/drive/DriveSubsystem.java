@@ -58,7 +58,7 @@ public class DriveSubsystem extends SubsystemBase {
   // Slew rate limiters to make joystick inputs smoother
   private final SlewRateLimiter xSpeedLimiter = new SlewRateLimiter(DriveConstants.kSlewRateLimit);
   private final SlewRateLimiter ySpeedLimiter = new SlewRateLimiter(DriveConstants.kSlewRateLimit);
-  private final SlewRateLimiter rotLimiter = new SlewRateLimiter(DriveConstants.kSlewRateLimit);
+  private final SlewRateLimiter rSpeedLimiter = new SlewRateLimiter(DriveConstants.kSlewRateLimit);
   
   // Swerve modules - ensure indexed order is 0 = FL, 1 = FR, 2 = BL, 3 = BR
   private final SwerveModule[] modules = new SwerveModule[4];
@@ -386,31 +386,31 @@ public class DriveSubsystem extends SubsystemBase {
    * Field relative driving is automatically disabled if the gyro is disconnected. 
    * @param xSpeed Speed in x direction (-1 to 1)
    * @param ySpeed Speed in y direction (-1 to 1)
-   * @param rot Rotation speed (-1 to 1)
+   * @param rSpeed Rotation speed (-1 to 1)
    */
-  public void drive(double xSpeed, double ySpeed, double rot) {
+  public void drive(double xSpeed, double ySpeed, double rSpeed) {
     // Apply deadband to the raw joystick inputs.
     // This ignores noise from the joystick when it's in the neutral position.
     xSpeed = MathUtil.applyDeadband(xSpeed, DriveConstants.kJoystickDeadband);
     ySpeed = MathUtil.applyDeadband(ySpeed, DriveConstants.kJoystickDeadband);
-    rot = MathUtil.applyDeadband(rot, DriveConstants.kJoystickDeadband);
+    rSpeed = MathUtil.applyDeadband(rSpeed, DriveConstants.kJoystickDeadband);
 
     // Square the inputs (while preserving sign) for finer control at low speeds.
     // Cubing is used in "slow" mode because it gives even finer control. 
     // Joystick input is linear by default. May need to remove cubing?
     xSpeed = Math.copySign(Math.pow(xSpeed, (slowMode ? 3 : 2)), xSpeed);
     ySpeed = Math.copySign(Math.pow(ySpeed, (slowMode ? 3 : 2)), ySpeed);
-    rot = Math.copySign(Math.pow(rot, (slowMode ? 3 : 2)), rot);
+    rSpeed = Math.copySign(Math.pow(rSpeed, (slowMode ? 3 : 2)), rSpeed);
 
     // Then apply slew rate limiters for a smoother acceleration ramp 
     xSpeed = xSpeedLimiter.calculate(xSpeed);
     ySpeed = ySpeedLimiter.calculate(ySpeed);
-    rot = rotLimiter.calculate(rot);
+    rSpeed = rSpeedLimiter.calculate(rSpeed);
 
     // Convert joystick's -1..1 to m/s and rad/s velocitys
     double xSpeedMS = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedMS = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
-    double rotSpeedRad = rot * DriveConstants.kMaxAngularSpeedRadiansPerSecond;
+    double rSpeedRad = rSpeed * DriveConstants.kMaxAngularSpeedRadiansPerSecond;
 
     // Force robot-relative if gyro disconnected
     if (fieldRelative && !gyroConnected) {
@@ -422,10 +422,10 @@ public class DriveSubsystem extends SubsystemBase {
     if (fieldRelative) {
       int invert = Utils.isRedAlliance() ? -1 : 1;
       chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-        xSpeedMS * invert, ySpeedMS * invert, rotSpeedRad, getHeading()
+        xSpeedMS * invert, ySpeedMS * invert, rSpeedRad, getHeading()
       );
     } else {
-      chassisSpeeds = new ChassisSpeeds(xSpeedMS, ySpeedMS, rotSpeedRad);
+      chassisSpeeds = new ChassisSpeeds(xSpeedMS, ySpeedMS, rSpeedRad);
     }
 
     // Drive the robot with robot-relative speeds
