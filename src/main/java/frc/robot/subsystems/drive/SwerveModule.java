@@ -319,7 +319,7 @@ public class SwerveModule implements Sendable {
     desiredState.optimize(getState().angle);
 
     // Apply anti-jitter if enabled
-    if (DriveConstants.kAntiJitter) {
+    if (DriveConstants.kAntiJitterEnabled) {
       desiredState = applyAntiJitter(desiredState);
     }
 

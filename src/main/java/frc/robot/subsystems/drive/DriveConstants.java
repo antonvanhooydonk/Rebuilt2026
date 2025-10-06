@@ -39,7 +39,7 @@ public final class DriveConstants {
   // Maximum speeds - adjust based on your robot capabilities
   public static final double kJoystickDeadband = 0.1; // maybe use 0.5?, joystick deadband
   public static final double kSlewRateLimit = 3.0; // joystick slew rate, start at 3.0, decrease if too twitchy, increase if too sluggish 
-  public static final boolean kAntiJitter = true; // set to true to stop jittering from module noise
+  public static final boolean kAntiJitterEnabled = true; // set to true to stop jittering from module noise
   public static final double kAntiJitterSpeedDeadband = 0.001; // 1mm in m/s
   public static final double kAntiJitterAngleDeadband = Units.degreesToRadians(2.0); // radians
   public static final double kAntiJitterMinTurningSpeed = 0.1; // m/s
