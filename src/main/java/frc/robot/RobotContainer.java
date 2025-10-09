@@ -70,22 +70,22 @@ public class RobotContainer {
     // Turning is controlled by the X axis of the right stick.
     // Drive field relative by default.
     // See: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
-    // driveSubsystem.setDefaultCommand(new RunCommand(() -> 
-    //   driveSubsystem.drive(
-    //     -xboxController.getLeftY(),
-    //     -xboxController.getLeftX(),
-    //     -xboxController.getRightX()
-    //   ), 
-    //   driveSubsystem
-    // ));
     driveSubsystem.setDefaultCommand(new RunCommand(() -> 
       driveSubsystem.drive(
-        -xboxController.getRawAxis(1),
-        -xboxController.getRawAxis(0),
-        -xboxController.getRawAxis(4)
+        -xboxController.getLeftY(),
+        -xboxController.getLeftX(),
+        -xboxController.getRightX()
       ), 
       driveSubsystem
     ));
+    // driveSubsystem.setDefaultCommand(new RunCommand(() -> 
+    //   driveSubsystem.drive(
+    //     -xboxController.getRawAxis(1),
+    //     -xboxController.getRawAxis(0),
+    //     -xboxController.getRawAxis(4)
+    //   ), 
+    //   driveSubsystem
+    // ));
 
     // Configure the autonomous command chooser
     configureAutos();
