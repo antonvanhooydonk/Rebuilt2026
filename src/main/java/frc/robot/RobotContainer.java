@@ -138,24 +138,43 @@ public class RobotContainer {
    * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
    */
   private void configureButtonBindings() {
-    // Configure Xbox controller bindings
-    xboxController.start().onTrue(new RunCommand(() -> driveSubsystem.zeroHeading(), driveSubsystem).ignoringDisable(true));
-    xboxController.back().onTrue(Commands.none());
+    // Zero gyro yaw when start+back is pushed
+    xboxController.start().and(xboxController.back()).onTrue(
+      new RunCommand(() -> driveSubsystem.zeroHeading(), driveSubsystem).ignoringDisable(true)
+    );
+
+    // Score at coral level 1
     xboxController.a().onTrue(new MoveArmCommand(armSubsystem, ArmConstants.HomePosition));
-    xboxController.b().onTrue(Commands.none());
-    xboxController.x().onTrue(new MoveArmCommand(armSubsystem, ArmConstants.CoralMovingPosition));
+    
+    // Score at coral level 2
+    xboxController.x().onTrue(Commands.none());
+
+    // Score at coral level 3
+    xboxController.b().onTrue(new MoveArmCommand(armSubsystem, ArmConstants.CoralMovingPosition));
+    
+    // Score at coral level 4
     xboxController.y().onTrue(Commands.none());
     
+    // Drive to left scoring pose of the current camera target
     xboxController.leftBumper()
       .whileTrue(driveSubsystem.driveToPoseCommand(Utils.getLeftScoringPose(visionSubsystem, "FRONT_CAMERA"))
       .andThen(new RumbleControllerCommand(xboxController, 2.0)));
+    
+    // Drive to right scoring pose of the current camera target
     xboxController.rightBumper()
       .whileTrue(driveSubsystem.driveToPoseCommand(Utils.getRightScoringPose(visionSubsystem, "FRONT_CAMERA"))
       .andThen(new RumbleControllerCommand(xboxController, 2.0)));
 
-    xboxController.rightTrigger().onTrue(new RunCommand(() -> driveSubsystem.setSlowMode(true), driveSubsystem));
-    xboxController.rightTrigger().onFalse(new RunCommand(() -> driveSubsystem.setSlowMode(false), driveSubsystem));
+    // Manually toggle "algae" mode
+    xboxController.leftTrigger().onTrue(
+      new RunCommand(() -> armSubsystem.setAlgaeMode(!armSubsystem.isAlgaeMode()), armSubsystem)
+    );
 
+    // Manually toggle "slow" mode
+    xboxController.rightTrigger().onTrue(
+      new RunCommand(() -> driveSubsystem.setSlowMode(!driveSubsystem.isSlowMode()), driveSubsystem)
+    );
+ 
     // Configure operator controller 1 - blue buttons
     opController1.button(Controller1Constants.ButtonBlue1)
       .onTrue(new MoveArmCommand(armSubsystem, ArmConstants.AlgaeMovingPosition)

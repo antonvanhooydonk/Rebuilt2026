@@ -25,6 +25,7 @@ public class ArmSubsystem extends SubsystemBase {
   private TalonFXConfiguration armMotorConfig;
   private double targetPos;
   private double zeroPoint;
+  private boolean algaeMode = false;
 
   public ArmSubsystem() {
     // Initialize motor
@@ -139,6 +140,25 @@ public class ArmSubsystem extends SubsystemBase {
 
     // default false
     return false;
+  }
+
+  /**
+   * Check if the arm is in algae mode
+   * @return
+   */
+  public boolean isAlgaeMode() {
+    return algaeMode;
+  }
+
+  /**
+   * Set algae mode
+   * @param mode True if in algae mode, false otherwise
+   */
+  public void setAlgaeMode(boolean mode) {
+    algaeMode = mode;
+    if (algaeMode) {
+    
+    }
   }
 
   /**
