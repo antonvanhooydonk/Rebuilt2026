@@ -53,6 +53,7 @@ public class RobotContainer {
 
   // Initialize our robot controllers
   private final CommandXboxController xboxController = new CommandXboxController(0);
+  // private final CommandGenericHID xboxController = new CommandGenericHID(0);
   private final CommandGenericHID opController1 = new CommandGenericHID(1);
   private final CommandGenericHID opController2 = new CommandGenericHID(2);
 
@@ -69,11 +70,19 @@ public class RobotContainer {
     // Turning is controlled by the X axis of the right stick.
     // Drive field relative by default.
     // See: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
+    // driveSubsystem.setDefaultCommand(new RunCommand(() -> 
+    //   driveSubsystem.drive(
+    //     -xboxController.getLeftY(),
+    //     -xboxController.getLeftX(),
+    //     -xboxController.getRightX()
+    //   ), 
+    //   driveSubsystem
+    // ));
     driveSubsystem.setDefaultCommand(new RunCommand(() -> 
       driveSubsystem.drive(
-        -xboxController.getLeftY(),
-        -xboxController.getLeftX(),
-        -xboxController.getRightX()
+        -xboxController.getRawAxis(1),
+        -xboxController.getRawAxis(0),
+        -xboxController.getRawAxis(4)
       ), 
       driveSubsystem
     ));

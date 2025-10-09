@@ -112,7 +112,7 @@ public class SwerveModule implements Sendable {
     // Configure drive motor (we use a KrakenX60)
     configureDriveMotor();
 
-    // Configure steering motor (we use a Neo550)
+    // Configure steering motor (we use a Neo)
     configureSteerMotor();
 
     // Get steering PID controller and relative encoder

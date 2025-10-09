@@ -448,17 +448,20 @@ public class DriveSubsystem extends SubsystemBase {
     // call SwerveDriveKinematics.desaturateWheelSpeeds(), 
     // before or after using the setpoint generator, as 
     // it will discretize them for you.
-    currentSetpoint = setpointGenerator.generateSetpoint(
+    SwerveSetpoint nextSetpoint = setpointGenerator.generateSetpoint(
       currentSetpoint,                      // The previous "current" setpoint
       speeds,                               // The desired target speeds
       DriveConstants.kPeriodicTimeSeconds   // The loop time of the robot code, in seconds
     );
 
     // Set each module state directly from the setpoint
-    SwerveModuleState[] desiredStates = currentSetpoint.moduleStates();
+    SwerveModuleState[] desiredStates = nextSetpoint.moduleStates();
     for (int i = 0; i < 4; i++) {
       modules[i].setDesiredState(desiredStates[i]);
     }
+
+    // Update the current setpoint
+    currentSetpoint = nextSetpoint;
   }
 
   /**
@@ -497,7 +500,11 @@ public class DriveSubsystem extends SubsystemBase {
   /**
    * Sets modules to X formation for defense
    */
-  public void setXFormation() {
+  public void stopAndLock() {
+    // Stop the robot
+    stop();
+
+    // Set modules to X formation
     SwerveModuleState[] states = {
       new SwerveModuleState(0, Rotation2d.fromDegrees(45)), // Front Left
       new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),        // Front Right

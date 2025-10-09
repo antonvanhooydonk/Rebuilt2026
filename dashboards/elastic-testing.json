@@ -359,14 +359,14 @@
                 }
               },
               {
-                "title": "Current Angle",
+                "title": "Desired Speed",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 150.0,
                 "height": 150.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/FL/Current Angle",
+                  "topic": "/SmartDashboard/Drive/Modules/FL/Last Target Speed",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -387,7 +387,7 @@
                 }
               },
               {
-                "title": "Last Target Angle",
+                "title": "Desired Angle",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 150.0,
@@ -395,6 +395,20 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "/SmartDashboard/Drive/Modules/FL/Last Target Angle",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Current Angle",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/FL/Current Angle",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -428,14 +442,14 @@
                 }
               },
               {
-                "title": "Current Angle",
+                "title": "Desired Speed",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 150.0,
                 "height": 150.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/FR/Current Angle",
+                  "topic": "/SmartDashboard/Drive/Modules/FR/Last Target Speed",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -456,7 +470,7 @@
                 }
               },
               {
-                "title": "Last Target Angle",
+                "title": "Desired Angle",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 150.0,
@@ -464,6 +478,20 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "/SmartDashboard/Drive/Modules/FR/Last Target Angle",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Current Angle",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/FR/Current Angle",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -497,14 +525,14 @@
                 }
               },
               {
-                "title": "Current Angle",
+                "title": "Desired Speed",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 150.0,
                 "height": 150.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/BL/Current Angle",
+                  "topic": "/SmartDashboard/Drive/Modules/BL/Last Target Speed",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -525,7 +553,7 @@
                 }
               },
               {
-                "title": "Last Target Angle",
+                "title": "Desired Angle",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 150.0,
@@ -533,6 +561,20 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "/SmartDashboard/Drive/Modules/BL/Last Target Angle",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Current Angle",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/BL/Current Angle",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -566,14 +608,14 @@
                 }
               },
               {
-                "title": "Current Angle",
+                "title": "Desired Speed",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 150.0,
                 "height": 150.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/BR/Current Angle",
+                  "topic": "/SmartDashboard/Drive/Modules/BR/Last Target Speed",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -594,7 +636,7 @@
                 }
               },
               {
-                "title": "Last Target Angle",
+                "title": "Desired Angle",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 150.0,
@@ -602,6 +644,20 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "/SmartDashboard/Drive/Modules/BR/Last Target Angle",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Current Angle",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/BR/Current Angle",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false

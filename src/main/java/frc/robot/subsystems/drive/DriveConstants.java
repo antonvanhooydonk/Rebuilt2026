@@ -24,7 +24,7 @@ public final class DriveConstants {
   public static final double kWheelCircumference = kWheelDiameterMeters * Math.PI;
   public static final double kWheelCOF = 1.19; // could try 1.0 to 1.3, coefficient of friction of wheel on carpet
   public static final double kRobotMassKg = Units.lbsToKilograms(134);
-  public static final double kRobotMOI = 6.884; // kg m^2, moment of inertia about center of robot
+  public static final double kRobotMOI = 0.025; // 6.884; // kg m^2, moment of inertia about center of robot
   public static final double kDriveMotorCurrentLimit = 60.0; // The max current draw in amps of a swerve module drive motor
   public static final double kDriveMotorCurrentLowerLimit = 40.0; // The lower limit current draw in amps of a swerve module drive motor
   public static final double kDriveMaxForwardVoltage = 12.0; // Max voltage to apply to drive motors when driving forward
@@ -44,7 +44,7 @@ public final class DriveConstants {
   public static final double kAntiJitterAngleDeadband = Units.degreesToRadians(2.0); // radians
   public static final double kAntiJitterMinTurningSpeed = 0.1; // m/s
   public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(13); // max translation speed in meters per second, 12-16 ft/s is reasonable
-  public static final double kMaxAccelMetersPerSecondSq = 4.5; // 4 to 6 is a reasonable range
+  public static final double kMaxAccelMetersPerSecondSq = 5.5; // 4 to 6 is a reasonable range
   public static final double kMaxAngularSpeedRadiansPerSecond = Units.degreesToRadians(540);
   public static final double kMaxAngularAccelRadiansPerSecondSq = Units.degreesToRadians(720); // 0.5 is a conservative default
   public static final double kWheelLockTimeSeconds = 10.0; // seconds to lock wheels when robot is disabled
