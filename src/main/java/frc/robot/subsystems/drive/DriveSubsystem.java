@@ -263,16 +263,15 @@ public class DriveSubsystem extends SubsystemBase {
     boolean timeout = false;
 
     while (gyro.isCalibrating()) {
-      Timer.delay(0.01);
+      // Wait for 1 second
+      Timer.delay(1.0);
       waitCount++;
       
-      // Print every second
-      if (waitCount % 100 == 0) { 
-        Utils.logInfo("Calibrating gyro... (" + (waitCount/100) + "s). Do not move the robot!");
-      }
+      // Print message every second
+      Utils.logInfo("Calibrating gyro... (" + waitCount + "s). Do not move the robot!");
       
       // 20 seconds timeout
-      if (waitCount > 2000) { 
+      if (waitCount > 20) { 
         timeout = true;
         break;
       }
