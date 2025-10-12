@@ -405,8 +405,8 @@ public class DriveSubsystem extends SubsystemBase {
     rSpeed = rSpeedLimiter.calculate(rSpeed);
 
     // Convert joystick's -1..1 to m/s and rad/s velocitys
-    double xSpeedMS = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
-    double ySpeedMS = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
+    double xSpeedMPS = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
+    double ySpeedMPS = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double rSpeedRad = rSpeed * DriveConstants.kMaxAngularSpeedRadiansPerSecond;
 
     // Force robot-relative if gyro disconnected
@@ -419,10 +419,10 @@ public class DriveSubsystem extends SubsystemBase {
     if (fieldRelative) {
       int invert = Utils.isRedAlliance() ? -1 : 1;
       chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-        xSpeedMS * invert, ySpeedMS * invert, rSpeedRad, getHeading()
+        xSpeedMPS * invert, ySpeedMPS * invert, rSpeedRad, getHeading()
       );
     } else {
-      chassisSpeeds = new ChassisSpeeds(xSpeedMS, ySpeedMS, rSpeedRad);
+      chassisSpeeds = new ChassisSpeeds(xSpeedMPS, ySpeedMPS, rSpeedRad);
     }
 
     // Drive the robot with robot-relative speeds
