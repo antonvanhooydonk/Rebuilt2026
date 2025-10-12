@@ -285,10 +285,10 @@ public class DriveSubsystem extends SubsystemBase {
       Utils.logError("Gyro calibration complete. Magnetometer not calibrated!");
     }
     else {
-      Utils.logInfo("Gyro calibration complete successfully.");
+      Utils.logInfo("Gyro calibration completed successfully.");
     }
   }
-  
+
   /**
    * Simple debounced gryo disconnect detection
    */
