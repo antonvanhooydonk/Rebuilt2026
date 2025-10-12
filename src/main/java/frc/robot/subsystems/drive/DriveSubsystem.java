@@ -610,10 +610,10 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public SwerveModuleState[] getModuleStates() {
     return new SwerveModuleState[] {
-      modules[0].getState(),
-      modules[1].getState(),
-      modules[2].getState(),
-      modules[3].getState()
+      modules[0].getState(),  // front left
+      modules[1].getState(),  // front right
+      modules[2].getState(),  // back left
+      modules[3].getState()   // back right
     };
   }
 
@@ -623,10 +623,10 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public SwerveModulePosition[] getModulePositions() {
     return new SwerveModulePosition[] {
-      modules[0].getPosition(),
-      modules[1].getPosition(),
-      modules[2].getPosition(),
-      modules[3].getPosition()
+      modules[0].getPosition(), // front left
+      modules[1].getPosition(), // front right
+      modules[2].getPosition(), // back left
+      modules[3].getPosition()  // back right
     };
   }
 
