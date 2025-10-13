@@ -98,9 +98,9 @@ public class DriveSubsystem extends SubsystemBase {
     gyro = new AHRS(NavXComType.kMXP_SPI, NavXUpdateRate.k50Hz);
     waitForGyroCalibration();
 
-    // Add an offset if the gyro wasn't mounted with the X axis facing forward.
-    // NOTE: Change getGyroAngle() to use getAngle() instead of getYaw() if you do this. 
-    // gyro.setAngleAdjustment(0); 
+    // Set an offset if the gyro wasn't mounted with the X axis pointing forward.
+    // NOTE: if the value is 0, you can comment this line out.
+    gyro.setAngleAdjustment(DriveConstants.kGyroXAngleOffsetDegrees);
     
     // Initialize front left swerve module
     modules[0] = new SwerveModule(
@@ -533,8 +533,8 @@ public class DriveSubsystem extends SubsystemBase {
    * NOTE: Should never need to call this if vision is working properly.
    */
   public void zeroHeading() {
-    // Reset gyro yaw to zero
-    gyro.zeroYaw();
+    // Reset gyro
+    gyro.reset(); // gyro.zeroYaw();
 
     // Reset pose estimator
     resetPose(poseEstimator.getEstimatedPosition());
@@ -553,8 +553,14 @@ public class DriveSubsystem extends SubsystemBase {
       return new Rotation2d();
     }
 
-    // Negate the angle b/c our NavX is CW positive
-    return Rotation2d.fromDegrees(-gyro.getYaw()); 
+    // Return the gyro angle with the offset applied (CCW positive)
+    return Rotation2d.fromDegrees(-gyro.getAngle());
+
+    // The getAngle() method should drive the same as the getYaw() because
+    // we're turning returing it as Rototation2d, which normalizes the
+    // accumulating angle that is return by getAngle().
+    // Return the gyro yaw angle (CCW positive)
+    // return Rotation2d.fromDegrees(-gyro.getYaw()); 
   }
 
   /**
