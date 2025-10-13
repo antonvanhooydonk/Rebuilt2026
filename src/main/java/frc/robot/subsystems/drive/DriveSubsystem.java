@@ -99,7 +99,7 @@ public class DriveSubsystem extends SubsystemBase {
     waitForGyroCalibration();
 
     // Set an offset if the gyro wasn't mounted with the X axis pointing forward.
-    // NOTE: if the value is 0, you can comment this line out.
+    // NOTE: if the value is 0, you can safely comment this line out.
     gyro.setAngleAdjustment(DriveConstants.kGyroXAngleOffsetDegrees);
     
     // Initialize front left swerve module
