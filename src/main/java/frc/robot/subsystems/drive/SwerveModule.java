@@ -29,7 +29,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import frc.robot.util.ThriftyBotEncoder;
+import frc.robot.sensors.ThriftyBotEncoder;
 import frc.robot.util.Utils;
 
 /**

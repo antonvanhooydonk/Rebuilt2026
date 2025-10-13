@@ -17,10 +17,6 @@ import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 
-import com.studica.frc.AHRS;
-import com.studica.frc.AHRS.NavXComType;
-import com.studica.frc.AHRS.NavXUpdateRate;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -42,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Robot;
+import frc.robot.sensors.NavX2Gyro;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem.VisionMeasurement;
 import frc.robot.util.Utils;
@@ -64,10 +61,8 @@ public class DriveSubsystem extends SubsystemBase {
   private final SwerveModule[] modules = new SwerveModule[4];
   
   // Gyroscope
-  private final AHRS gyro;
-  private boolean gyroConnected = true;
-  private int gyroDisconnectCount = 0;
-  
+  private final NavX2Gyro gyro;
+
   // Kinematics and odometry
   private final SwerveDriveKinematics kinematics;
   private final SwerveDrivePoseEstimator poseEstimator;
@@ -95,12 +90,7 @@ public class DriveSubsystem extends SubsystemBase {
     this.visionSubsystem = visionSubsystem;
 
     // Initialize gyro
-    gyro = new AHRS(NavXComType.kMXP_SPI, NavXUpdateRate.k50Hz);
-    waitForGyroCalibration();
-
-    // Set an offset if the gyro wasn't mounted with the X axis pointing forward.
-    // NOTE: if the value is 0, you can safely comment this line out.
-    gyro.setAngleAdjustment(DriveConstants.kGyroXAngleOffsetDegrees);
+    gyro = new NavX2Gyro();
     
     // Initialize front left swerve module
     modules[0] = new SwerveModule(
@@ -161,7 +151,7 @@ public class DriveSubsystem extends SubsystemBase {
     // Initialize pose estimator for vision integration
     poseEstimator = new SwerveDrivePoseEstimator(
       kinematics,           // The kinematics object
-      getGyroAngle(),       // The current gyro angle
+      gyro.getAngle(),      // The current gyro angle
       getModulePositions(), // The current module positions
       new Pose2d()          // Will be updated by auto and vision
     );
@@ -221,7 +211,6 @@ public class DriveSubsystem extends SubsystemBase {
     // Add data to dashboard
     SmartDashboard.putData("Drive", this);
     SmartDashboard.putData("Drive/Field", field2d);
-    SmartDashboard.putData("Drive/Gyro", gyro);
     SmartDashboard.putData("Drive/Swerve", builder -> {
       builder.setSmartDashboardType("SwerveDrive");
       builder.addDoubleProperty("Front Left Angle", () -> modules[0].getState().angle.getRadians(), null);
@@ -241,11 +230,11 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Check if the gyro is connected
-    checkGyroIsConnected();
+    // Run the gyro's periodic method
+    gyro.periodic();
 
     // Update odometry
-    poseEstimator.updateWithTime(Timer.getFPGATimestamp(), getGyroAngle(), getModulePositions());
+    poseEstimator.updateWithTime(Timer.getFPGATimestamp(), gyro.getAngle(), getModulePositions());
     
     // Add vision measurements to the pose estimator
     addVisionMeasurements();
@@ -256,58 +245,6 @@ public class DriveSubsystem extends SubsystemBase {
     // Call each swerve module's periodic
     for (var module : modules) {
       module.periodic();
-    }
-  }
-
-  /**
-   * Waits for gyro calibration to complete (with timeout)
-   */
-  private void waitForGyroCalibration() {
-    int waitCount = 0;
-    boolean timeout = false;
-
-    while (gyro.isCalibrating()) {
-      // Wait for 1 second
-      Timer.delay(1.0);
-      waitCount++;
-      
-      // Print message every second
-      Utils.logInfo("Calibrating gyro... (" + waitCount + "s). Do not move the robot!");
-      
-      // 20 seconds timeout
-      if (waitCount > 20) { 
-        timeout = true;
-        break;
-      }
-    }
-
-    // Print calibration complete message
-    if (timeout) {
-      Utils.logError("Gyro calibration completed with timeout.");
-    }
-    else if (!gyro.isMagnetometerCalibrated()) {
-      Utils.logError("Gyro calibration complete. Magnetometer not calibrated!");
-    }
-    else {
-      Utils.logInfo("Gyro calibration completed successfully.");
-    }
-  }
-
-  /**
-   * Simple debounced gryo disconnect detection
-   */
-  private void checkGyroIsConnected() {
-    if (gyro.isConnected()) {
-      gyroDisconnectCount = 0;
-      gyroConnected = true;
-    } else {
-      gyroDisconnectCount++;
-      if (gyroDisconnectCount > 10) {
-        if (gyroConnected) {
-          Utils.logError("Gyro disconnected - switching to robot-relative"); // first time
-        }
-        gyroConnected = false;
-      }
     }
   }
 
@@ -342,7 +279,8 @@ public class DriveSubsystem extends SubsystemBase {
    * @param targetPose The Pose2d to aim at
    * @return Command to aim at the target pose
    */
-  public Command aimAtTargetCommand(Pose2d targetPose) {
+  
+   public Command aimAtTargetCommand(Pose2d targetPose) {
     // Check for null target pose
     if (targetPose == null) {
       return Commands.none();
@@ -413,7 +351,7 @@ public class DriveSubsystem extends SubsystemBase {
     double rSpeedRad = rSpeed * DriveConstants.kMaxAngularSpeedRadiansPerSecond;
 
     // Force robot-relative if gyro disconnected
-    if (fieldRelative && !gyroConnected) {
+    if (fieldRelative && !gyro.isConnected()) {
       fieldRelative = false;
     }
 
@@ -534,33 +472,10 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void zeroHeading() {
     // Reset gyro
-    gyro.reset(); // gyro.zeroYaw();
+    gyro.reset();
 
     // Reset pose estimator
     resetPose(poseEstimator.getEstimatedPosition());
-  }
-
-  /**
-   * Gets the current raw gyro angle. This may not match the robot's heading
-   * due to initial offset, or drift over time. Generally, this is only 
-   * used as input into the swerve drive PoseEstimator, and then our 
-   * robot can be driven based on the PoseEstimator's heading.
-   * @return The current gyro angle as a Rotation2d, CCW positive
-   */
-  public Rotation2d getGyroAngle() {
-      // Return zero if gyro is disconnected - effectively forces robot-relative driving
-    if (!gyroConnected) {
-      return new Rotation2d();
-    }
-
-    // Return the gyro angle with the offset applied (CCW positive)
-    return Rotation2d.fromDegrees(-gyro.getAngle());
-
-    // The getAngle() method should drive the same as the getYaw() because
-    // we're turning returing it as Rototation2d, which normalizes the
-    // accumulating angle that is return by getAngle().
-    // Return the gyro yaw angle (CCW positive)
-    // return Rotation2d.fromDegrees(-gyro.getYaw()); 
   }
 
   /**
@@ -571,22 +486,6 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public Rotation2d getHeading() {
     return poseEstimator.getEstimatedPosition().getRotation(); 
-  }
-
-  /**
-   * Gets the current pitch of the robot (for auto-balancing)
-   * @return Current pitch in degrees
-   */
-  public double getPitch() {
-    return gyro.getPitch();
-  }
-
-  /**
-   * Gets the current roll of the robot
-   * @return Current roll in degrees
-   */
-  public double getRoll() {
-    return gyro.getRoll();
   }
 
   /**
@@ -602,7 +501,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @param pose New pose
    */
   public void resetPose(Pose2d pose) {
-    poseEstimator.resetPosition(getGyroAngle(), getModulePositions(), pose);
+    poseEstimator.resetPosition(gyro.getAngle(), getModulePositions(), pose);
   }
 
   /**
@@ -687,8 +586,8 @@ public class DriveSubsystem extends SubsystemBase {
     // Robot telemetry
     builder.addStringProperty("Robot Pose", () -> getPose().toString(), null);
     builder.addDoubleProperty("Robot Heading", () -> getHeading().getDegrees(), null);
-    builder.addDoubleProperty("Robot Pitch", this::getPitch, null);
-    builder.addDoubleProperty("Robot Roll", this::getRoll, null);
+    builder.addDoubleProperty("Robot Pitch", () -> gyro.getPitch(), null);
+    builder.addDoubleProperty("Robot Roll", () -> gyro.getRoll(), null);
     builder.addBooleanProperty("Field Relative", this::isFieldRelative, null);
     builder.addBooleanProperty("Slow Mode", this::isSlowMode, null);
     
