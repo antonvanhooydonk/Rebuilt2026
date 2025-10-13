@@ -21,8 +21,8 @@ public class NavX2Gyro implements Sendable {
   private final AHRS gyro;
   
   // Instance fields
-  private boolean gyroConnected = true;
-  private int gyroDisconnectCount = 0;
+  private boolean connected = true;
+  private int disconnectCount = 0;
   
   /**
    * Creates a new NavX2 gyro object.
@@ -88,15 +88,15 @@ public class NavX2Gyro implements Sendable {
    */
   private void checkIsConnected() {
     if (gyro.isConnected()) {
-      gyroDisconnectCount = 0;
-      gyroConnected = true;
+      disconnectCount = 0;
+      connected = true;
     } else {
-      gyroDisconnectCount++;
-      if (gyroDisconnectCount > 10) {
-        if (gyroConnected) {
+      disconnectCount++;
+      if (disconnectCount > 10) {
+        if (connected) {
           Utils.logError("Gyro disconnected"); // first time
         }
-        gyroConnected = false;
+        connected = false;
       }
     }
   }
@@ -106,7 +106,7 @@ public class NavX2Gyro implements Sendable {
    * @return True if the gyro is connected, false if disconnected
    */
   public boolean isConnected() {
-    return gyroConnected;
+    return connected;
   }
 
   /**
@@ -118,7 +118,7 @@ public class NavX2Gyro implements Sendable {
    */
   public Rotation2d getAngle() {
     // Return zero if gyro is disconnected - effectively forces robot-relative driving
-    if (!gyroConnected) {
+    if (!connected) {
       return new Rotation2d();
     }
 
