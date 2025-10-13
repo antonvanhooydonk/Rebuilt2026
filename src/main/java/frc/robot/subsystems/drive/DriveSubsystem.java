@@ -97,6 +97,10 @@ public class DriveSubsystem extends SubsystemBase {
     // Initialize gyro
     gyro = new AHRS(NavXComType.kMXP_SPI, NavXUpdateRate.k50Hz);
     waitForGyroCalibration();
+
+    // Add an offset if the gyro wasn't mounted with the X axis facing forward.
+    // NOTE: Change getGyroAngle() to use getAngle() instead of getYaw() if you do this. 
+    // gyro.setAngleAdjustment(0); 
     
     // Initialize front left swerve module
     modules[0] = new SwerveModule(
