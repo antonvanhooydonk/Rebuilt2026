@@ -46,17 +46,17 @@ public class NavX2Gyro implements Sendable {
    * Periodic method to be called by subsystem
    */
   public void periodic() {
-    checkIsConnected();
+    checkConnection();
   }
 
   /**
    * Waits for gyro calibration to complete (with timeout)
    */
   private void waitForGyroCalibration() {
-    int waitCount = 0;
     boolean timeout = false;
+    int waitCount = 0;
 
-    while (gyro.isCalibrating()) {
+    while (gyro.isCalibrating() && timeout == false) {
       // Wait for 1 second
       Timer.delay(1.0);
       waitCount++;
@@ -67,7 +67,6 @@ public class NavX2Gyro implements Sendable {
       // 20 seconds timeout
       if (waitCount > 20) { 
         timeout = true;
-        break;
       }
     }
 
@@ -84,9 +83,11 @@ public class NavX2Gyro implements Sendable {
   }
 
   /**
-   * Simple debounced gryo disconnect detection
+   * Simple debounced gryo disconnect detection.
+   * The gyro must be disconnected for 10 consecutive 
+   * checks to be considered disconnected.
    */
-  private void checkIsConnected() {
+  private void checkConnection() {
     if (gyro.isConnected()) {
       disconnectCount = 0;
       connected = true;
@@ -94,7 +95,7 @@ public class NavX2Gyro implements Sendable {
       disconnectCount++;
       if (disconnectCount > 10) {
         if (connected) {
-          Utils.logError("Gyro disconnected"); // first time
+          Utils.logError("Gyro disconnected! (checkConnection)"); // first time
         }
         connected = false;
       }
@@ -122,12 +123,12 @@ public class NavX2Gyro implements Sendable {
       return new Rotation2d();
     }
 
+    // The getAngle() method should drive the same as the getYaw() because
+    // we're turning returing it as Rototation2d and it is normalized by
+    // the SwerveDrivePoseEstimator.
     // Return the gyro angle with the offset applied (CCW positive)
     return Rotation2d.fromDegrees(-gyro.getAngle());
 
-    // The getAngle() method should drive the same as the getYaw() because
-    // we're turning returing it as Rototation2d, which normalizes the
-    // accumulating angle that is return by getAngle().
     // Return the gyro yaw angle (CCW positive)
     // return Rotation2d.fromDegrees(-gyro.getYaw()); 
   }
@@ -160,7 +161,8 @@ public class NavX2Gyro implements Sendable {
    * Resets the gyro to zero.
    */
   public void reset() {
-    gyro.reset(); // gyro.zeroYaw();
+    gyro.reset(); 
+    gyro.zeroYaw();
   }
 
   /**
