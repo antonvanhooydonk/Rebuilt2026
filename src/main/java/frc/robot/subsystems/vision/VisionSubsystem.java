@@ -5,13 +5,11 @@
 package frc.robot.subsystems.vision;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -23,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.FieldConstants;
+import frc.robot.sensors.Camera;
 import frc.robot.util.Utils;
 
 /**
@@ -31,33 +30,6 @@ import frc.robot.util.Utils;
  * caches the results for later use by the subsystem.
  */
 public class VisionSubsystem extends SubsystemBase {
-  // Camera configuration class
-  public static class CameraConfig {
-    private final String name;
-    private final Transform3d robotToCamera;
-    
-    public CameraConfig(String name, Transform3d robotToCamera) {
-      this.name = name;
-      this.robotToCamera = robotToCamera;
-    }
-
-    /**
-     * Gets the camera name
-     * @return
-     */
-    public String getName() {
-      return name;
-    }
-
-    /**
-     * Gets the robot-to-camera transform
-     * @return
-     */
-    public Transform3d getRobotToCamera() {
-      return robotToCamera;
-    }
-  }
-
   // Vision measurement data class
   public static class VisionMeasurement {
     private final Pose2d pose;
@@ -99,115 +71,6 @@ public class VisionSubsystem extends SubsystemBase {
     }
   }
 
-  // Camera data class with cached results
-  public static class Camera {
-    private final CameraConfig config;
-    private final PhotonCamera camera;
-    private final PhotonPoseEstimator poseEstimator;
-    
-    // Cached data from current periodic cycle
-    private List<PhotonPipelineResult> cachedResults = new ArrayList<>();
-    
-    /**
-     * Construct a new Camera instance
-     * @param config The camera configuration
-     */
-    public Camera(CameraConfig config) {
-      // Initialize PhotonCamera
-      PhotonCamera camera = new PhotonCamera(config.getName());
-
-      // Initialize PhotonPoseEstimator
-      PhotonPoseEstimator poseEstimator = new PhotonPoseEstimator(
-        FieldConstants.fieldLayout,
-        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-        config.getRobotToCamera()
-      );
-
-      // Set fallback strategy for multi-tag ambiguity
-      poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
-
-      // Assign to fields
-      this.config = config;
-      this.camera = camera;
-      this.poseEstimator = poseEstimator;
-    }
-        
-    /**
-     * Updates cached results - CALL ONLY ONCE PER PERIODIC CYCLE
-     */
-    public void updateCache() {
-      cachedResults = camera.getAllUnreadResults();
-    }
-        
-    /**
-     * Gets the most recent result from cache
-     */
-    public PhotonPipelineResult getLatestResult() {
-      if (!cachedResults.isEmpty()) {
-        return cachedResults.get(cachedResults.size() - 1);
-      }
-      return new PhotonPipelineResult();
-    }
-    
-    /**
-     * Checks if any cached results have targets
-     */
-    public boolean hasTargets() {
-      if (!cachedResults.isEmpty()) {
-        return cachedResults.stream().anyMatch(PhotonPipelineResult::hasTargets);
-      }
-      return false;
-    }
-        
-    /**
-     * Gets target count from most recent cached result
-     */
-    public int getTargetCount() {
-      PhotonPipelineResult latestResult = getLatestResult();
-      return latestResult.getTargets().size();
-    }
-        
-    /**
-     * Gets best target from most recent cached result
-     */
-    public Optional<PhotonTrackedTarget> getBestTarget() {
-      PhotonPipelineResult latestResult = getLatestResult();
-      return latestResult.hasTargets() ? Optional.of(latestResult.getBestTarget()) : Optional.empty();
-    }
-
-    /**
-     * Gets the camera name
-     * @return The camera's name
-     */
-    public String getName() {
-      return config.getName();
-    }
-
-    /**
-     * Gets the PhotonCamera instance
-     * @return
-     */
-    public PhotonCamera getCamera() {
-      return camera;
-    }
-
-    /**
-     * Gets the PhotonPoseEstimator instance
-     * @return
-     */
-    public PhotonPoseEstimator getPoseEstimator() {
-      return poseEstimator;
-    }
-
-    /**
-     * Gets the cached results
-     * @return
-     */
-    public List<PhotonPipelineResult> getCachedResults() {
-      return cachedResults;
-    }
-  }
-
   // Camera data storage
   private final List<Camera> cameras = new ArrayList<>();
 
@@ -221,15 +84,15 @@ public class VisionSubsystem extends SubsystemBase {
    * Creates a new VisionSubsystem
    */
   public VisionSubsystem() {
-    // Process each camera config
-    for (CameraConfig config : VisionConstants.kCameraConfigs) {
+    // Get the defined camera configurations
+    HashMap<String, Transform3d> configs = VisionConstants.kCameraConfigs;
+    
+    // Add each to camera the list
+    for (String cameraName : configs.keySet()) {
       try {
-        // Add each to camera the list
-        cameras.add(new Camera(config));
-
-        Utils.logInfo("Initialized camera: " + config.getName());
+        cameras.add(new Camera(cameraName, configs.get(cameraName)));
       } catch (Exception e) {
-        Utils.logError("Failed to initialize camera " + config.getName() + ": " + e.getMessage());
+        Utils.logError("Failed to initialize camera " + cameraName + ": " + e.getMessage());
       }
     }
     

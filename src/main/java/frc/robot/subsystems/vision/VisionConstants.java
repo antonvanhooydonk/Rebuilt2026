@@ -4,14 +4,12 @@
 
 package frc.robot.subsystems.vision;
 
-import java.util.List;
+import java.util.HashMap;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
-
-import frc.robot.subsystems.vision.VisionSubsystem.CameraConfig;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -23,24 +21,29 @@ import frc.robot.subsystems.vision.VisionSubsystem.CameraConfig;
  */
 public final class VisionConstants {
     // Camera configurations - modify for your robot
-  public static final List<CameraConfig> kCameraConfigs = List.of(
-    new CameraConfig(
-      "FRONT_CAMERA", 
-      new Transform3d(
-        new Pose3d(
-          Units.inchesToMeters(12), // Forward 12 inches
-          Units.inchesToMeters(0),  // Centered left/right  
-          Units.inchesToMeters(24), // 24 inches high
-          Rotation3d.kZero
-        ).getTranslation(), 
-        null
-      )
-    )
+  public static final HashMap<String, Transform3d> kCameraConfigs = defineCameras();
 
-    // Add more cameras here:
-    // new CameraConfig("rear_camera", rearCameraTransform),
-    // new CameraConfig("left_camera", leftCameraTransform)
-  );
+  /**
+   * Initialize the robot cameras
+   * @return A hashmap containing camera names and their Transform3ds
+   */
+  private static HashMap<String, Transform3d> defineCameras() {
+    HashMap<String, Transform3d> cameras = new HashMap<>();
+
+    // define the robots cameras here
+    cameras.put("FRONT_CAMERA", new Transform3d(
+      new Pose3d(
+        Units.inchesToMeters(12), // Forward 12 inches
+        Units.inchesToMeters(0),  // Centered left/right  
+        Units.inchesToMeters(24), // 24 inches high
+        Rotation3d.kZero
+      ).getTranslation(), 
+      null
+    ));
+
+    // return the camera map
+    return cameras;
+  }
 
   // Vision configuration constants
   public static final double kPoseAmbiguityThreshold = 0.2;
