@@ -123,13 +123,8 @@ public class NavX2Gyro implements Sendable {
       return new Rotation2d();
     }
 
-    // The getAngle() method should drive the same as the getYaw() because
-    // we're turning returing it as Rototation2d and it is normalized by
-    // the SwerveDrivePoseEstimator.
     // Return the gyro angle with the offset applied (CCW positive)
     return Rotation2d.fromDegrees(-gyro.getAngle());
-
-    // Return the gyro yaw angle (CCW positive)
     // return Rotation2d.fromDegrees(-gyro.getYaw()); 
   }
 
