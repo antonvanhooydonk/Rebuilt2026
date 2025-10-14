@@ -21,9 +21,16 @@ import edu.wpi.first.math.util.Units;
  */
 public final class VisionConstants {
     // Camera configurations - modify for your robot
-  public static final HashMap<String, Transform3d> kCameraConfigs() {
+  public static final HashMap<String, Transform3d> kCameraConfigs = defineCameras();
+
+  /**
+   * Initialize the robot cameras
+   * @return A hashmap containing camera names and their Transform3ds
+   */
+  private static HashMap<String, Transform3d> defineCameras() {
     HashMap<String, Transform3d> cameras = new HashMap<>();
-    
+
+    // define the robot's cameras here
     cameras.put("FRONT_CAMERA", new Transform3d(
       new Pose3d(
         Units.inchesToMeters(12), // Forward 12 inches
@@ -34,6 +41,7 @@ public final class VisionConstants {
       null
     ));
 
+    // return the camera map
     return cameras;
   }
 
