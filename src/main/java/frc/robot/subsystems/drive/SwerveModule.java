@@ -66,6 +66,7 @@ public class SwerveModule implements Sendable {
 
   /**
    * Construct a SwerveModule with the given parameters
+   * @param moduleName Name of the module for debugging
    * @param driveMotorID CAN ID of the drive motor
    * @param steerMotorID CAN ID of the steering motor
    * @param driveMotorInverted Indicates that the drive motor is inverted
@@ -73,19 +74,19 @@ public class SwerveModule implements Sendable {
    * @param absoluteEncoderPort Analog port of the absolute encoder
    * @param absoluteEncoderOffsetRadians Offset angle in radians for the absolute encoder
    * @param absoluteEncoderInverted Indicates that the absolute encoder is inverted
-   * @param moduleName Name of the module for debugging
    */
   public SwerveModule(
+    String moduleName,
     int driveMotorID,
     int steerMotorID,
     boolean driveMotorInverted,
     boolean steerMotorInverted,
     int absoluteEncoderID,
     double absoluteEncoderOffsetRadians,
-    boolean absoluteEncoderInverted,
-    String moduleName
+    boolean absoluteEncoderInverted
   ) {
     // Cache module info
+    this.moduleName = moduleName;
     this.driveMotorID = driveMotorID;
     this.steerMotorID = steerMotorID;
     this.driveMotorInverted = driveMotorInverted;
@@ -93,7 +94,6 @@ public class SwerveModule implements Sendable {
     this.absoluteEncoderID = absoluteEncoderID;
     this.absoluteEncoderOffsetRadians = absoluteEncoderOffsetRadians;
     this.absoluteEncoderInverted = absoluteEncoderInverted;
-    this.moduleName = moduleName;
 
     // Initialize the drive motor (we use a Kraken x60)
     driveMotor = new TalonFX(this.driveMotorID);
