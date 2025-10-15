@@ -136,7 +136,7 @@ public class SwerveModule implements Sendable {
    * Called periodically by the drive subsystem
    */
   public void periodic() {
-    syncEncoders();
+    checkEncoderDrift();
   }
 
   /**
@@ -267,9 +267,9 @@ public class SwerveModule implements Sendable {
   }
 
   /**
-   * Check relative encoder is synced to absolute encoder
+   * Check relative encoder has drifted away from the absolute encoder
    */
-  public void syncEncoders() {
+  public void checkEncoderDrift() {
     double absoluteAngle = absoluteEncoder.getAngleRadians();
     double relativeAngle = steerEncoder.getPosition();
     double error = Math.abs(absoluteAngle - relativeAngle);
@@ -277,7 +277,7 @@ public class SwerveModule implements Sendable {
     
     // Re-sync if the robot has been still for 0.5 seconds 
     // and error is > 5 degrees (indicates encoder drift)
-    if (timeSinceLastMove > 0.5 && error > Units.degreesToRadians(5.0)) { 
+    if (timeSinceLastMove > 0.5 && error > Units.degreesToRadians(3.0)) { 
       resetEncoders();
     }
   }
