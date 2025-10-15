@@ -244,11 +244,12 @@ public class ThriftyBotEncoder implements Sendable {
    */
   @Override
   public void initSendable(SendableBuilder builder) {
+    builder.addDoubleProperty("Absolute Position", this::getAbsolutePosition, null);
     builder.addDoubleProperty("Angle (deg)", this::getAngleDegrees, null);
     builder.addDoubleProperty("Angle (rad)", this::getAngleRadians, null);
+    builder.addDoubleProperty("Raw Angle (rad)", this::getRawAngleRadians, null);
     builder.addDoubleProperty("Raw Voltage", this::getRawVoltage, null);
     builder.addDoubleProperty("Supply Voltage", RobotController::getVoltage5V, null);
-    builder.addDoubleProperty("Absolute Position", this::getAbsolutePosition, null);
     builder.addBooleanProperty("Valid", this::isValid, null);
     builder.addBooleanProperty("Inverted", this::isInverted, null);
     builder.addDoubleProperty("Noise Count", this::getNoiseCount, null);
