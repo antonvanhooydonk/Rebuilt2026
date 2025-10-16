@@ -4,7 +4,11 @@
 
 package frc.robot.subsystems.drive;
 
+import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.RobotConfig;
+
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -118,4 +122,24 @@ public final class DriveConstants {
   public static final double kBackRightAbsoluteEncoderOffsetRadians = Units.degreesToRadians(297.5);
   public static final boolean kBackRightAbsoluteEncoderInverted = false;
   public static final Translation2d kBackRightLocation = new Translation2d(Units.inchesToMeters(-11.5), Units.inchesToMeters(-11.5));
+
+  // ------------------------------------------------------------
+  // Autobuilder RobotConfig for PathPlanner
+  // ------------------------------------------------------------
+  public static final RobotConfig kRobotConfig = new RobotConfig(
+    kRobotMassKg,
+    kRobotMOI,
+    new ModuleConfig(
+      kWheelRadiusMeters,
+      kMaxSpeedAt12VoltsMPS,
+      kWheelCOF, 
+      DCMotor.getKrakenX60(1).withReduction(kDriveGearRatio), 
+      kDriveMotorCurrentLimit,
+      1
+    ),
+    kFrontLeftLocation, 
+    kFrontRightLocation, 
+    kBackLeftLocation, 
+    kBackRightLocation
+  );
 }

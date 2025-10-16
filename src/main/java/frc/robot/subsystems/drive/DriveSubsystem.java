@@ -8,9 +8,7 @@ import java.util.List;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathfindingCommand;
-import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.util.DriveFeedforwards;
@@ -27,7 +25,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
@@ -156,38 +153,14 @@ public class DriveSubsystem extends SubsystemBase {
       new Pose2d()          // Will be updated by auto and vision
     );
 
-    // Initialize the robot config.
-    // This could be populated from RobotConfig.fromGUISettings() 
-    // but it is better to initialize this from constants.
-    RobotConfig robotConfig = new RobotConfig(
-      DriveConstants.kRobotMassKg,
-      DriveConstants.kRobotMOI,
-      new ModuleConfig(
-        DriveConstants.kWheelRadiusMeters,
-        DriveConstants.kMaxSpeedAt12VoltsMPS,
-        DriveConstants.kWheelCOF, 
-        DCMotor.getKrakenX60(1).withReduction(DriveConstants.kDriveGearRatio), 
-        DriveConstants.kDriveMotorCurrentLimit,
-        1
-      ),
-      DriveConstants.kFrontLeftLocation, 
-      DriveConstants.kFrontRightLocation, 
-      DriveConstants.kBackLeftLocation, 
-      DriveConstants.kBackRightLocation
-    );
-
     // Initialize the swerve setpoint generator
     setpointGenerator = new SwerveSetpointGenerator(
-      robotConfig, // The robot configuration. This is the same config used for generating trajectories and running path following commands.
+      DriveConstants.kRobotConfig, // The robot configuration. This is the same config used for generating trajectories and running path following commands.
       DriveConstants.kMaxAngularSpeedRadiansPerSecond // The max rotation velocity of a swerve module in radians per second.
     );
     
     // Initialize the current setpoint to the robot's speeds & module states
-    currentSetpoint = new SwerveSetpoint(
-      getChassisSpeeds(), 
-      getModuleStates(), 
-      DriveFeedforwards.zeros(robotConfig.numModules)
-    );
+    currentSetpoint = new SwerveSetpoint(getChassisSpeeds(), getModuleStates(), DriveFeedforwards.zeros(4));
 
     // Configure AutoBuilder for path following
     AutoBuilder.configure(
@@ -199,7 +172,7 @@ public class DriveSubsystem extends SubsystemBase {
         new PIDConstants(DriveConstants.kDriveKP, DriveConstants.kDriveKI, DriveConstants.kDriveKD), // Translation PID constants
         new PIDConstants(DriveConstants.kSteerKP, DriveConstants.kSteerKI, DriveConstants.kSteerKD)  // Rotation PID constants
       ),
-      robotConfig, // Robot configuration
+      DriveConstants.kRobotConfig, // Robot configuration
       Utils::isRedAlliance, // Method to flip path based on alliance color
       this // Reference to this subsystem to set requirements
     );
