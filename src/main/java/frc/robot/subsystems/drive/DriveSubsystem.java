@@ -53,12 +53,12 @@ public class DriveSubsystem extends SubsystemBase {
   private final SlewRateLimiter xSpeedLimiter = new SlewRateLimiter(DriveConstants.kSlewRateLimit);
   private final SlewRateLimiter ySpeedLimiter = new SlewRateLimiter(DriveConstants.kSlewRateLimit);
   private final SlewRateLimiter rSpeedLimiter = new SlewRateLimiter(DriveConstants.kSlewRateLimit);
-  
-  // Swerve modules - ensure indexed order is 0 = FL, 1 = FR, 2 = BL, 3 = BR
-  private final SwerveModule[] modules = new SwerveModule[4];
-  
+
   // Gyroscope
   private final NavX2Gyro gyro;
+
+  // Swerve modules - ensure indexed order is 0 = FL, 1 = FR, 2 = BL, 3 = BR
+  private final SwerveModule[] modules;
 
   // Kinematics and odometry
   private final SwerveDriveKinematics kinematics;
@@ -67,17 +67,17 @@ public class DriveSubsystem extends SubsystemBase {
   // Setpoint generator
   private final SwerveSetpointGenerator setpointGenerator;
   private SwerveSetpoint currentSetpoint;
-  
+
   // Vision subsystem reference
   private final VisionSubsystem visionSubsystem;
 
   // Field visualization
   private final Field2d field2d = new Field2d();
-  
+
   // Current robot state
   private boolean fieldRelative = true;
   private boolean slowMode = false;
-  
+
   /**
    * Creates a new SwerveSubsystem
    * @param visionSubsystem The vision subsystem for pose estimation
@@ -88,62 +88,17 @@ public class DriveSubsystem extends SubsystemBase {
 
     // Initialize gyro
     gyro = new NavX2Gyro();
-    
-    // Initialize front left swerve module
-    modules[0] = new SwerveModule(
-      "FL",                                        // Module name
-      DriveConstants.kFrontLeftDriveMotorID,                  // Drive motor CAN ID
-      DriveConstants.kFrontLeftSteerMotorID,                  // Steer motor CAN ID  
-      DriveConstants.kFrontLeftDriveMotorInverted,            // Drive motor inverted
-      DriveConstants.kFrontLeftSteerMotorInverted,            // Steer motor inverted
-      DriveConstants.kFrontLeftAbsoluteEncoderID,             // Absolute encoder analog port
-      DriveConstants.kFrontLeftAbsoluteEncoderOffsetRadians,  // Absolute encoder offset in radians (calibrate this)
-      DriveConstants.kFrontLeftAbsoluteEncoderInverted        // Absolute encoder inverted
-    );
-    
-    // Initialize front right swerve module
-    modules[1] = new SwerveModule(
-      "FR",                                        // Module name
-      DriveConstants.kFrontRightDriveMotorID,                 // Drive motor CAN ID
-      DriveConstants.kFrontRightSteerMotorID,                 // Steer motor CAN ID  
-      DriveConstants.kFrontRightDriveMotorInverted,           // Drive motor inverted
-      DriveConstants.kFrontRightSteerMotorInverted,           // Steer motor inverted
-      DriveConstants.kFrontRightAbsoluteEncoderID,            // Absolute encoder analog port
-      DriveConstants.kFrontRightAbsoluteEncoderOffsetRadians, // Absolute encoder offset in radians (calibrate this)
-      DriveConstants.kFrontRightAbsoluteEncoderInverted       // Absolute encoder inverted
-    );
-    
-    // Initialize back left swerve module
-    modules[2] = new SwerveModule(
-      "BL",                                        // Module name
-      DriveConstants.kBackLeftDriveMotorID,                   // Drive motor CAN ID
-      DriveConstants.kBackLeftSteerMotorID,                   // Steer motor CAN ID  
-      DriveConstants.kBackLeftDriveMotorInverted,             // Drive motor inverted
-      DriveConstants.kBackLeftSteerMotorInverted,             // Steer motor inverted
-      DriveConstants.kBackLeftAbsoluteEncoderID,              // Absolute encoder analog port
-      DriveConstants.kBackLeftAbsoluteEncoderOffsetRadians,   // Absolute encoder offset in radians (calibrate this)
-      DriveConstants.kBackLeftAbsoluteEncoderInverted         // Absolute encoder inverted
-    );
-    
-    // Initialize back right swerve module    
-    modules[3] = new SwerveModule(
-      "BR",                                        // Module name
-      DriveConstants.kBackRightDriveMotorID,                  // Drive motor CAN ID
-      DriveConstants.kBackRightSteerMotorID,                  // Steer motor CAN ID  
-      DriveConstants.kBackRightDriveMotorInverted,            // Drive motor inverted
-      DriveConstants.kBackRightSteerMotorInverted,            // Steer motor inverted
-      DriveConstants.kBackRightAbsoluteEncoderID,             // Absolute encoder analog port
-      DriveConstants.kBackRightAbsoluteEncoderOffsetRadians,  // Absolute encoder offset in radians (calibrate this)
-      DriveConstants.kBackRightAbsoluteEncoderInverted        // Absolute encoder inverted
-    );
+
+    // Initialize swerve modules
+    modules = new SwerveModule[] {
+      DriveConstants.kFrontLeftSwerveModule,
+      DriveConstants.kFrontRightSwerveModule,
+      DriveConstants.kBackLeftSwerveModule,
+      DriveConstants.kBackRightSwerveModule
+    };
     
     // Initialize swerve drive kinematics
-    kinematics = new SwerveDriveKinematics(
-      DriveConstants.kFrontLeftLocation, 
-      DriveConstants.kFrontRightLocation, 
-      DriveConstants.kBackLeftLocation, 
-      DriveConstants.kBackRightLocation
-    );
+    kinematics = new SwerveDriveKinematics(DriveConstants.kSwerveModuleTranslations);
     
     // Initialize pose estimator for vision integration
     poseEstimator = new SwerveDrivePoseEstimator(

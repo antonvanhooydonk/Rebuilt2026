@@ -84,44 +84,60 @@ public final class DriveConstants {
   // Define the swerve module constants
   // ------------------------------------------------------------
   // Front Left Module - Module 0
-  public static final int kFrontLeftDriveMotorID = 11;
-  public static final boolean kFrontLeftDriveMotorInverted = false;
-  public static final int kFrontLeftSteerMotorID = 2;
-  public static final boolean kFrontLeftSteerMotorInverted = false;
-  public static final int kFrontLeftAbsoluteEncoderID = 0;
-  public static final double kFrontLeftAbsoluteEncoderOffsetRadians = Units.degreesToRadians(7.8);
-  public static final boolean kFrontLeftAbsoluteEncoderInverted = false;
-  public static final Translation2d kFrontLeftLocation = new Translation2d(Units.inchesToMeters(11.5), Units.inchesToMeters(11.5));
+  public static final SwerveModule kFrontLeftSwerveModule = new SwerveModule(
+    "FL",
+    11,
+    2,
+    false,
+    false,
+    0,
+    Units.degreesToRadians(7.8),
+    false
+  );
 
   // Front Right Module - Module 1
-  public static final int kFrontRightDriveMotorID = 12;
-  public static final boolean kFrontRightDriveMotorInverted = false;
-  public static final int kFrontRightSteerMotorID = 8;
-  public static final boolean kFrontRightSteerMotorInverted = false;
-  public static final int kFrontRightAbsoluteEncoderID = 1;
-  public static final double kFrontRightAbsoluteEncoderOffsetRadians = Units.degreesToRadians(119.7);
-  public static final boolean kFrontRightAbsoluteEncoderInverted = false;
-  public static final Translation2d kFrontRightLocation = new Translation2d(Units.inchesToMeters(11.5), Units.inchesToMeters(-11.5));
+  public static final SwerveModule kFrontRightSwerveModule = new SwerveModule(
+    "FR",
+    12,
+    8,
+    false,
+    false,
+    1,
+    Units.degreesToRadians(119.7),
+    false
+  );
 
   // Rear Left Module - Module 2
-  public static final int kBackLeftDriveMotorID = 14;
-  public static final boolean kBackLeftDriveMotorInverted = false;
-  public static final int kBackLeftSteerMotorID = 4;
-  public static final boolean kBackLeftSteerMotorInverted = false;
-  public static final int kBackLeftAbsoluteEncoderID = 3;
-  public static final double kBackLeftAbsoluteEncoderOffsetRadians = Units.degreesToRadians(68.7);
-  public static final boolean kBackLeftAbsoluteEncoderInverted = false;
-  public static final Translation2d kBackLeftLocation = new Translation2d(Units.inchesToMeters(-11.5), Units.inchesToMeters(11.5));
+  public static final SwerveModule kBackLeftSwerveModule = new SwerveModule(
+    "BL",
+    14,
+    4,
+    false,
+    false,
+    3,
+    Units.degreesToRadians(68.7),
+    false
+  );
 
   // Rear Right Module - Module 3
-  public static final int kBackRightDriveMotorID = 13;
-  public static final boolean kBackRightDriveMotorInverted = false;
-  public static final int kBackRightSteerMotorID = 6;
-  public static final boolean kBackRightSteerMotorInverted = false;
-  public static final int kBackRightAbsoluteEncoderID = 2;
-  public static final double kBackRightAbsoluteEncoderOffsetRadians = Units.degreesToRadians(297.5);
-  public static final boolean kBackRightAbsoluteEncoderInverted = false;
-  public static final Translation2d kBackRightLocation = new Translation2d(Units.inchesToMeters(-11.5), Units.inchesToMeters(-11.5));
+  public static final SwerveModule kBackRightSwerveModule = new SwerveModule(
+    "BR",
+    13,
+    6,
+    false,
+    false,
+    2,
+    Units.degreesToRadians(297.5),
+    false
+  );
+
+  // Define the module translations from the robot's center
+  public static final Translation2d[] kSwerveModuleTranslations = new Translation2d[] {
+    new Translation2d(Units.inchesToMeters(11.5), Units.inchesToMeters(11.5)), // FL
+    new Translation2d(Units.inchesToMeters(11.5), Units.inchesToMeters(-11.5)),       // FR
+    new Translation2d(Units.inchesToMeters(-11.5), Units.inchesToMeters(11.5)),       // BL
+    new Translation2d(Units.inchesToMeters(-11.5), Units.inchesToMeters(-11.5))              // BR
+  };
 
   // ------------------------------------------------------------
   // Autobuilder RobotConfig for PathPlanner
@@ -137,9 +153,6 @@ public final class DriveConstants {
       kDriveMotorCurrentLimit,
       1
     ),
-    kFrontLeftLocation, 
-    kFrontRightLocation, 
-    kBackLeftLocation, 
-    kBackRightLocation
+    kSwerveModuleTranslations
   );
 }
