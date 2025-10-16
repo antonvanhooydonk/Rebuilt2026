@@ -23,6 +23,7 @@ public final class DriveConstants {
   public static final double kWheelRadiusMeters = kWheelDiameterMeters / 2;
   public static final double kWheelCircumference = kWheelDiameterMeters * Math.PI;
   public static final double kWheelCOF = 1.19; // could try 1.0 to 1.3, coefficient of friction of wheel on carpet
+  public static final double kMaxSpeedAt12VoltsMPS = Units.feetToMeters(15); // MK4i 16.5 ft/s L3 Kraken FOC With 14t pinion
   public static final double kRobotMassKg = Units.lbsToKilograms(134);
   public static final double kRobotMOI = 3.08607399254; // kg m^2, moment of inertia about center of robot
   public static final double kDriveMotorCurrentLimit = 60.0; // The max current draw in amps of a swerve module drive motor

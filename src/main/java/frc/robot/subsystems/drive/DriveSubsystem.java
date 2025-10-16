@@ -163,8 +163,8 @@ public class DriveSubsystem extends SubsystemBase {
       DriveConstants.kRobotMassKg,
       DriveConstants.kRobotMOI,
       new ModuleConfig(
-        DriveConstants.kWheelRadiusMeters, 
-        DriveConstants.kMaxSpeedMetersPerSecond, 
+        DriveConstants.kWheelRadiusMeters,
+        DriveConstants.kMaxSpeedAt12VoltsMPS,
         DriveConstants.kWheelCOF, 
         DCMotor.getKrakenX60(1).withReduction(DriveConstants.kDriveGearRatio), 
         DriveConstants.kDriveMotorCurrentLimit,
