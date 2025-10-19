@@ -336,7 +336,6 @@ public class SwerveModule implements Sendable {
 
     // Cache the target state
     lastState = desiredState;
-    System.out.println(this.moduleName + ": " + desiredState);
   }
 
   /**
