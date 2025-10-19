@@ -125,6 +125,7 @@ public class NavX2Gyro implements Sendable {
 
     // Return the gyro angle with the offset applied (CCW positive)
     return Rotation2d.fromDegrees(-gyro.getAngle());
+    // return Rotation2d.fromDegrees(Math.IEEEremainder(-gyro.getAngle(), 360));
     // return Rotation2d.fromDegrees(-gyro.getYaw()); 
   }
 

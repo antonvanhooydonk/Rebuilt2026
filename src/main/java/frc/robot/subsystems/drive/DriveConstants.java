@@ -26,6 +26,10 @@ public final class DriveConstants {
   public static final double kWheelDiameterMeters = Units.inchesToMeters(4.0);
   public static final double kWheelRadiusMeters = kWheelDiameterMeters / 2;
   public static final double kWheelCircumference = kWheelDiameterMeters * Math.PI;
+  public static final double kDriveGearRatio = 1 / 6.75; // Drive gear ratio (adjust for your setup)
+  public static final double kSteerGearRatio = 1 / 21.4285714286; // Steering gear ratio (adjust for your setup)
+  public static final double kDriveRot2Meter = kWheelCircumference / kDriveGearRatio; // Convert drive motor rotations to meters 
+  public static final double kDriveMeter2Rot = kDriveGearRatio / kWheelCircumference; // Convert drive motor meters to rotations 
   public static final double kWheelCOF = 1.19; // could try 1.0 to 1.3, coefficient of friction of wheel on carpet
   public static final double kMaxSpeedAt12VoltsMPS = Units.feetToMeters(15); // MK4i 16.5 ft/s L3 Kraken FOC With 14t pinion
   public static final double kRobotMassKg = Units.lbsToKilograms(134);
@@ -35,10 +39,6 @@ public final class DriveConstants {
   public static final double kDriveMaxForwardVoltage = 12.0; // Max voltage to apply to drive motors when driving forward
   public static final double kDriveMaxReverseVoltage = -12.0; // Max voltage to apply to drive motors when driving backward
   public static final int    kSteerMotorMaxCurrent = 30; // The max current draw in amps of a swerve module steer motor
-  public static final double kDriveGearRatio = 6.75; // Drive gear ratio (adjust for your setup)
-  public static final double kSteerGearRatio = 21.4285714286; // Steering gear ratio (adjust for your setup)
-  public static final double kDriveRPStoMPS = kWheelCircumference / kDriveGearRatio; // Convert drive motor rotations per second to meters per second
-  public static final double kDriveMPStoRPS = kDriveGearRatio / kWheelCircumference; // Convert drive motor meters per second to rotations per second 
   public static final double kPeriodicTimeSeconds = 0.02; // 0.13; // 20ms (default) + 110ms => 0.02 + 0.11 spark max velocity lag 
 
   public static final double kGyroXAngleOffsetDegrees = 0.0; // default 0.0 - offset if gyro X axis does not point forward

@@ -295,7 +295,7 @@ public class SwerveModule implements Sendable {
    * @return Current SwerveModuleState
    */
   public SwerveModuleState getState() {
-    double velocity = driveMotor.getVelocity().getValueAsDouble() * DriveConstants.kDriveRPStoMPS;
+    double velocity = driveMotor.getVelocity().getValueAsDouble() * DriveConstants.kDriveRot2Meter;
     Rotation2d angle = new Rotation2d(steerEncoder.getPosition());
     return new SwerveModuleState(velocity, angle);
   }
@@ -305,7 +305,7 @@ public class SwerveModule implements Sendable {
    * @return Current SwerveModulePosition
    */
   public SwerveModulePosition getPosition() {
-    double distance = driveMotor.getPosition().getValueAsDouble() * DriveConstants.kDriveRPStoMPS;
+    double distance = driveMotor.getPosition().getValueAsDouble() * DriveConstants.kDriveRot2Meter;
     Rotation2d angle = new Rotation2d(steerEncoder.getPosition());
     return new SwerveModulePosition(distance, angle);
   }
@@ -336,6 +336,7 @@ public class SwerveModule implements Sendable {
 
     // Cache the target state
     lastState = desiredState;
+    System.out.println(this.moduleName + ": " + desiredState);
   }
 
   /**
@@ -343,7 +344,7 @@ public class SwerveModule implements Sendable {
    * @param velocityMetersPerSecond Desired velocity in m/s
    */
   private void setDriveVelocity(double velocityMetersPerSecond) {
-    double velocityRPS = velocityMetersPerSecond * DriveConstants.kDriveMPStoRPS;
+    double velocityRPS = velocityMetersPerSecond * DriveConstants.kDriveMeter2Rot;
     driveMotor.setControl(driveVelocityRequest.withVelocity(velocityRPS));
   }
 
