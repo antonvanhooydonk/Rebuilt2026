@@ -88,16 +88,19 @@ public class VisionSubsystem extends SubsystemBase {
     HashMap<String, Transform3d> configs = VisionConstants.kCameraConfigs;
     
     // Add each to camera the list
-    for (String cameraName : configs.keySet()) {
-      try {
-        cameras.add(new Camera(cameraName, configs.get(cameraName)));
-      } catch (Exception e) {
-        Utils.logError("Failed to initialize camera " + cameraName + ": " + e.getMessage());
+    if (VisionConstants.kEnableVision) {
+      for (String cameraName : configs.keySet()) {
+        try {
+          cameras.add(new Camera(cameraName, configs.get(cameraName)));
+        } catch (Exception e) {
+          Utils.logError("Failed to initialize camera " + cameraName + ": " + e.getMessage());
+        }
       }
     }
     
     // Warn if no cameras initialized
     if (cameras.isEmpty()) {
+      Utils.logError("kEnableVision: " + VisionConstants.kEnableVision);
       Utils.logError("No cameras initialized!");
     }
 
