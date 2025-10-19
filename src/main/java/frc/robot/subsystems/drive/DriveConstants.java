@@ -28,8 +28,10 @@ public final class DriveConstants {
   public static final double kWheelCircumference = kWheelDiameterMeters * Math.PI;
   public static final double kDriveGearRatio = 1 / 6.75; // Drive gear ratio (adjust for your setup)
   public static final double kSteerGearRatio = 1 / 21.4285714286; // Steering gear ratio (adjust for your setup)
-  public static final double kDriveRot2Meter = kWheelCircumference / kDriveGearRatio; // Convert drive motor rotations to meters 
-  public static final double kDriveMeter2Rot = kDriveGearRatio / kWheelCircumference; // Convert drive motor meters to rotations 
+  public static final double kDriveRot2Meter = kDriveGearRatio * kWheelCircumference ; // Convert drive motor rotations to meters 
+  public static final double kDriveMeter2Rot = 1 / kDriveRot2Meter; // Convert drive motor meters to rotations 
+  public static final double kSteerRot2Rad = kSteerGearRatio * 2 * Math.PI ; // Convert steering motor rotations to radians
+  public static final double kSteerRpm2RadPerSec = kSteerRot2Rad / 60.0; // Convert steering motor RPM to radians per second
   public static final double kWheelCOF = 1.19; // could try 1.0 to 1.3, coefficient of friction of wheel on carpet
   public static final double kMaxSpeedAt12VoltsMPS = Units.feetToMeters(15); // MK4i 16.5 ft/s L3 Kraken FOC With 14t pinion
   public static final double kRobotMassKg = Units.lbsToKilograms(134);

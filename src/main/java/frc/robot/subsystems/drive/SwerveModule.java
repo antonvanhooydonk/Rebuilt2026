@@ -214,8 +214,8 @@ public class SwerveModule implements Sendable {
     // Set position conversion factor (rotations to radians)
     // Set velocity conversion factor (rotations per minute to radians per second)
     steerConfig.encoder
-      .positionConversionFactor(2 * Math.PI / DriveConstants.kSteerGearRatio)
-      .velocityConversionFactor(2 * Math.PI / DriveConstants.kSteerGearRatio / 60.0);
+      .positionConversionFactor(DriveConstants.kSteerRot2Rad)
+      .velocityConversionFactor(DriveConstants.kSteerRpm2RadPerSec);
 
     // Closed-loop PID configuration
     steerConfig.closedLoop
