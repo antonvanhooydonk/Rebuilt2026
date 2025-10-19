@@ -116,7 +116,7 @@ public class DriveSubsystem extends SubsystemBase {
     // Initialize the swerve setpoint generator
     setpointGenerator = new SwerveSetpointGenerator(
       DriveConstants.kRobotConfig, // The robot configuration. This is the same config used for generating trajectories and running path following commands.
-      DriveConstants.kMaxAngularSpeedRadiansPerSecond // The max rotation velocity of a swerve module in radians per second.
+      DriveConstants.kMaxAngularSpeedRadsPerSecond // The max rotation velocity of a swerve module in radians per second.
     );
     
     // Initialize the current setpoint to the robot's speeds & module states
@@ -242,8 +242,8 @@ public class DriveSubsystem extends SubsystemBase {
     PathConstraints constraints = new PathConstraints(
       DriveConstants.kMaxSpeedMetersPerSecond, 
       DriveConstants.kMaxAccelMetersPerSecondSq,
-      DriveConstants.kMaxAngularSpeedRadiansPerSecond, 
-      DriveConstants.kMaxAngularAccelRadiansPerSecondSq
+      DriveConstants.kMaxAngularSpeedRadsPerSecond, 
+      DriveConstants.kMaxAngularAccelRadsPerSecondSq
     );
 
     // Since AutoBuilder is configured, we can use it to build pathfinding commands
@@ -281,7 +281,7 @@ public class DriveSubsystem extends SubsystemBase {
     // Convert joystick's -1..1 to m/s and rad/s velocitys
     double xSpeedMPS = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedMPS = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
-    double rSpeedRad = rSpeed * DriveConstants.kMaxAngularSpeedRadiansPerSecond;
+    double rSpeedRad = rSpeed * DriveConstants.kMaxAngularSpeedRadsPerSecond;
 
     // Force robot-relative if gyro disconnected
     if (fieldRelative && !gyro.isConnected()) {

@@ -54,8 +54,8 @@ public final class DriveConstants {
   public static final double kAntiJitterMinTurningSpeed = 0.1; // m/s
   public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(13); // max translation speed in meters per second, 12-16 ft/s is reasonable
   public static final double kMaxAccelMetersPerSecondSq = 5.5; // 4 to 6 is a reasonable range
-  public static final double kMaxAngularSpeedRadiansPerSecond = Units.degreesToRadians(540);
-  public static final double kMaxAngularAccelRadiansPerSecondSq = Units.degreesToRadians(720); // 0.5 is a conservative default
+  public static final double kMaxAngularSpeedRadsPerSecond = Units.degreesToRadians(540);
+  public static final double kMaxAngularAccelRadsPerSecondSq = Units.degreesToRadians(720); // 0.5 is a conservative default
   public static final double kWheelLockTimeSeconds = 10.0; // seconds to lock wheels when robot is disabled
 
   // PID Constants for drive (tune these each year for the robot)
