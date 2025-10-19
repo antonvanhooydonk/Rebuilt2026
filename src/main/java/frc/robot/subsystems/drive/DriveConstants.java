@@ -149,7 +149,7 @@ public final class DriveConstants {
       kWheelRadiusMeters,
       kMaxSpeedAt12VoltsMPS,
       kWheelCOF, 
-      DCMotor.getKrakenX60(1).withReduction(kDriveGearRatio), 
+      DCMotor.getKrakenX60(1).withReduction(1 / kDriveGearRatio), 
       kDriveMotorCurrentLimit,
       1
     ),
