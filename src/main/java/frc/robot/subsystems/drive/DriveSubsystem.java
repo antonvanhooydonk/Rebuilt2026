@@ -141,6 +141,11 @@ public class DriveSubsystem extends SubsystemBase {
     // IF USING CUSTOM PATHFINDER ADD THEM HERE
     PathfindingCommand.warmupCommand().schedule();
 
+    // Zero the gyro if vision is not enabled
+    if (!visionEnabled()) {
+      zeroHeading();
+    }
+
     // Add data to dashboard
     SmartDashboard.putData("Drive", this);
     SmartDashboard.putData("Drive/Field", field2d);
@@ -182,11 +187,19 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
+   * Checks if vision subsystem is available
+   * @return
+   */
+  private boolean visionEnabled() {
+    return visionSubsystem != null && visionSubsystem.isEnabled();
+  }
+
+  /**
    * Updates pose estimation using vision measurements from VisionSubsystem
    */
   private void addVisionMeasurements() {
     // Exit early if vision subsystem is not available or is disabled
-    if (visionSubsystem == null || !visionSubsystem.isEnabled()) return;
+    if (!visionEnabled()) return;
     
     // Get all latest vision measurements
     List<VisionMeasurement> measurements = visionSubsystem.getLatestMeasurements();
