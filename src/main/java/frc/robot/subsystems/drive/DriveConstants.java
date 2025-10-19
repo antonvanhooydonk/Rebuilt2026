@@ -134,6 +134,7 @@ public final class DriveConstants {
   );
 
   // Define the module translations from the robot's center
+  // See: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html#coordinate-system
   public static final Translation2d[] kSwerveModuleTranslations = new Translation2d[] {
     new Translation2d(Units.inchesToMeters(11.5), Units.inchesToMeters(11.5)), // FL
     new Translation2d(Units.inchesToMeters(11.5), Units.inchesToMeters(-11.5)),       // FR
