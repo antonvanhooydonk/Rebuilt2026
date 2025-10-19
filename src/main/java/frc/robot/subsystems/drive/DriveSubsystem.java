@@ -50,9 +50,9 @@ import frc.robot.util.Utils;
  */
 public class DriveSubsystem extends SubsystemBase {  
   // Slew rate limiters to make joystick inputs smoother
-  private final SlewRateLimiter xSpeedLimiter = new SlewRateLimiter(DriveConstants.kSlewRateLimit);
-  private final SlewRateLimiter ySpeedLimiter = new SlewRateLimiter(DriveConstants.kSlewRateLimit);
-  private final SlewRateLimiter rSpeedLimiter = new SlewRateLimiter(DriveConstants.kSlewRateLimit);
+  private final SlewRateLimiter xSpeedLimiter;
+  private final SlewRateLimiter ySpeedLimiter;
+  private final SlewRateLimiter rSpeedLimiter;
 
   // Gyroscope
   private final NavX2Gyro gyro;
@@ -85,6 +85,11 @@ public class DriveSubsystem extends SubsystemBase {
   public DriveSubsystem(VisionSubsystem visionSubsystem) {
     // Store vision subsystem reference
     this.visionSubsystem = visionSubsystem;
+
+    // Initialize the slew rate limiters
+    xSpeedLimiter = new SlewRateLimiter(DriveConstants.kSlewRateLimit);
+    ySpeedLimiter = new SlewRateLimiter(DriveConstants.kSlewRateLimit);
+    rSpeedLimiter = new SlewRateLimiter(DriveConstants.kSlewRateLimit);
 
     // Initialize gyro
     gyro = new NavX2Gyro();
