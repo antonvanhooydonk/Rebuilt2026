@@ -33,7 +33,7 @@ public final class DriveConstants {
   public static final double kRobotMOI = 3.08607399254; // kg m^2, moment of inertia about center of robot
   public static final double kMaxDriveVelocityAt12VoltsMPS = Units.feetToMeters(15.5); // MK4i L2 Kraken non-FOC With 14t pinion (https://www.swervedrivespecialties.com/products/mk4i-swerve-module?variant=47316033798445)
   public static final double kDriveMotorCurrentLimit = 60.0; // The max current draw in amps of a swerve module drive motor
-  public static final double kDriveMotorCurrentLowerLimit = 40.0; // The lower limit current draw in amps of a swerve module drive motor
+  public static final double kDriveMotorCurrentLowerLimit = 40.0; // The regular lower limit current draw in amps of a swerve module drive motor
   public static final double kDriveMaxForwardVoltage = 12.0; // Max voltage to apply to drive motors when driving forward
   public static final double kDriveMaxReverseVoltage = -12.0; // Max voltage to apply to drive motors when driving backward
   public static final int    kSteerMotorMaxCurrent = 30; // The max current draw in amps of a swerve module steer motor
@@ -49,9 +49,9 @@ public final class DriveConstants {
   public static final double kAntiJitterAngleDeadband = Units.degreesToRadians(2.0); // radians
   public static final double kAntiJitterMinTurningSpeed = 0.1; // m/s
   public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(13); // max translation speed in meters per second, 12-16 ft/s is reasonable
-  public static final double kMaxAccelMetersPerSecondSq = 5.5; // 4 to 6 is a reasonable range
-  public static final double kMaxAngularSpeedRadsPerSecond = Units.degreesToRadians(540);
-  public static final double kMaxAngularAccelRadsPerSecondSq = Units.degreesToRadians(720); // 0.5 is a conservative default
+  public static final double kMaxAccelMetersPerSecondSq = Units.feetToMeters(10); // max acceleration in meters per second squared (must be <= max speed)
+  public static final double kMaxAngularSpeedRadsPerSecond = Units.rotationsToRadians(1.25); // 1.25 rotations per second (target 8-10 rad/s (2.5π - 3π))
+  public static final double kMaxAngularAccelRadsPerSecondSq = Units.rotationsToRadians(0.9375); // set to 75% of angular speed
   public static final double kWheelLockTimeSeconds = 10.0; // seconds to lock wheels when robot is disabled
 
   // PID Constants for drive (tune these each year for the robot)
