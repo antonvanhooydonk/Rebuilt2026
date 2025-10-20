@@ -276,7 +276,7 @@ public class SwerveModule implements Sendable {
     double timeSinceLastMove = Timer.getFPGATimestamp() - lastMoveAtTime;
     
     // Re-sync if the robot has been still for 0.5 seconds 
-    // and error is > 5 degrees (indicates encoder drift)
+    // and error is > 3 degrees (indicates encoder drift)
     if (timeSinceLastMove > 0.5 && error > Units.degreesToRadians(3.0)) { 
       resetEncoders();
     }
