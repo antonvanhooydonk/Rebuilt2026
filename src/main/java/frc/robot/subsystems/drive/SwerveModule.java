@@ -340,7 +340,7 @@ public class SwerveModule implements Sendable {
 
   /**
    * Sets the drive motor velocity adjusted for gear ratio and wheel circumference
-   * @param velocityMetersPerSecond Desired velocity in m/s
+   * @param velocityMPS Desired velocity in m/s
    */
   private void setDriveVelocity(double velocityMPS) {
     double velocityRPS = (velocityMPS / DriveConstants.kWheelCircumference) * DriveConstants.kDriveGearRatio;
