@@ -26,16 +26,12 @@ public final class DriveConstants {
   public static final double kWheelDiameterMeters = Units.inchesToMeters(4.0);
   public static final double kWheelRadiusMeters = kWheelDiameterMeters / 2;
   public static final double kWheelCircumference = kWheelDiameterMeters * Math.PI;
-  public static final double kDriveGearRatio = 1 / 6.75; // Drive gear ratio (adjust for your setup)
-  public static final double kSteerGearRatio = 1 / 21.4285714286; // Steering gear ratio (adjust for your setup)
-  public static final double kDriveRot2Meter = kDriveGearRatio * kWheelCircumference ; // Convert drive motor rotations to meters 
-  public static final double kDriveMeter2Rot = 1 / kDriveRot2Meter; // Convert drive motor meters to rotations 
-  public static final double kSteerRot2Rad = kSteerGearRatio * 2 * Math.PI ; // Convert steering motor rotations to radians
-  public static final double kSteerRpm2RadPerSec = kSteerRot2Rad / 60.0; // Convert steering motor RPM to radians per second
+  public static final double kDriveGearRatio = 6.75; // Drive gear ratio for MKi L2 (adjust for your setup)
+  public static final double kSteerGearRatio = 21.4285714286; // Steering gear ratio (adjust for your setup)
   public static final double kWheelCOF = 1.19; // could try 1.0 to 1.3, coefficient of friction of wheel on carpet
-  public static final double kMaxDriveVelocityAt12VoltsMPS = Units.feetToMeters(15); // MK4i 16.5 ft/s L3 Kraken FOC With 14t pinion
   public static final double kRobotMassKg = Units.lbsToKilograms(134);
   public static final double kRobotMOI = 3.08607399254; // kg m^2, moment of inertia about center of robot
+  public static final double kMaxDriveVelocityAt12VoltsMPS = Units.feetToMeters(15.5); // MK4i L2 Kraken non-FOC With 14t pinion (https://www.swervedrivespecialties.com/products/mk4i-swerve-module?variant=47316033798445)
   public static final double kDriveMotorCurrentLimit = 60.0; // The max current draw in amps of a swerve module drive motor
   public static final double kDriveMotorCurrentLowerLimit = 40.0; // The lower limit current draw in amps of a swerve module drive motor
   public static final double kDriveMaxForwardVoltage = 12.0; // Max voltage to apply to drive motors when driving forward
@@ -152,7 +148,7 @@ public final class DriveConstants {
       kWheelRadiusMeters,
       kMaxDriveVelocityAt12VoltsMPS,
       kWheelCOF, 
-      DCMotor.getKrakenX60(1).withReduction(1 / kDriveGearRatio), 
+      DCMotor.getKrakenX60(1).withReduction(kDriveGearRatio),
       kDriveMotorCurrentLimit,
       1
     ),

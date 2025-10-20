@@ -214,8 +214,8 @@ public class SwerveModule implements Sendable {
     // Set position conversion factor (rotations to radians)
     // Set velocity conversion factor (rotations per minute to radians per second)
     steerConfig.encoder
-      .positionConversionFactor(DriveConstants.kSteerRot2Rad)
-      .velocityConversionFactor(DriveConstants.kSteerRpm2RadPerSec);
+      .positionConversionFactor(DriveConstants.kSteerGearRatio * 2 * Math.PI)
+      .velocityConversionFactor(DriveConstants.kSteerGearRatio * 2 * Math.PI / 60.0);
 
     // Closed-loop PID configuration
     steerConfig.closedLoop
@@ -295,7 +295,7 @@ public class SwerveModule implements Sendable {
    * @return Current SwerveModuleState
    */
   public SwerveModuleState getState() {
-    double velocity = driveMotor.getVelocity().getValueAsDouble() * DriveConstants.kDriveRot2Meter;
+    double velocity = (driveMotor.getVelocity().getValueAsDouble() / DriveConstants.kDriveGearRatio) * DriveConstants.kWheelCircumference;
     Rotation2d angle = new Rotation2d(steerEncoder.getPosition());
     return new SwerveModuleState(velocity, angle);
   }
@@ -305,7 +305,7 @@ public class SwerveModule implements Sendable {
    * @return Current SwerveModulePosition
    */
   public SwerveModulePosition getPosition() {
-    double distance = driveMotor.getPosition().getValueAsDouble() * DriveConstants.kDriveRot2Meter;
+    double distance = (driveMotor.getPosition().getValueAsDouble() / DriveConstants.kDriveGearRatio) * DriveConstants.kWheelCircumference;
     Rotation2d angle = new Rotation2d(steerEncoder.getPosition());
     return new SwerveModulePosition(distance, angle);
   }
@@ -342,8 +342,8 @@ public class SwerveModule implements Sendable {
    * Sets the drive motor velocity adjusted for gear ratio and wheel circumference
    * @param velocityMetersPerSecond Desired velocity in m/s
    */
-  private void setDriveVelocity(double velocityMetersPerSecond) {
-    double velocityRPS = velocityMetersPerSecond * DriveConstants.kDriveMeter2Rot;
+  private void setDriveVelocity(double velocityMPS) {
+    double velocityRPS = (velocityMPS / DriveConstants.kWheelCircumference) * DriveConstants.kDriveGearRatio;
     driveMotor.setControl(driveVelocityRequest.withVelocity(velocityRPS));
   }
 
