@@ -53,7 +53,7 @@ public class RobotContainer {
 
   // Initialize our robot controllers
   private final CommandXboxController xboxController = new CommandXboxController(0);
-  // private final CommandGenericHID xboxController = new CommandGenericHID(0);
+  private final CommandGenericHID logitechController = new CommandGenericHID(0);
   private final CommandGenericHID opController1 = new CommandGenericHID(1);
   private final CommandGenericHID opController2 = new CommandGenericHID(2);
 
@@ -65,34 +65,16 @@ public class RobotContainer {
    * Contains subsystems, OI devices, and commands. 
    */
   public RobotContainer() {
-    // Initialize the default driving command.
-    // The left stick controls translation of the robot.
-    // Turning is controlled by the X axis of the right stick.
-    // Drive field relative by default.
-    // See: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
-    driveSubsystem.setDefaultCommand(new RunCommand(() -> 
-      driveSubsystem.drive(
-        -xboxController.getLeftY(),
-        -xboxController.getLeftX(),
-        -xboxController.getRightX()
-      ), 
-      driveSubsystem
-    ));
-    // driveSubsystem.setDefaultCommand(new RunCommand(() -> 
-    //   driveSubsystem.drive(
-    //     -xboxController.getRawAxis(1),
-    //     -xboxController.getRawAxis(0),
-    //     -xboxController.getRawAxis(4)
-    //   ), 
-    //   driveSubsystem
-    // ));
-
     // Configure the autonomous command chooser
     configureAutos();
 
     // Configure the trigger/button bindings
-    configureButtonBindings();
-
+    if (Robot.isSimulation()) {
+      configureButtonBindingsTest();
+    } else {
+      configureButtonBindings();
+    }
+    
     // Silence joystick warnings during testing
     DriverStation.silenceJoystickConnectionWarning(true);
   }
@@ -138,6 +120,20 @@ public class RobotContainer {
    * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
    */
   private void configureButtonBindings() {
+    // Initialize the default driving command.
+    // The left stick controls translation of the robot.
+    // Turning is controlled by the X axis of the right stick.
+    // Drive field relative by default.
+    // See: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
+    driveSubsystem.setDefaultCommand(new RunCommand(() -> 
+      driveSubsystem.drive(
+        -xboxController.getLeftY(),
+        -xboxController.getLeftX(),
+        -xboxController.getRightX()
+      ), 
+      driveSubsystem
+    ));
+
     // Zero gyro yaw when start+back is pushed
     xboxController.start().and(xboxController.back()).onTrue(
       new RunCommand(() -> driveSubsystem.zeroHeading(), driveSubsystem).ignoringDisable(true)
@@ -235,6 +231,24 @@ public class RobotContainer {
       .andThen(new MoveElevatorCommand(elevatorSubsystem, ElevatorConstants.Lvl4Position))
       .andThen(new MoveArmCommand(armSubsystem, ArmConstants.Lvl4Position))
       .andThen(new RunCommand(() -> driveSubsystem.setSlowMode(true), driveSubsystem)));
+  }
+
+  /**
+   * Configure button bindings for testing/simulation purposes.
+   */
+  private void configureButtonBindingsTest() {
+    // Initialize the default driving command using the Logitech controller.
+    driveSubsystem.setDefaultCommand(new RunCommand(() -> 
+      driveSubsystem.drive(
+        -logitechController.getRawAxis(1),
+        -logitechController.getRawAxis(0),
+        -logitechController.getRawAxis(4)
+      ), 
+      driveSubsystem
+    ));
+
+    // Initialize other button bindings as needed for testing
+    // TO DO...
   }
 
   /**

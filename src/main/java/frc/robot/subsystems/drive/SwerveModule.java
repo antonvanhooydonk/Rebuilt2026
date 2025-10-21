@@ -423,14 +423,14 @@ public class SwerveModule implements Sendable {
    */
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addDoubleProperty("Last Target Speed", () -> lastState.speedMetersPerSecond, null);
-    builder.addDoubleProperty("Last Target Angle", () -> lastState.angle.getDegrees(), null);
-    builder.addDoubleProperty("Current Speed", () -> getState().speedMetersPerSecond, null);
-    builder.addDoubleProperty("Current Angle", () -> getState().angle.getDegrees(), null);
+    builder.addDoubleProperty("Last Target Speed (mps)", () -> lastState.speedMetersPerSecond, null);
+    builder.addDoubleProperty("Last Target Angle (deg)", () -> lastState.angle.getDegrees(), null);
+    builder.addDoubleProperty("Current Speed (mps)", () -> getState().speedMetersPerSecond, null);
+    builder.addDoubleProperty("Current Angle (deg)", () -> getState().angle.getDegrees(), null);
     builder.addDoubleProperty("Absolute Encoder (deg)", () -> absoluteEncoder.getAngleDegrees(), null);
-    builder.addDoubleProperty("Drive Current", () -> driveMotor.getSupplyCurrent().getValueAsDouble(), null);
-    builder.addDoubleProperty("Drive Temp", () -> driveMotor.getDeviceTemp().getValueAsDouble(), null);
-    builder.addDoubleProperty("Steer Current", () -> steerMotor.getOutputCurrent(), null);
-    builder.addDoubleProperty("Steer Temp", () -> steerMotor.getMotorTemperature(), null);
+    builder.addDoubleProperty("Drive Current (A)", () -> driveMotor.getSupplyCurrent().getValueAsDouble(), null);
+    builder.addDoubleProperty("Drive Temp (deg C)", () -> driveMotor.getDeviceTemp().getValueAsDouble(), null);
+    builder.addDoubleProperty("Steer Current (A)", () -> steerMotor.getOutputCurrent(), null);
+    builder.addDoubleProperty("Steer Temp (deg C)", () -> steerMotor.getMotorTemperature(), null);
   }
 }

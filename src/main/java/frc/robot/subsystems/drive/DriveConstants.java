@@ -20,7 +20,9 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class DriveConstants {
-  // Physical constants - adjust these for your robot
+  // ------------------------------------------------------------
+  // Physical constants - adjust these to robot each year
+  // ------------------------------------------------------------
   public static final double kTrackWidth = Units.inchesToMeters(21.73); // Distance between left and right wheels
   public static final double kWheelBase = Units.inchesToMeters(21.73);  // Distance between front and rear wheels
   public static final double kWheelDiameterMeters = Units.inchesToMeters(4.0);
@@ -39,22 +41,43 @@ public final class DriveConstants {
   public static final int    kSteerMotorMaxCurrent = 30; // The max current draw in amps of a swerve module steer motor
   public static final double kPeriodicTimeSeconds = 0.02; // 0.13; // 20ms (default) + 110ms => 0.02 + 0.11 spark max velocity lag 
 
-  public static final double kGyroXAngleOffsetDegrees = 0.0; // default 0.0 - offset if gyro X axis does not point forward
+  // Define the module translations from the robot's center
+  // See: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html#coordinate-system
+  public static final Translation2d[] kSwerveModuleTranslations = new Translation2d[] {
+    new Translation2d(Units.inchesToMeters(11.5), Units.inchesToMeters(11.5)), // FL
+    new Translation2d(Units.inchesToMeters(11.5), Units.inchesToMeters(-11.5)),       // FR
+    new Translation2d(Units.inchesToMeters(-11.5), Units.inchesToMeters(11.5)),       // BL
+    new Translation2d(Units.inchesToMeters(-11.5), Units.inchesToMeters(-11.5))              // BR
+  };
 
-  // Maximum speeds - adjust based on your robot capabilities
+  // Rotate the gyro X axis if the gyro was not installed facing forward
+  public static final double kGyroXAngleOffsetDegrees = 0.0; // default 0.0
+
+  // ------------------------------------------------------------
+  // Driver joystick settings
+  // ------------------------------------------------------------
   public static final double kJoystickDeadband = 0.1; // maybe use 0.5?, joystick deadband
-  public static final double kSlewRateLimit = 3.0; // joystick slew rate, start at 3.0, decrease if too twitchy, increase if too sluggish 
+  public static final double kSlewRateLimit = 3.0;    // joystick slew rate, start at 3.0, decrease if too twitchy, increase if too sluggish 
+
+  // ------------------------------------------------------------
+  // Swerve module anti-jitter settings
+  // ------------------------------------------------------------
   public static final boolean kAntiJitterEnabled = true; // set to true to stop jittering from module noise
   public static final double kAntiJitterSpeedDeadband = 0.001; // 1mm in m/s
   public static final double kAntiJitterAngleDeadband = Units.degreesToRadians(2.0); // radians
   public static final double kAntiJitterMinTurningSpeed = 0.1; // m/s
+
+  // ------------------------------------------------------------
+  // Maximum drive & turning speeds - adjust as necessary
+  // ------------------------------------------------------------
   public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(13); // max translation speed in meters per second, 12-16 ft/s is reasonable
   public static final double kMaxAccelMetersPerSecondSq = Units.feetToMeters(10); // max acceleration in meters per second squared (must be <= max speed)
   public static final double kMaxAngularSpeedRadsPerSecond = Units.rotationsToRadians(1.25); // 1.25 rotations per second (target 8-10 rad/s (2.5π - 3π))
   public static final double kMaxAngularAccelRadsPerSecondSq = Units.rotationsToRadians(0.9375); // set to 75% of angular speed
-  public static final double kWheelLockTimeSeconds = 10.0; // seconds to lock wheels when robot is disabled
-
-  // PID Constants for drive (tune these each year for the robot)
+  
+  // ------------------------------------------------------------
+  // Drive PID constants (tune these each year for the robot)
+  // ------------------------------------------------------------
   // Tuning Process:
   // 1. Characterize with SysId tool
   // 2. Start with feedforward only (kP = 0)
@@ -67,7 +90,9 @@ public final class DriveConstants {
   public static final double kDriveKV = 2.7;  // Velocity feedforward
   public static final double kDriveKA = 0.3;  // Acceleration feedforward
 
-  // PID Constants for steering (tune these each year for the robot)
+  // ------------------------------------------------------------
+  // Steering PID Constants (tune these each year for the robot)
+  // ------------------------------------------------------------
   // Tuning Process:
   // 1. Start with P only (I=0, D=0)
   // 2. Increase P until fast response without overshoot
@@ -128,15 +153,6 @@ public final class DriveConstants {
     Units.degreesToRadians(297.5),
     false
   );
-
-  // Define the module translations from the robot's center
-  // See: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html#coordinate-system
-  public static final Translation2d[] kSwerveModuleTranslations = new Translation2d[] {
-    new Translation2d(Units.inchesToMeters(11.5), Units.inchesToMeters(11.5)), // FL
-    new Translation2d(Units.inchesToMeters(11.5), Units.inchesToMeters(-11.5)),       // FR
-    new Translation2d(Units.inchesToMeters(-11.5), Units.inchesToMeters(11.5)),       // BL
-    new Translation2d(Units.inchesToMeters(-11.5), Units.inchesToMeters(-11.5))              // BR
-  };
 
   // ------------------------------------------------------------
   // Autobuilder RobotConfig for PathPlanner

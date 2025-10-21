@@ -81,7 +81,7 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
     // Set the motor brakes to coast mode after kWheelLockTimeSecond.
     // This makes it easier to push the robot around after the match.
-    if (afterMatchTimer.isRunning() && afterMatchTimer.hasElapsed(DriveConstants.kWheelLockTimeSeconds)) {
+    if (afterMatchTimer.isRunning() && afterMatchTimer.hasElapsed(10.0)) {
       m_robotContainer.setMotorBrake(false);
       afterMatchTimer.stop();
     }
