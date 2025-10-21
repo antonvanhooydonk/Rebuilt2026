@@ -145,7 +145,7 @@ public class SwerveModule implements Sendable {
   private void configureDriveMotor() {
     TalonFXConfiguration driveConfig = new TalonFXConfiguration();
 
-    // Motor output configuration
+    // Motor outputs
     driveConfig.MotorOutput
       .withDutyCycleNeutralDeadband(0.001)  // 0.1% deadband (tight control)
       .withNeutralMode(NeutralModeValue.Brake)
