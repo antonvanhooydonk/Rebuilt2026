@@ -111,6 +111,15 @@ public class ThriftyBotEncoder implements Sendable {
   }
   
   /**
+   * Gets the current angle in degrees from the analog input.
+   * This method does not apply the internal offset.
+   * @return Raw angle in degrees
+   */
+  public double getRawAngleDegrees() {
+    return Units.radiansToDegrees(getRawAngleRadians());
+  }
+  
+  /**
    * Gets the absolute position (0 to 1.0 rotations).
    * This method does not apply the internal offset.
    * @return Position as fraction of full rotation
@@ -247,6 +256,7 @@ public class ThriftyBotEncoder implements Sendable {
     builder.addDoubleProperty("Absolute Position", this::getAbsolutePosition, null);
     builder.addDoubleProperty("Angle (deg)", this::getAngleDegrees, null);
     builder.addDoubleProperty("Angle (rad)", this::getAngleRadians, null);
+    builder.addDoubleProperty("Raw Angle (deg)", this::getRawAngleDegrees, null);
     builder.addDoubleProperty("Raw Angle (rad)", this::getRawAngleRadians, null);
     builder.addDoubleProperty("Raw Voltage", this::getRawVoltage, null);
     builder.addDoubleProperty("Supply Voltage", RobotController::getVoltage5V, null);
