@@ -71,7 +71,15 @@ public class ThriftyBotEncoder implements Sendable {
     }
     
     // Normalize to [-π, π]
-    return normalizeAngle(angle);
+    while (angle > Math.PI) {
+      angle -= 2.0 * Math.PI;
+    }
+    while (angle < -Math.PI) {
+      angle += 2.0 * Math.PI;
+    }
+
+    // Return the angle
+    return angle;
   }
   
   /**
@@ -223,21 +231,6 @@ public class ThriftyBotEncoder implements Sendable {
    */
   public String getName() {
     return name;
-  }
-
-  /**
-   * Normalizes an angle to [-π, π] range
-   * @param angle Angle in radians
-   * @return Normalized angle
-   */
-  private double normalizeAngle(double angle) {
-    while (angle > Math.PI) {
-      angle -= 2.0 * Math.PI;
-    }
-    while (angle < -Math.PI) {
-      angle += 2.0 * Math.PI;
-    }
-    return angle;
   }
 
   /**
