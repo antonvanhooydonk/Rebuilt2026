@@ -39,6 +39,7 @@ public final class DriveConstants {
   public static final double kDriveMaxForwardVoltage = 12.0; // Max voltage to apply to drive motors when driving forward
   public static final double kDriveMaxReverseVoltage = -12.0; // Max voltage to apply to drive motors when driving backward
   public static final int    kSteerMotorMaxCurrent = 30; // The max current draw in amps of a swerve module steer motor
+  public static final double kGyroXAngleOffsetDegrees = 0.0; // default 0.0 - Rotate the gyro X axis if the gyro was not installed facing forward
   public static final double kPeriodicTimeSeconds = 0.02; // 0.13; // 20ms (default) + 110ms => 0.02 + 0.11 spark max velocity lag 
 
   // Define the module translations from the robot's center
@@ -50,8 +51,22 @@ public final class DriveConstants {
     new Translation2d(Units.inchesToMeters(-11.5), Units.inchesToMeters(-11.5))              // BR
   };
 
-  // Rotate the gyro X axis if the gyro was not installed facing forward
-  public static final double kGyroXAngleOffsetDegrees = 0.0; // default 0.0
+  // ------------------------------------------------------------
+  // Autobuilder RobotConfig for PathPlanner
+  // ------------------------------------------------------------
+  public static final RobotConfig kRobotConfig = new RobotConfig(
+    kRobotMassKg,
+    kRobotMOI,
+    new ModuleConfig(
+      kWheelRadiusMeters,
+      kMaxDriveVelocityAt12VoltsMPS,
+      kWheelCOF, 
+      DCMotor.getKrakenX60(1).withReduction(kDriveGearRatio),
+      kDriveMotorCurrentLimit,
+      1
+    ),
+    kSwerveModuleTranslations
+  );
 
   // ------------------------------------------------------------
   // Driver joystick settings
@@ -152,22 +167,5 @@ public final class DriveConstants {
     2,
     Units.degreesToRadians(297.5),
     false
-  );
-
-  // ------------------------------------------------------------
-  // Autobuilder RobotConfig for PathPlanner
-  // ------------------------------------------------------------
-  public static final RobotConfig kRobotConfig = new RobotConfig(
-    kRobotMassKg,
-    kRobotMOI,
-    new ModuleConfig(
-      kWheelRadiusMeters,
-      kMaxDriveVelocityAt12VoltsMPS,
-      kWheelCOF, 
-      DCMotor.getKrakenX60(1).withReduction(kDriveGearRatio),
-      kDriveMotorCurrentLimit,
-      1
-    ),
-    kSwerveModuleTranslations
   );
 }
