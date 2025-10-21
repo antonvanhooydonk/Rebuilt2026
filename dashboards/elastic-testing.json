@@ -954,6 +954,650 @@
           }
         ]
       }
+    },
+    {
+      "name": "Absolute Encoders",
+      "grid_layout": {
+        "layouts": [
+          {
+            "title": "FL",
+            "x": 200.0,
+            "y": 0.0,
+            "width": 250.0,
+            "height": 625.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Absolute Position",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FL/Absolute Position",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Angle (deg)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FL/Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Angle (rad)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FL/Angle (rad)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Inverted",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FL/Inverted",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
+                "title": "Noise Count",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FL/Noise Count",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Angle (deg)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FL/Raw Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Angle (rad)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FL/Raw Angle (rad)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Voltage",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FL/Raw Voltage",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Supply Voltage",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FL/Supply Voltage",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Valid",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FL/Valid",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              }
+            ]
+          },
+          {
+            "title": "FR",
+            "x": 450.0,
+            "y": 0.0,
+            "width": 250.0,
+            "height": 625.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Absolute Position",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FR/Absolute Position",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Angle (deg)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FR/Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Angle (rad)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FR/Angle (rad)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Inverted",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FR/Inverted",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
+                "title": "Noise Count",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FR/Noise Count",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Angle (deg)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FR/Raw Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Angle (rad)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FR/Raw Angle (rad)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Voltage",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FR/Raw Voltage",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Supply Voltage",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FR/Supply Voltage",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Valid",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FR/Valid",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              }
+            ]
+          },
+          {
+            "title": "BL",
+            "x": 700.0,
+            "y": 0.0,
+            "width": 250.0,
+            "height": 625.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Absolute Position",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BL/Absolute Position",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Angle (deg)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BL/Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Angle (rad)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BL/Angle (rad)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Inverted",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BL/Inverted",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
+                "title": "Noise Count",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BL/Noise Count",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Angle (deg)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BL/Raw Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Angle (rad)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BL/Raw Angle (rad)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Voltage",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BL/Raw Voltage",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Supply Voltage",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BL/Supply Voltage",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Valid",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BL/Valid",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              }
+            ]
+          },
+          {
+            "title": "BR",
+            "x": 950.0,
+            "y": 0.0,
+            "width": 250.0,
+            "height": 625.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Absolute Position",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BR/Absolute Position",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Angle (deg)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BR/Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Angle (rad)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BR/Angle (rad)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Inverted",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BR/Inverted",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
+                "title": "Noise Count",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BR/Noise Count",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Angle (deg)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BR/Raw Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Angle (rad)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BR/Raw Angle (rad)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Voltage",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BR/Raw Voltage",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Supply Voltage",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BR/Supply Voltage",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Valid",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BR/Valid",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              }
+            ]
+          }
+        ],
+        "containers": []
+      }
     }
   ]
 }
