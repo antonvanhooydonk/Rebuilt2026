@@ -68,8 +68,8 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
+    // Run end of match code here...
     if (Timer.getMatchTime() <= 0.00) {
-      // Run end of match code here...
       afterMatchTimer.reset();
       afterMatchTimer.start();
     }
