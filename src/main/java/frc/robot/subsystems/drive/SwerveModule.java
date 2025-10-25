@@ -47,7 +47,7 @@ public class SwerveModule implements Sendable {
   private final RelativeEncoder steerEncoder;
 
   // Control requests
-  private final VelocityDutyCycle driveVelocityRequest = new VelocityDutyCycle(0);
+  private final VelocityDutyCycle driveVelocityRequest;
 
   // Module identification
   private final int driveMotorID;
@@ -108,6 +108,9 @@ public class SwerveModule implements Sendable {
       this.absoluteEncoderInverted,
       this.moduleName
     );
+
+    // Initialize the drive velocity request
+    driveVelocityRequest = new VelocityDutyCycle(0);
 
     // Configure drive motor (we use a KrakenX60)
     configureDriveMotor();
