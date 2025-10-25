@@ -95,13 +95,13 @@ public class SwerveModule implements Sendable {
     this.absoluteEncoderOffsetRadians = absoluteEncoderOffsetRadians;
     this.absoluteEncoderInverted = absoluteEncoderInverted;
 
-    // Initialize the drive motor (we use a Kraken x60)
+    // Initialize the drive motor
     driveMotor = new TalonFX(this.driveMotorID);
 
-    // Initialize the steering motor (we use a Neo) 
+    // Initialize the steering motor
     steerMotor = new SparkMax(this.steerMotorID, MotorType.kBrushless);
 
-    // Initialize the absolute encoder (we use a ThriftyBot)
+    // Initialize the absolute encoder
     absoluteEncoder = new ThriftyBotEncoder(
       this.absoluteEncoderID, 
       this.absoluteEncoderOffsetRadians, 
@@ -112,10 +112,10 @@ public class SwerveModule implements Sendable {
     // Initialize the drive velocity request
     driveVelocityRequest = new VelocityDutyCycle(0);
 
-    // Configure drive motor (we use a KrakenX60)
+    // Configure drive motor
     configureDriveMotor();
 
-    // Configure steering motor (we use a Neo)
+    // Configure steering motor
     configureSteerMotor();
 
     // Get the steering motor's onboard PID controller and relative encoder
@@ -143,7 +143,7 @@ public class SwerveModule implements Sendable {
   }
 
   /**
-   * Configures the Kraken60 drive motor
+   * Configures the drive motor (we use a Kraken x60)
    */
   private void configureDriveMotor() {
     TalonFXConfiguration driveConfig = new TalonFXConfiguration();
@@ -202,7 +202,7 @@ public class SwerveModule implements Sendable {
   }
 
   /**
-   * Configures the Neo550 steering motor
+   * Configures the steering motor (we use a Neo with Spark Max controller)
    */
   private void configureSteerMotor() {
     SparkMaxConfig steerConfig = new SparkMaxConfig();
