@@ -144,8 +144,13 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Zero gyro yaw when start+back is pushed
-    xboxController.start().and(xboxController.back()).onTrue(
+    xboxController.start().onTrue(
       new RunCommand(() -> driveSubsystem.zeroHeading(), driveSubsystem).ignoringDisable(true)
+    );
+
+    // Set robot to robot-relative driving when back is pressed
+    xboxController.back().onTrue(
+      new RunCommand(() -> driveSubsystem.setFieldRelative(true), driveSubsystem)
     );
 
     // Score at coral level 1
@@ -171,14 +176,16 @@ public class RobotContainer {
       .andThen(new RumbleControllerCommand(xboxController, 2.0)));
 
     // Manually toggle "algae" mode
-    xboxController.leftTrigger().onTrue(
-      new RunCommand(() -> armSubsystem.setAlgaeMode(!armSubsystem.isAlgaeMode()), armSubsystem)
-    );
+    xboxController.leftTrigger().onTrue(Commands.runOnce(() -> 
+      armSubsystem.setAlgaeMode(!armSubsystem.isAlgaeMode()), 
+      armSubsystem
+    ));    
 
     // Manually toggle "slow" mode
-    xboxController.rightTrigger().onTrue(
-      new RunCommand(() -> driveSubsystem.setSlowMode(!driveSubsystem.isSlowMode()), driveSubsystem)
-    );
+    xboxController.rightTrigger().onTrue(Commands.runOnce(() -> 
+      driveSubsystem.setSlowMode(!driveSubsystem.isSlowMode()),
+      driveSubsystem
+    ));    
  
     // Configure operator controller 1 - blue buttons
     opController1.button(Controller1Constants.ButtonBlue1)

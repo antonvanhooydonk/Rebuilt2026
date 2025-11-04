@@ -21,10 +21,30 @@ import edu.wpi.first.math.util.Units;
  */
 public final class DriveConstants {
   // ------------------------------------------------------------
+  // Maximum drive & turning speeds - adjust as necessary
+  // ------------------------------------------------------------
+  public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(13); // ensure <= kMaxDriveVelocityAt12VoltsMPS, max translation speed in meters per second, set 7 in loft, 10 - 14 at competition
+  public static final double kMaxAccelMetersPerSecondSq = Units.feetToMeters(10); // max acceleration in meters per second squared (must be <= max speed)
+  public static final double kMaxAngularSpeedRadsPerSecond = Units.rotationsToRadians(1.25); // 1.25 rotations per second (target 8-10 rad/s (2.5π - 3π))
+  public static final double kMaxAngularAccelRadsPerSecondSq = Units.rotationsToRadians(0.9375); // set to 75% of angular speed
+ 
+  // ------------------------------------------------------------
+  // Driver joystick settings
+  // ------------------------------------------------------------
+  public static final double kJoystickDeadband = 0.1; // maybe use 0.5?, joystick deadband
+  public static final double kSlewRateLimit = 3.0;    // joystick slew rate, start at 3.0, decrease if too twitchy, increase if too sluggish 
+
+  // ------------------------------------------------------------
+  // Swerve module anti-jitter settings
+  // ------------------------------------------------------------
+  public static final boolean kAntiJitterEnabled = true; // set to true to stop jittering from module noise
+  public static final double kAntiJitterSpeedDeadband = 0.001; // 1mm in m/s
+  public static final double kAntiJitterAngleDeadband = Units.degreesToRadians(2.0); // radians
+  public static final double kAntiJitterMinTurningSpeed = 0.1; // m/s
+
+  // ------------------------------------------------------------
   // Physical constants - adjust these to robot each year
   // ------------------------------------------------------------
-  public static final double kTrackWidth = Units.inchesToMeters(21.73); // Distance between left and right wheels
-  public static final double kWheelBase = Units.inchesToMeters(21.73);  // Distance between front and rear wheels
   public static final double kWheelDiameterMeters = Units.inchesToMeters(4.0);
   public static final double kWheelRadiusMeters = kWheelDiameterMeters / 2;
   public static final double kWheelCircumference = kWheelDiameterMeters * Math.PI;
@@ -34,11 +54,17 @@ public final class DriveConstants {
   public static final double kRobotMassKg = Units.lbsToKilograms(134);
   public static final double kRobotMOI = 3.08607399254; // kg m^2, moment of inertia about center of robot
   public static final double kMaxDriveVelocityAt12VoltsMPS = Units.feetToMeters(15.5); // MK4i L2 Kraken non-FOC With 14t pinion (https://www.swervedrivespecialties.com/products/mk4i-swerve-module?variant=47316033798445)
-  public static final double kDriveMotorCurrentLimit = 60.0; // The max current draw in amps of a swerve module drive motor
-  public static final double kDriveMotorCurrentLowerLimit = 40.0; // The regular lower limit current draw in amps of a swerve module drive motor
+
+  public static final double kDriveMotorCurrentLimit = 90.0; // The max current draw in amps of a swerve module drive motor
+  public static final double kDriveMotorCurrentLowerLimit = 70.0; // The regular lower limit current draw in amps of a swerve module drive motor
+  public static final double kDriveMotorCurrentLowerTime = 0.5; // The time in seconds after which the lower current limit applies
+  public static final double kDriveMotorStatorCurrentLimit = 120.00; // The max current draw in amps of a swerve module drive motor stator
   public static final double kDriveMaxForwardVoltage = 12.0; // Max voltage to apply to drive motors when driving forward
   public static final double kDriveMaxReverseVoltage = -12.0; // Max voltage to apply to drive motors when driving backward
-  public static final int    kSteerMotorMaxCurrent = 30; // The max current draw in amps of a swerve module steer motor
+  
+  public static final int    kSteerMotorMaxCurrent = 25; // The max steady state current draw in amps of a swerve module steer motor
+  public static final double kSteerMotorMaxPeakCurrent = 35; // The max burst/peak current draw in amps of a swerve module steer motor
+  
   public static final double kGyroXAngleOffsetDegrees = 0.0; // default 0.0 - Rotate the gyro X axis if the gyro was not installed facing forward
   public static final double kPeriodicTimeSeconds = 0.02; // 0.13; // 20ms (default) + 110ms => 0.02 + 0.11 spark max velocity lag 
 
@@ -67,29 +93,7 @@ public final class DriveConstants {
     ),
     kSwerveModuleTranslations
   );
-
-  // ------------------------------------------------------------
-  // Driver joystick settings
-  // ------------------------------------------------------------
-  public static final double kJoystickDeadband = 0.1; // maybe use 0.5?, joystick deadband
-  public static final double kSlewRateLimit = 3.0;    // joystick slew rate, start at 3.0, decrease if too twitchy, increase if too sluggish 
-
-  // ------------------------------------------------------------
-  // Swerve module anti-jitter settings
-  // ------------------------------------------------------------
-  public static final boolean kAntiJitterEnabled = true; // set to true to stop jittering from module noise
-  public static final double kAntiJitterSpeedDeadband = 0.001; // 1mm in m/s
-  public static final double kAntiJitterAngleDeadband = Units.degreesToRadians(2.0); // radians
-  public static final double kAntiJitterMinTurningSpeed = 0.1; // m/s
-
-  // ------------------------------------------------------------
-  // Maximum drive & turning speeds - adjust as necessary
-  // ------------------------------------------------------------
-  public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(13); // max translation speed in meters per second, 12-16 ft/s is reasonable
-  public static final double kMaxAccelMetersPerSecondSq = Units.feetToMeters(10); // max acceleration in meters per second squared (must be <= max speed)
-  public static final double kMaxAngularSpeedRadsPerSecond = Units.rotationsToRadians(1.25); // 1.25 rotations per second (target 8-10 rad/s (2.5π - 3π))
-  public static final double kMaxAngularAccelRadsPerSecondSq = Units.rotationsToRadians(0.9375); // set to 75% of angular speed
-  
+ 
   // ------------------------------------------------------------
   // Drive PID constants (tune these each year for the robot)
   // ------------------------------------------------------------
@@ -140,7 +144,7 @@ public final class DriveConstants {
     8,
     false,
     false,
-    1,
+    1,    
     Units.degreesToRadians(119.7),
     false
   );

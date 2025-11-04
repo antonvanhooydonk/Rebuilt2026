@@ -163,9 +163,9 @@ public class SwerveModule implements Sendable {
       .withSupplyCurrentLimitEnable(true)
       .withSupplyCurrentLimit(DriveConstants.kDriveMotorCurrentLimit)
       .withSupplyCurrentLowerLimit(DriveConstants.kDriveMotorCurrentLowerLimit)
-      .withSupplyCurrentLowerTime(1.0)
+      .withSupplyCurrentLowerTime(DriveConstants.kDriveMotorCurrentLowerTime)
       .withStatorCurrentLimitEnable(true)
-      .withStatorCurrentLimit(120);
+      .withStatorCurrentLimit(DriveConstants.kDriveMotorStatorCurrentLimit);
 
     // Voltage compensation
     driveConfig.Voltage
@@ -212,6 +212,7 @@ public class SwerveModule implements Sendable {
       .idleMode(IdleMode.kBrake)
       .inverted(steerMotorInverted ? true : false)
       .smartCurrentLimit(DriveConstants.kSteerMotorMaxCurrent)
+      .secondaryCurrentLimit(DriveConstants.kSteerMotorMaxPeakCurrent)
       .voltageCompensation(12.0);
 
     // Set position conversion factor (rotations to radians)
