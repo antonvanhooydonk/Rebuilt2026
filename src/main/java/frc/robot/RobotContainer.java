@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -65,22 +66,6 @@ public class RobotContainer {
    * Contains subsystems, OI devices, and commands. 
    */
   public RobotContainer() {
-    // Initialize default drive command based on whether we are in simulation or on the real robot
-    if (Robot.isSimulation()) {
-      CommandGenericHID logitechController = new CommandGenericHID(0);
-      driveSubsystem.setDefaultCommand(new RunCommand(() -> 
-        driveSubsystem.drive(
-          -logitechController.getRawAxis(1),
-          -logitechController.getRawAxis(0),
-          -logitechController.getRawAxis(4)
-        ), 
-        driveSubsystem
-      ));
-    }
-
-    // Configure the autonomous command chooser
-    configureAutos();    
-
     // Initialize the default driving command.
     // The left stick controls translation of the robot.
     // Turning is controlled by the X axis of the right stick.
@@ -95,6 +80,9 @@ public class RobotContainer {
       driveSubsystem
     ));
 
+    // Configure the autonomous command chooser
+    configureAutos();
+
     // Configure the trigger/button bindings
     configureButtonBindings();
     
@@ -103,11 +91,26 @@ public class RobotContainer {
   }
 
   /**
-   * Configure the autonomous command chooser.
+   * Register named commands to be used in PathPlanner autos.
+   */
+  public void registerNamedCommands() {
+    // Register named commands before the creation of any PathPlanner Autos or Paths. 
+    // It is recommended to do this in RobotContainer, after subsystem initialization, 
+    // but before the creation of any other commands.
+    // NamedCommands.registerCommand("autoBalance", swerve.autoBalanceCommand());
+    // NamedCommands.registerCommand("exampleCommand", exampleSubsystem.exampleCommand());
+    // NamedCommands.registerCommand("someOtherCommand", new SomeOtherCommand());
+  }
+
+  /**
+   * Register named commands and configure the autonomous command chooser.
    * This will build the auto chooser using the AutoBuilder class, 
    * which pulls in all autos defined in the PathPlanner deploy folder.
    */
   public void configureAutos() {
+    // Register named commands to be used in Pathplanner
+    registerNamedCommands();
+
     // Build the auto chooser and add it to the dashboard
     // This will use Commands.none() as the default option.
     autoCommandChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(

@@ -1195,14 +1195,28 @@
             },
             "children": [
               {
-                "title": "Absolute Position",
+                "title": "Raw Angle (deg)",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 150.0,
                 "height": 150.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/FL/Absolute Position",
+                  "topic": "/SmartDashboard/Absolute Encoder/FL/Raw Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Angle (rad)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FL/Raw Angle (rad)",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -1237,6 +1251,20 @@
                 }
               },
               {
+                "title": "Absolute Position",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FL/Absolute Position",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
                 "title": "Inverted",
                 "x": 0.0,
                 "y": 0.0,
@@ -1258,34 +1286,6 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "/SmartDashboard/Absolute Encoder/FL/Noise Count",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Raw Angle (deg)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/FL/Raw Angle (deg)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Raw Angle (rad)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/FL/Raw Angle (rad)",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -1350,14 +1350,28 @@
             },
             "children": [
               {
-                "title": "Absolute Position",
+                "title": "Raw Angle (deg)",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 150.0,
                 "height": 150.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/FR/Absolute Position",
+                  "topic": "/SmartDashboard/Absolute Encoder/FR/Raw Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Angle (rad)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FR/Raw Angle (rad)",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -1392,6 +1406,20 @@
                 }
               },
               {
+                "title": "Absolute Position",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FR/Absolute Position",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
                 "title": "Inverted",
                 "x": 0.0,
                 "y": 0.0,
@@ -1413,34 +1441,6 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "/SmartDashboard/Absolute Encoder/FR/Noise Count",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Raw Angle (deg)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/FR/Raw Angle (deg)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Raw Angle (rad)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/FR/Raw Angle (rad)",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -1505,14 +1505,28 @@
             },
             "children": [
               {
-                "title": "Absolute Position",
+                "title": "Raw Angle (deg)",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 150.0,
                 "height": 150.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/BL/Absolute Position",
+                  "topic": "/SmartDashboard/Absolute Encoder/BL/Raw Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Angle (rad)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BL/Raw Angle (rad)",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -1547,6 +1561,20 @@
                 }
               },
               {
+                "title": "Absolute Position",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BL/Absolute Position",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
                 "title": "Inverted",
                 "x": 0.0,
                 "y": 0.0,
@@ -1568,34 +1596,6 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "/SmartDashboard/Absolute Encoder/BL/Noise Count",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Raw Angle (deg)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/BL/Raw Angle (deg)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Raw Angle (rad)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/BL/Raw Angle (rad)",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -1660,14 +1660,28 @@
             },
             "children": [
               {
-                "title": "Absolute Position",
+                "title": "Raw Angle (deg)",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 150.0,
                 "height": 150.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/BR/Absolute Position",
+                  "topic": "/SmartDashboard/Absolute Encoder/BR/Raw Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Angle (rad)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BR/Raw Angle (rad)",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -1702,6 +1716,20 @@
                 }
               },
               {
+                "title": "Absolute Position",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BR/Absolute Position",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
                 "title": "Inverted",
                 "x": 0.0,
                 "y": 0.0,
@@ -1723,34 +1751,6 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "/SmartDashboard/Absolute Encoder/BR/Noise Count",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Raw Angle (deg)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/BR/Raw Angle (deg)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Raw Angle (rad)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/BR/Raw Angle (rad)",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
