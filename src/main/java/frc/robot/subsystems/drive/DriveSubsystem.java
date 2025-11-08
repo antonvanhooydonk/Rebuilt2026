@@ -224,9 +224,8 @@ public class DriveSubsystem extends SubsystemBase {
    * Creates a command to aim the robot at a specified target pose
    * @param targetPose The Pose2d to aim at
    * @return Command to aim at the target pose
-   */
-  
-   public Command aimAtTargetCommand(Pose2d targetPose) {
+   */  
+  public Command aimAtTargetCommand(Pose2d targetPose) {
     // Check for null target pose
     if (targetPose == null) {
       return Commands.none();
