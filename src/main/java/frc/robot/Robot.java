@@ -21,21 +21,20 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot {
   private final RobotContainer m_robotContainer;
   private Command m_autonomousCommand;
-  private Timer afterMatchTimer = new Timer();
 
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   public Robot() {
-    // Starts recording to data log
+    // Starts recording to data log (ensure a USB stick is plugged in to the RoboRIO)
     DataLogManager.start();
 
     // Record both DS control and joystick data
     DriverStation.startDataLog(DataLogManager.getLog());
 
     // Set the periodic loop to run on a custom time (default 20 milliseconds)
-    // Comment this out to go back to the default.
+    // Comment this out to go back to use the default time cycle.
     // super(DriveConstants.kPeriodicTimeSeconds);
 
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
@@ -70,20 +69,12 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     // Run end of match code here...
     if (Timer.getMatchTime() <= 0.00) {
-      afterMatchTimer.reset();
-      afterMatchTimer.start();
+      m_robotContainer.setMotorBrake(false);
     }
   }
 
   @Override
-  public void disabledPeriodic() {
-    // Set the motor brakes to coast mode after kWheelLockTimeSecond.
-    // This makes it easier to push the robot around after the match.
-    if (afterMatchTimer.isRunning() && afterMatchTimer.hasElapsed(10.0)) {
-      m_robotContainer.setMotorBrake(false);
-      afterMatchTimer.stop();
-    }
-  }
+  public void disabledPeriodic() {}
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override

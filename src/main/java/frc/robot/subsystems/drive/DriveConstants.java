@@ -23,8 +23,8 @@ public final class DriveConstants {
   // ------------------------------------------------------------
   // Maximum drive & turning speeds - adjust as necessary
   // ------------------------------------------------------------
-  public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(13); // ensure <= kMaxDriveVelocityAt12VoltsMPS, max translation speed in meters per second, set 7 in loft, 10 - 14 at competition
-  public static final double kMaxAccelMetersPerSecondSq = Units.feetToMeters(10); // max acceleration in meters per second squared (must be <= max speed)
+  public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(14); // ensure <= kMaxDriveVelocityAt12VoltsMPS, max translation speed in meters per second, set 7 in loft, 10 - 14 at competition
+  public static final double kMaxAccelMetersPerSecondSq = Units.feetToMeters(12); // max acceleration in meters per second squared (must be <= max speed)
   public static final double kMaxAngularSpeedRadsPerSecond = Units.rotationsToRadians(1.25); // 1.25 rotations per second (target 8-10 rad/s (2.5π - 3π))
   public static final double kMaxAngularAccelRadsPerSecondSq = Units.rotationsToRadians(0.9375); // set to 75% of angular speed
  
