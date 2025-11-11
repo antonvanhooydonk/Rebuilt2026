@@ -132,21 +132,26 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   /**
+   * Determine if the elevator's is currently stalling.
+   * This happens when the elevator is trying to move
+   * but can't because it is at a limit or obstructed.
+   * @return
+   */
+  public boolean isStalling() {
+    return !isAtTargetPosition() && (
+      (leftElevatorMotor.getVelocity().getValueAsDouble() == 0 && leftElevatorMotor.getMotorVoltage().getValueAsDouble() != 0.0) ||
+      (rightElevatorMotor.getVelocity().getValueAsDouble() == 0 && rightElevatorMotor.getMotorVoltage().getValueAsDouble() != 0.0)
+    );
+  }
+
+  /**
    * Determines if the elevator should stop moving
-   * 1. If the target position is below the zero point and the elevator is at or below the zero point
-   * 2. If the target position is above the max height and the elevator is at or above the max height
-   * 3. If the elevator is at the target position
+   * 1. The elevator is stalling
+   * 2. The elevator is at the target position
    * @return
    */
   public boolean shouldStop() {
-    if (
-      (targetPosition <= zeroPoint && getPosition() <= zeroPoint) ||
-      (targetPosition >= ElevatorConstants.MaxHeightPosition + zeroPoint && getPosition() >= ElevatorConstants.MaxHeightPosition + zeroPoint) || 
-      isAtTargetPosition()
-    ) {
-      return true;
-    };
-    return false;
+    return isStalling() || isAtTargetPosition();
   }
 
   /**
