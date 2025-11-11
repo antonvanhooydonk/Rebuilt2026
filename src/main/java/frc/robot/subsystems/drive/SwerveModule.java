@@ -233,14 +233,6 @@ public class SwerveModule implements Sendable {
       .d(DriveConstants.kSteerKD)
       .velocityFF(DriveConstants.kSteerFF);
 
-    // Configure MAXMotion
-    // Not currently used, but could be useful in the future.
-    // Be sure to change the setSteerAngle() method to use SparkMax.ControlType.kMAXMotionPositionControl
-    // steerConfig.closedLoop.maxMotion
-    //   .allowedClosedLoopError(0)
-    //   .maxVelocity(DriveConstants.kMaxAngularSpeedRadsPerSecond)
-    //   .maxAcceleration(DriveConstants.kMaxAngularAccelRadsPerSecondSq);
-
     // OPTIMIZE CAN STATUS FRAMES for reduced lag
     steerConfig.signals
       .primaryEncoderPositionPeriodMs(10)   // Position: 100Hz (was Status2)
