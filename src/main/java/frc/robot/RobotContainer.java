@@ -89,6 +89,12 @@ public class RobotContainer {
 
     // Configure the trigger/button bindings
     configureButtonBindings();
+
+    // Configure custom event triggers
+    new Trigger(elevatorSubsystem::isStalling)
+      .onTrue(Commands.runOnce(() -> Utils.logInfo("Elevator is stalling!"))
+      .andThen(Commands.runOnce(() -> elevatorSubsystem.stopElevator(), elevatorSubsystem))
+      .andThen(Commands.runOnce(() -> armSubsystem.setArmPosition(ArmConstants.HomePosition), armSubsystem)));
     
     // Silence joystick warnings during testing
     DriverStation.silenceJoystickConnectionWarning(true);
