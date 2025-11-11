@@ -21,6 +21,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import frc.robot.Constants.Controller1Constants;
 import frc.robot.Constants.Controller2Constants;
+import frc.robot.commands.ScoreLevel1CoralCommand;
+import frc.robot.commands.ScoreLevel2CoralCommand;
+import frc.robot.commands.ScoreLevel3CoralCommand;
+import frc.robot.commands.ScoreLevel4CoralCommand;
 import frc.robot.commands.arm.MoveArmCommand;
 import frc.robot.commands.elevator.MoveElevatorCommand;
 import frc.robot.commands.roller.HoldAlgaeCommand;
@@ -52,8 +56,8 @@ public class RobotContainer {
   private final VisionSubsystem visionSubsystem = new VisionSubsystem();
   private final DriveSubsystem driveSubsystem = new DriveSubsystem(visionSubsystem);
 
-  // Initialize our robot controllers
-  private final CommandXboxController xboxController = new CommandXboxController(0);
+  // Initialize our controllers
+  private final CommandXboxController driverXbox = new CommandXboxController(0);
   private final CommandGenericHID opController1 = new CommandGenericHID(1);
   private final CommandGenericHID opController2 = new CommandGenericHID(2);
 
@@ -73,9 +77,9 @@ public class RobotContainer {
     // See: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
     driveSubsystem.setDefaultCommand(new RunCommand(() -> 
       driveSubsystem.drive(
-        -xboxController.getLeftY(),
-        -xboxController.getLeftX(),
-        -xboxController.getRightX()
+        -driverXbox.getLeftY(),
+        -driverXbox.getLeftX(),
+        -driverXbox.getRightX()
       ), 
       driveSubsystem
     ));
@@ -97,9 +101,30 @@ public class RobotContainer {
     // Register named commands before the creation of any PathPlanner Autos or Paths. 
     // It is recommended to do this in RobotContainer, after subsystem initialization, 
     // but before the creation of any other commands.
-    // NamedCommands.registerCommand("autoBalance", swerve.autoBalanceCommand());
-    // NamedCommands.registerCommand("exampleCommand", exampleSubsystem.exampleCommand());
-    // NamedCommands.registerCommand("someOtherCommand", new SomeOtherCommand());
+    NamedCommands.registerCommand("ScoreLevel1Coral", new ScoreLevel1CoralCommand(
+      driveSubsystem,
+      elevatorSubsystem,
+      armSubsystem,
+      rollerSubsystem
+    ));
+    NamedCommands.registerCommand("ScoreLevel2Coral", new ScoreLevel2CoralCommand(
+      driveSubsystem,
+      elevatorSubsystem,
+      armSubsystem,
+      rollerSubsystem
+    ));
+    NamedCommands.registerCommand("ScoreLevel3Coral", new ScoreLevel3CoralCommand(
+      driveSubsystem,
+      elevatorSubsystem,
+      armSubsystem,
+      rollerSubsystem
+    ));
+    NamedCommands.registerCommand("ScoreLevel4Coral", new ScoreLevel4CoralCommand(
+      driveSubsystem,
+      elevatorSubsystem,
+      armSubsystem,
+      rollerSubsystem
+    ));
   }
 
   /**
@@ -147,45 +172,45 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Zero gyro yaw when start+back is pushed
-    xboxController.start().onTrue(
+    driverXbox.start().onTrue(
       new RunCommand(() -> driveSubsystem.zeroHeading(), driveSubsystem).ignoringDisable(true)
     );
 
     // Set robot to robot-relative driving when back is pressed
-    xboxController.back().onTrue(
+    driverXbox.back().onTrue(
       new RunCommand(() -> driveSubsystem.setFieldRelative(true), driveSubsystem)
     );
 
     // Score at coral level 1
-    xboxController.a().onTrue(new MoveArmCommand(armSubsystem, ArmConstants.HomePosition));
+    driverXbox.a().onTrue(new MoveArmCommand(armSubsystem, ArmConstants.HomePosition));
     
     // Score at coral level 2
-    xboxController.x().onTrue(Commands.none());
+    driverXbox.x().onTrue(Commands.none());
 
     // Score at coral level 3
-    xboxController.b().onTrue(new MoveArmCommand(armSubsystem, ArmConstants.CoralMovingPosition));
+    driverXbox.b().onTrue(new MoveArmCommand(armSubsystem, ArmConstants.CoralMovingPosition));
     
     // Score at coral level 4
-    xboxController.y().onTrue(Commands.none());
+    driverXbox.y().onTrue(Commands.none());
     
     // Drive to left scoring pose of the current camera target
-    xboxController.leftBumper()
+    driverXbox.leftBumper()
       .whileTrue(driveSubsystem.driveToPoseCommand(Utils.getLeftScoringPose(visionSubsystem, "FRONT_CAMERA"))
-      .andThen(new RumbleControllerCommand(xboxController, 2.0)));
+      .andThen(new RumbleControllerCommand(driverXbox, 2.0)));
     
     // Drive to right scoring pose of the current camera target
-    xboxController.rightBumper()
+    driverXbox.rightBumper()
       .whileTrue(driveSubsystem.driveToPoseCommand(Utils.getRightScoringPose(visionSubsystem, "FRONT_CAMERA"))
-      .andThen(new RumbleControllerCommand(xboxController, 2.0)));
+      .andThen(new RumbleControllerCommand(driverXbox, 2.0)));
 
     // Manually toggle "algae" mode
-    xboxController.leftTrigger().onTrue(Commands.runOnce(() -> 
+    driverXbox.leftTrigger().onTrue(Commands.runOnce(() -> 
       armSubsystem.setAlgaeMode(!armSubsystem.isAlgaeMode()), 
       armSubsystem
     ));    
 
     // Manually toggle "slow" mode
-    xboxController.rightTrigger().onTrue(Commands.runOnce(() -> 
+    driverXbox.rightTrigger().onTrue(Commands.runOnce(() -> 
       driveSubsystem.setSlowMode(!driveSubsystem.isSlowMode()),
       driveSubsystem
     ));    

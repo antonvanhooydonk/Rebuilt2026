@@ -31,8 +31,8 @@ public final class DriveConstants {
   // ------------------------------------------------------------
   // Driver joystick settings
   // ------------------------------------------------------------
+  public static final double kSlewRateLimit = 3.0; // slew rate, start at 3.0, decrease if too twitchy, increase if too sluggish 
   public static final double kJoystickDeadband = 0.1; // maybe use 0.5?, joystick deadband
-  public static final double kSlewRateLimit = 3.0;    // joystick slew rate, start at 3.0, decrease if too twitchy, increase if too sluggish 
 
   // ------------------------------------------------------------
   // Swerve module anti-jitter settings
