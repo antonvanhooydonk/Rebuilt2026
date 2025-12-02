@@ -117,7 +117,7 @@ public class SwerveModule implements Sendable {
 
     // Get the steering motor's onboard PID controller and relative encoder
     steerPIDController = steerMotor.getClosedLoopController();
-    steerEncoder = steerMotor.getEncoder();    
+    steerEncoder = steerMotor.getEncoder();
 
     // Reset encoders
     resetEncoders();
