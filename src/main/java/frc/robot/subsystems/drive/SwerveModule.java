@@ -154,10 +154,6 @@ public class SwerveModule implements Sendable {
         ? InvertedValue.Clockwise_Positive
         : InvertedValue.CounterClockwise_Positive
       );
-
-    // Set the sensor to mechanism ratio (motor rotations to wheel rotations)
-    // This means we don't have to do conversion in code later
-    driveConfig.Feedback.SensorToMechanismRatio = DriveConstants.kDriveGearRatio;
     
     // Current limits
     driveConfig.CurrentLimits
@@ -275,7 +271,7 @@ public class SwerveModule implements Sendable {
    * @return Current SwerveModuleState
    */
   public SwerveModuleState getState() {
-    double velocity = driveMotor.getVelocity().getValueAsDouble() * DriveConstants.kWheelCircumference;
+    double velocity = (driveMotor.getVelocity().getValueAsDouble() / DriveConstants.kDriveGearRatio) * DriveConstants.kWheelCircumference;
     Rotation2d angle = new Rotation2d(steerEncoder.getPosition());
     return new SwerveModuleState(velocity, angle);
   }
@@ -285,7 +281,7 @@ public class SwerveModule implements Sendable {
    * @return Current SwerveModulePosition
    */
   public SwerveModulePosition getPosition() {
-    double distance = driveMotor.getPosition().getValueAsDouble() * DriveConstants.kWheelCircumference;
+    double distance = (driveMotor.getPosition().getValueAsDouble() / DriveConstants.kDriveGearRatio) * DriveConstants.kWheelCircumference;
     Rotation2d angle = new Rotation2d(steerEncoder.getPosition());
     return new SwerveModulePosition(distance, angle);
   }
@@ -325,7 +321,7 @@ public class SwerveModule implements Sendable {
    * @param velocityMPS Desired velocity in m/s
    */
   private void setDriveVelocity(double velocityMPS) {
-    double velocityRPS = velocityMPS / DriveConstants.kWheelCircumference;
+    double velocityRPS = (velocityMPS / DriveConstants.kWheelCircumference) * DriveConstants.kDriveGearRatio;
     driveMotor.setControl(driveVelocityRequest.withVelocity(velocityRPS));
   }
 
