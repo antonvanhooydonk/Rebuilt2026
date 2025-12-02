@@ -72,8 +72,8 @@ public class RobotContainer {
   public RobotContainer() {
     // Initialize the default driving command.
     // The left stick controls translation of the robot.
-    // Turning is controlled by the X axis of the right stick.
-    // Drives field relative by default.
+    // Turning/rotatiton is controlled by the X axis of the right stick.
+    // Robot drives field relative by default.
     // See: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
     driveSubsystem.setDefaultCommand(new RunCommand(() -> 
       driveSubsystem.drive(

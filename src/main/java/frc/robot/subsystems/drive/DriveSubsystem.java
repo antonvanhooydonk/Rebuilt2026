@@ -142,7 +142,7 @@ public class DriveSubsystem extends SubsystemBase {
     PathfindingCommand.warmupCommand().schedule();
 
     // Zero the gyro if vision is not enabled
-    if (!visionEnabled()) {
+    if (!isVisionEnabled()) {
       zeroHeading();
     }
 
@@ -190,7 +190,7 @@ public class DriveSubsystem extends SubsystemBase {
    * Checks if vision subsystem is available
    * @return
    */
-  private boolean visionEnabled() {
+  private boolean isVisionEnabled() {
     return visionSubsystem != null && visionSubsystem.isEnabled();
   }
 
@@ -199,7 +199,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   private void addVisionMeasurements() {
     // Exit early if vision subsystem is not available or is disabled
-    if (!visionEnabled()) return;
+    if (!isVisionEnabled()) return;
     
     // Get all latest vision measurements
     List<VisionMeasurement> measurements = visionSubsystem.getLatestMeasurements();

@@ -26,7 +26,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.sensors.ThriftyBotEncoder;
@@ -61,8 +60,6 @@ public class SwerveModule implements Sendable {
 
   // Previous target/desired state
   private SwerveModuleState lastState;
-
-  private double lastMoveAtTime = 0;
 
   /**
    * Construct a SwerveModule with the given parameters
@@ -139,7 +136,7 @@ public class SwerveModule implements Sendable {
    * Called periodically by the drive subsystem
    */
   public void periodic() {
-    checkEncoderDrift();
+    // Nothing needed here for now
   }
 
   /**
@@ -157,6 +154,10 @@ public class SwerveModule implements Sendable {
         ? InvertedValue.Clockwise_Positive
         : InvertedValue.CounterClockwise_Positive
       );
+
+    // Set the sensor to mechanism ratio (motor rotations to wheel rotations)
+    // This means we don't have to do conversion in code later
+    driveConfig.Feedback.SensorToMechanismRatio = DriveConstants.kDriveGearRatio;
     
     // Current limits
     driveConfig.CurrentLimits
@@ -215,25 +216,24 @@ public class SwerveModule implements Sendable {
       .secondaryCurrentLimit(DriveConstants.kSteerMotorMaxPeakCurrent)
       .voltageCompensation(12.0);
 
-    // Set position conversion factor (rotations to radians)
-    // Set velocity conversion factor (rotations per minute to radians per second)
-    steerConfig.encoder
-      .positionConversionFactor(DriveConstants.kSteerGearRatio * 2 * Math.PI)
-      .velocityConversionFactor(DriveConstants.kSteerGearRatio * 2 * Math.PI / 60.0);
-
     // Closed-loop PID configuration
     steerConfig.closedLoop
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       .outputRange(-1.0, 1.0)
       .positionWrappingEnabled(true)
-      .positionWrappingMinInput(-Math.PI)
-      .positionWrappingMaxInput(Math.PI)
+      .positionWrappingInputRange(-Math.PI, Math.PI)
       .p(DriveConstants.kSteerKP)
       .i(DriveConstants.kSteerKI)
       .d(DriveConstants.kSteerKD)
       .velocityFF(DriveConstants.kSteerFF);
 
-    // OPTIMIZE CAN STATUS FRAMES for reduced lag
+    // Set position conversion factor (rotations to radians)
+    // Set velocity conversion factor (rotations per minute to radians per second)
+    steerConfig.encoder
+      .positionConversionFactor(2 * Math.PI / DriveConstants.kSteerGearRatio)
+      .velocityConversionFactor(2 * Math.PI / DriveConstants.kSteerGearRatio / 60.0);
+
+    // Optimize CAN status frames for reduced lag
     steerConfig.signals
       .primaryEncoderPositionPeriodMs(10)   // Position: 100Hz (was Status2)
       .primaryEncoderVelocityPeriodMs(10)   // Velocity: 100Hz (was Status2)
@@ -263,22 +263,6 @@ public class SwerveModule implements Sendable {
   }
 
   /**
-   * Check relative encoder has drifted away from the absolute encoder
-   */
-  public void checkEncoderDrift() {
-    double absoluteAngle = absoluteEncoder.getAngleRadians();
-    double relativeAngle = steerEncoder.getPosition();
-    double error = Math.abs(absoluteAngle - relativeAngle);
-    double timeSinceLastMove = Timer.getFPGATimestamp() - lastMoveAtTime;
-    
-    // Re-sync if the robot has been still for 0.5 seconds 
-    // and error is > 3 degrees (indicates encoder drift)
-    if (timeSinceLastMove > 0.5 && error > Units.degreesToRadians(3.0)) { 
-      resetEncoders();
-    }
-  }
-
-  /**
    * Gets the target state of the swerve module
    * @return
    */
@@ -291,7 +275,7 @@ public class SwerveModule implements Sendable {
    * @return Current SwerveModuleState
    */
   public SwerveModuleState getState() {
-    double velocity = (driveMotor.getVelocity().getValueAsDouble() / DriveConstants.kDriveGearRatio) * DriveConstants.kWheelCircumference;
+    double velocity = driveMotor.getVelocity().getValueAsDouble() * DriveConstants.kWheelCircumference;
     Rotation2d angle = new Rotation2d(steerEncoder.getPosition());
     return new SwerveModuleState(velocity, angle);
   }
@@ -301,7 +285,7 @@ public class SwerveModule implements Sendable {
    * @return Current SwerveModulePosition
    */
   public SwerveModulePosition getPosition() {
-    double distance = (driveMotor.getPosition().getValueAsDouble() / DriveConstants.kDriveGearRatio) * DriveConstants.kWheelCircumference;
+    double distance = driveMotor.getPosition().getValueAsDouble() * DriveConstants.kWheelCircumference;
     Rotation2d angle = new Rotation2d(steerEncoder.getPosition());
     return new SwerveModulePosition(distance, angle);
   }
@@ -311,27 +295,29 @@ public class SwerveModule implements Sendable {
    * @param desiredState The desired SwerveModuleState
    */
   public void setDesiredState(SwerveModuleState desiredState) {
+    // Anti-jitter: ignore tiny velocity commands
+    if (Math.abs(desiredState.speedMetersPerSecond) < 0.001) {
+      stop();
+      return;
+    }
+
     // Optimize the desired state to avoid spinning more than 90 degrees
     desiredState.optimize(getState().angle);
-
-    // Apply anti-jitter if enabled
-    if (DriveConstants.kAntiJitterEnabled) {
-      desiredState = applyAntiJitter(desiredState);
-    }
-
-    // Set drive motor speed
-    setDriveVelocity(desiredState.speedMetersPerSecond);
     
-    // Set steering angle
-    setSteerAngle(desiredState.angle.getRadians());
+    // Set the "lastState" to the given "desiredState" if there's a 
+    // meaningful change in either drive speed or steering angle
+    if (
+      Math.abs(desiredState.speedMetersPerSecond - lastState.speedMetersPerSecond) > 0.01 ||
+      Math.abs(desiredState.angle.minus(lastState.angle).getRadians()) > 0.01
+    ) {
+      lastState = desiredState;
+    }    
 
-    // Record last time the robot was commanded to move
-    if (Math.abs(desiredState.speedMetersPerSecond) > 0.001) {
-      lastMoveAtTime = Timer.getFPGATimestamp();
-    }
-
-    // Cache the target state
-    lastState = desiredState;
+    // Set drive motor speed (yes - lastState, not desiredState)
+    setDriveVelocity(lastState.speedMetersPerSecond);
+    
+    // Set steering angle (yes - lastState, not desiredState)
+    setSteerAngle(lastState.angle.getRadians());
   }
 
   /**
@@ -339,7 +325,7 @@ public class SwerveModule implements Sendable {
    * @param velocityMPS Desired velocity in m/s
    */
   private void setDriveVelocity(double velocityMPS) {
-    double velocityRPS = (velocityMPS / DriveConstants.kWheelCircumference) * DriveConstants.kDriveGearRatio;
+    double velocityRPS = velocityMPS / DriveConstants.kWheelCircumference;
     driveMotor.setControl(driveVelocityRequest.withVelocity(velocityRPS));
   }
 
@@ -349,36 +335,6 @@ public class SwerveModule implements Sendable {
    */
   private void setSteerAngle(double angleRadians) {
     steerPIDController.setReference(angleRadians, SparkMax.ControlType.kPosition);
-  }
-
-  /**
-   * Applies anti-jitter filtering to the new state
-   * @param newState The desired SwerveModuleState to filter
-   * @return The filtered SwerveModuleState
-   */
-  private SwerveModuleState applyAntiJitter(SwerveModuleState newState) {
-    // Calculate the differences between new state and the last target state
-    double speedDiff = Math.abs(newState.speedMetersPerSecond - lastState.speedMetersPerSecond);
-    double angleDiff = Math.abs(newState.angle.minus(lastState.angle).getRadians());
-    
-    // Apply speed filtering
-    double finalSpeed = (speedDiff < DriveConstants.kAntiJitterSpeedDeadband) 
-      ? lastState.speedMetersPerSecond 
-      : newState.speedMetersPerSecond;
-    
-    // Apply angle filtering with speed consideration
-    Rotation2d finalAngle;
-    if (
-      Math.abs(finalSpeed) > DriveConstants.kAntiJitterMinTurningSpeed || 
-      angleDiff > DriveConstants.kAntiJitterAngleDeadband
-    ) {
-      finalAngle = newState.angle;
-    } else {
-      finalAngle = lastState.angle;
-    }
-    
-    // Return the filtered state
-    return new SwerveModuleState(finalSpeed, finalAngle);
   }
 
   /**

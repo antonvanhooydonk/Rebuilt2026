@@ -67,18 +67,23 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    // Run end of match code here...
+    // Set motors to brake mode when disabled
+    m_robotContainer.setMotorBrake(true);
+  }
+
+  @Override
+  public void disabledPeriodic() {
     if (Timer.getMatchTime() <= 0.00) {
       m_robotContainer.setMotorBrake(false);
     }
   }
 
-  @Override
-  public void disabledPeriodic() {}
-
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
-  public void autonomousInit() {    
+  public void autonomousInit() {
+    // Set motors to brake mode at start of autonomous
+    m_robotContainer.setMotorBrake(true);
+
     // Get selected autonomous command
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -101,6 +106,9 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
+    // Set motors to brake mode at start of teleop
+    m_robotContainer.setMotorBrake(true);
   }
 
   /** This function is called periodically during operator control. */

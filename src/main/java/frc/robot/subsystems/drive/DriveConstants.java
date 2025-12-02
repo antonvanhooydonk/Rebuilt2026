@@ -35,14 +35,6 @@ public final class DriveConstants {
   public static final double kJoystickDeadband = 0.1; // maybe use 0.5?, joystick deadband
 
   // ------------------------------------------------------------
-  // Swerve module anti-jitter settings
-  // ------------------------------------------------------------
-  public static final boolean kAntiJitterEnabled = true; // set to true to stop jittering from module noise
-  public static final double kAntiJitterSpeedDeadband = 0.001; // 1mm in m/s
-  public static final double kAntiJitterAngleDeadband = Units.degreesToRadians(2.0); // radians
-  public static final double kAntiJitterMinTurningSpeed = 0.1; // m/s
-
-  // ------------------------------------------------------------
   // Physical constants - adjust these to robot each year
   // ------------------------------------------------------------
   public static final double kWheelDiameterMeters = Units.inchesToMeters(4.0);
