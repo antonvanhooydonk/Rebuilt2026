@@ -292,7 +292,8 @@ public class SwerveModule implements Sendable {
    */
   public void setDesiredState(SwerveModuleState desiredState) {
     // Anti-jitter: ignore tiny velocity commands
-    if (Math.abs(desiredState.speedMetersPerSecond) < 0.001) {
+    // Could also try 0.001 m/s
+    if (Math.abs(desiredState.speedMetersPerSecond) < 0.01) {
       stop();
       return;
     }
@@ -361,7 +362,7 @@ public class SwerveModule implements Sendable {
    * Checks if the steering motor is at the target angle
    * @return True if at target
    */
-  public boolean isSteerAtTarget() {
+  public boolean isAtSteerTarget() {
     // Calculate the absolute error between current and target angle
     double error = Math.abs(lastState.angle.getRadians() - steerEncoder.getPosition());
   

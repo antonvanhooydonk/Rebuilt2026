@@ -5,6 +5,7 @@
 package frc.robot.subsystems.drive;
 
 import java.util.List;
+import java.util.Set;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -129,8 +130,8 @@ public class DriveSubsystem extends SubsystemBase {
       this::getChassisSpeeds, // ChassisSpeeds supplier
       this::driveWithChassisSpeeds, // Method that will drive the robot given ChassisSpeeds
       new PPHolonomicDriveController(
-        new PIDConstants(DriveConstants.kDriveKP, DriveConstants.kDriveKI, DriveConstants.kDriveKD), // Translation PID constants
-        new PIDConstants(DriveConstants.kSteerKP, DriveConstants.kSteerKI, DriveConstants.kSteerKD)  // Rotation PID constants
+        new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+        new PIDConstants(5.0, 0.0, 0.0)  // Rotation PID constants
       ),
       DriveConstants.kRobotConfig, // Robot configuration
       Utils::isRedAlliance, // Method to flip path based on alliance color
@@ -231,12 +232,29 @@ public class DriveSubsystem extends SubsystemBase {
       return Commands.none();
     }
 
-    // Create a command that will rotate the robot to face the target pose
-    return run(() -> driveWithChassisSpeeds(new ChassisSpeeds(
-      0.0,  
-      0.0,
-      -targetPose.getRotation().getRadians()
-    )));
+    // Use PathPlanner to drive to current position with rotation toward target
+    // Deferred command to get latest pose when scheduled
+    // Set.of(this) ensures driveSubsystem is required
+    return Commands.defer(() -> {
+      Pose2d currentPose = getPose();
+      double dx = targetPose.getX() - currentPose.getX();
+      double dy = targetPose.getY() - currentPose.getY();
+      Rotation2d angleToTarget = new Rotation2d(dx, dy);
+      
+      // Create target pose at current location but rotated toward target
+      Pose2d aimPose = new Pose2d(currentPose.getTranslation(), angleToTarget);
+      
+      // Pathfind to the aim pose (will only rotate since translation is same)
+      PathConstraints constraints = new PathConstraints(
+        0.5, // Slow translation speed
+        DriveConstants.kMaxAccelMetersPerSecondSq,
+        DriveConstants.kMaxAngularSpeedRadsPerSecond, 
+        DriveConstants.kMaxAngularAccelRadsPerSecondSq
+      );
+      
+      // Return the command to aim at the target
+      return AutoBuilder.pathfindToPose(aimPose, constraints, 0.0);
+    }, Set.of(this));
   }
 
   /**
@@ -322,7 +340,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void driveWithChassisSpeeds(ChassisSpeeds speeds) {
     // By-pass the setpoint generator if necessary
-    if (Robot.isSimulation() || setpointGenerator == null) {
+    if (Robot.isSimulation()) {
       setModuleStates(kinematics.toSwerveModuleStates(speeds));
       return;
     }
@@ -484,6 +502,19 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
+   * Checks if all modules are at their steer target angles
+   * @return
+   */
+  public boolean areModulesAtSteerTarget() {
+    for (var module : modules) {
+      if (!module.isAtSteerTarget()) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
    * Enables/disables field-relative driving
    * @param enabled Whether field-relative is enabled
    */
@@ -537,9 +568,8 @@ public class DriveSubsystem extends SubsystemBase {
     builder.addBooleanProperty("Slow Mode", this::isSlowMode, null);
     
     // Chassis speeds
-    ChassisSpeeds speeds = getChassisSpeeds();
-    builder.addDoubleProperty("Chassis vX", () -> speeds.vxMetersPerSecond, null);
-    builder.addDoubleProperty("Chassis vY", () -> speeds.vyMetersPerSecond, null);
-    builder.addDoubleProperty("Chassis omega", () -> Units.radiansToDegrees(speeds.omegaRadiansPerSecond), null);
+    builder.addDoubleProperty("Chassis vX", () -> getChassisSpeeds().vxMetersPerSecond, null);
+    builder.addDoubleProperty("Chassis vY", () -> getChassisSpeeds().vyMetersPerSecond, null);
+    builder.addDoubleProperty("Chassis omega", () -> Units.radiansToDegrees(getChassisSpeeds().omegaRadiansPerSecond), null);
   }
 }
