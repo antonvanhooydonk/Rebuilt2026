@@ -129,7 +129,7 @@ public class SwerveModule implements Sendable {
     SmartDashboard.putData("Drive/Modules/" + this.moduleName, this);
 
     // Output initialization progress
-    Utils.logInfo(this.moduleName + " swerve module intialized");
+    Utils.logInfo(this.moduleName + " swerve module initialized");
   }
 
   /**
@@ -196,6 +196,9 @@ public class SwerveModule implements Sendable {
     
     // LOW PRIORITY - Reduce CAN traffic (4Hz = 250ms)
     driveMotor.getDeviceTemp().setUpdateFrequency(4.0);     // Temperature
+
+    // Optimize CAN bus utilization
+    driveMotor.optimizeBusUtilization();
   }
 
   /**
@@ -207,7 +210,7 @@ public class SwerveModule implements Sendable {
     // Basic motor configuration
     steerConfig
       .idleMode(IdleMode.kBrake)
-      .inverted(steerMotorInverted ? true : false)
+      .inverted(steerMotorInverted)
       .smartCurrentLimit(DriveConstants.kSteerMotorMaxCurrent)
       .secondaryCurrentLimit(DriveConstants.kSteerMotorMaxPeakCurrent)
       .voltageCompensation(12.0);
@@ -308,7 +311,7 @@ public class SwerveModule implements Sendable {
       Math.abs(desiredState.angle.minus(lastState.angle).getRadians()) > 0.01
     ) {
       lastState = desiredState;
-    }    
+    }
 
     // Set drive motor speed (yes - lastState, not desiredState)
     setDriveVelocity(lastState.speedMetersPerSecond);
