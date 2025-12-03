@@ -1,5 +1,6 @@
 package frc.robot.sensors;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.Sendable;
@@ -26,7 +27,7 @@ public class ThriftyBotEncoder implements Sendable {
   // Voltage thresholds for diagnostics
   private static final double MIN_VALID_VOLTAGE = 0.1;
   private static final double MAX_VALID_VOLTAGE = 4.9;
-  private static final double VOLTAGE_NOISE_THRESHOLD = 0.05;
+  private static final double VOLTAGE_NOISE_THRESHOLD = 0.1;
   
   // Previous reading for noise detection
   private double previousVoltage = 0.0;
@@ -69,17 +70,9 @@ public class ThriftyBotEncoder implements Sendable {
     if (inverted) {
       angle = -angle;
     }
-    
-    // Normalize to [-π, π]
-    while (angle > Math.PI) {
-      angle -= 2.0 * Math.PI;
-    }
-    while (angle < -Math.PI) {
-      angle += 2.0 * Math.PI;
-    }
 
-    // Return the angle
-    return angle;
+    // Return the angle normalized to [-π, π]
+    return MathUtil.angleModulus(angle);
   }
   
   /**
@@ -115,7 +108,10 @@ public class ThriftyBotEncoder implements Sendable {
     double voltage = getRawVoltage();
     double supplyVoltage = RobotController.getVoltage5V();
     double angle = (voltage / supplyVoltage) * 2.0 * Math.PI;    
-    return inverted ? -angle : angle;
+    if (inverted) {
+      angle = 2.0 * Math.PI - angle;
+    }
+    return angle; // 0 to 2π
   }
   
   /**
@@ -170,7 +166,7 @@ public class ThriftyBotEncoder implements Sendable {
   
   /**
    * Calibrates the encoder by calculating offset from current position.
-   * Can be called manually after aligning the modules with a straignt
+   * Can be called manually after aligning the modules with a straight
    * bar and pointing in the desired zero direction.
    */
   public void calibrate() {
@@ -194,18 +190,20 @@ public class ThriftyBotEncoder implements Sendable {
       return false;
     }
     
-    // Check for excessive noise
-    double voltageDelta = Math.abs(voltage - previousVoltage);
-    if (voltageDelta > VOLTAGE_NOISE_THRESHOLD) {
-      noiseCount++;
-    } else {
-      noiseCount = Math.max(0, noiseCount - 1); // Decay noise count
+    // Skip noise check on first reading
+    if (previousVoltage != 0.0) {
+      double voltageDelta = Math.abs(voltage - previousVoltage);
+      if (voltageDelta > VOLTAGE_NOISE_THRESHOLD) {
+        noiseCount++;
+      } else {
+        noiseCount = Math.max(0, noiseCount - 1);
+      }
     }
     
-    // Cache previous voltage reading
+    // Update previous voltage
     previousVoltage = voltage;
     
-    // Consider invalid if consistently noisy
+    // Consider valid if noise count is below threshold
     return noiseCount < 10;
   }
 
