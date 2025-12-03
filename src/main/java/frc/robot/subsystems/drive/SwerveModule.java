@@ -362,7 +362,7 @@ public class SwerveModule implements Sendable {
    * Checks if the steering motor is at the target angle
    * @return True if at target
    */
-  public boolean isAtSteerTarget() {
+  public boolean isSteerAtTarget() {
     // Calculate the absolute error between current and target angle
     double error = Math.abs(lastState.angle.getRadians() - steerEncoder.getPosition());
   
