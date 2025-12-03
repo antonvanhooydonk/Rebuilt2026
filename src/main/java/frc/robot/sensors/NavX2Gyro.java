@@ -10,7 +10,6 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import frc.robot.subsystems.drive.DriveConstants;
 import frc.robot.util.Utils;
 
 /**
@@ -29,14 +28,14 @@ public class NavX2Gyro implements Sendable {
    */
   public NavX2Gyro() {
     // Create the gyro
-    gyro = new AHRS(NavXComType.kMXP_SPI, NavXUpdateRate.k50Hz);
+    gyro = new AHRS(NavXComType.kMXP_SPI, NavXUpdateRate.k200Hz);
 
     // Wait for gyro to calibrate itself on startup
     waitForGyroCalibration();
 
     // Set an offset if the gyro wasn't mounted with the X axis pointing forward.
     // NOTE: if the value is 0, you can safely comment this line out.
-    gyro.setAngleAdjustment(DriveConstants.kGyroXAngleOffsetDegrees);
+    // gyro.setAngleAdjustment(DriveConstants.kGyroXAngleOffsetDegrees);
 
     // Initialize dashboard values
     SmartDashboard.putData("Drive/Gyro", gyro);
@@ -85,7 +84,7 @@ public class NavX2Gyro implements Sendable {
   /**
    * Simple debounced gryo disconnect detection.
    * The gyro must be disconnected for 10 consecutive 
-   * checks (200ms) to be considered disconnected.
+   * checks (10 * 20ms = 200ms delay) to be considered disconnected.
    */
   private void checkConnection() {
     if (gyro.isConnected()) {
@@ -123,7 +122,8 @@ public class NavX2Gyro implements Sendable {
       return new Rotation2d();
     }
 
-    // Return the gyro angle with the offset applied (CCW positive)
+    // Return the gyro angle with the offset applied.
+    // NavX reports CW positive so we negate for CCW positive.
     return Rotation2d.fromDegrees(-gyro.getAngle());
     // return Rotation2d.fromDegrees(Math.IEEEremainder(-gyro.getAngle(), 360));
     // return Rotation2d.fromDegrees(-gyro.getYaw()); 
