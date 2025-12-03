@@ -107,7 +107,7 @@ public class SwerveModule implements Sendable {
     );
 
     // Initialize the drive velocity request
-    driveVelocityRequest = new VelocityDutyCycle(0);
+    driveVelocityRequest = new VelocityDutyCycle(0).withSlot(0);
 
     // Configure drive motor
     configureDriveMotor();
