@@ -25,8 +25,8 @@ public final class DriveConstants {
   // ------------------------------------------------------------
   public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(14); // ensure <= kMaxDriveVelocityAt12VoltsMPS, max translation speed in meters per second, set 7 in loft, 10 - 14 at competition
   public static final double kMaxAccelMetersPerSecondSq = Units.feetToMeters(12); // max acceleration in meters per second squared (must be <= max speed)
-  public static final double kMaxAngularSpeedRadsPerSecond = Units.rotationsToRadians(1.25); // 1.25 rotations per second (target 8-10 rad/s (2.5π - 3π))
-  public static final double kMaxAngularAccelRadsPerSecondSq = Units.rotationsToRadians(0.9375); // set to 75% of angular speed
+  public static final double kMaxAngularSpeedRadsPerSecond = Units.rotationsToRadians(1.75); // 1.25 rotations per second (target 8-10 rad/s (2.5π - 3π))
+  public static final double kMaxAngularAccelRadsPerSecondSq = Units.rotationsToRadians(1.3125); // set to 75% of angular speed
  
   // ------------------------------------------------------------
   // Driver joystick settings
@@ -94,7 +94,7 @@ public final class DriveConstants {
   // 2. Start with feedforward only (kP = 0)
   // 3. Add minimal P gain if needed (usually 0.05 - 0.2)
   // 4. Avoid I and D unless absolutely necessary
-  public static final double kDriveKP = 0.0020645;
+  public static final double kDriveKP = 0.075;  // 0.0020645;
   public static final double kDriveKI = 0.0;
   public static final double kDriveKD = 0.0;
   public static final double kDriveKS = 0.1;  // Static friction
@@ -106,10 +106,10 @@ public final class DriveConstants {
   // ------------------------------------------------------------
   // Tuning Process:
   // 1. Start with P only (I=0, D=0)
-  // 2. Increase P until fast response without overshoot
+  // 2. Increase P until fast response without overshoot (typically 1.0 - 3.0)
   // 3. Add small D if oscillating (typically 0.01-0.1)
   // 4. Avoid I unless steady-state error (very rare in steering)
-  public static final double kSteerKP = 0.5; // 0.01
+  public static final double kSteerKP = 1.5; // 0.01
   public static final double kSteerKI = 0.0;
   public static final double kSteerKD = 0.0;  // 0.32
   public static final double kSteerFF = 0.0;  // 0.0 to 0.2, feedforward to help with static friction. Rev recommends 0
