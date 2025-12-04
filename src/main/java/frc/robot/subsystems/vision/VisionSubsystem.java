@@ -63,11 +63,7 @@ public class VisionSubsystem extends SubsystemBase {
      * @return
      */
     public double[] getStandardDeviations() {
-      return new double[] { 
-        standardDeviations[0],
-        standardDeviations[1],
-        standardDeviations[2]
-      };
+      return standardDeviations.clone();
     }
   }
 
@@ -99,16 +95,15 @@ public class VisionSubsystem extends SubsystemBase {
     }
     
     // Warn if no cameras initialized
-    if (cameras.isEmpty()) {
-      Utils.logError("kEnableVision: " + VisionConstants.kEnableVision);
-      Utils.logError("No cameras initialized!");
+    if (cameras.isEmpty() && VisionConstants.kEnableVision) {
+      Utils.logError("Vision enabled but no cameras initialized!");
     }
 
     // Initialize dashboard values
     SmartDashboard.putData("Vision", this);
 
     // Output initialization progress
-    Utils.logInfo("Vision subsystem intialized");
+    Utils.logInfo("Vision subsystem initialized");
   }
 
   @Override
@@ -201,7 +196,7 @@ public class VisionSubsystem extends SubsystemBase {
     // Check pose ambiguity for single tag estimates
     if (result.getTargets().size() == 1) {
       PhotonTrackedTarget target = result.getBestTarget();
-      if (target.getPoseAmbiguity() > VisionConstants.kPoseAmbiguityThreshold) {
+      if (target == null || target.getPoseAmbiguity() > VisionConstants.kPoseAmbiguityThreshold) {
         return false;
       }
     }
@@ -259,8 +254,12 @@ public class VisionSubsystem extends SubsystemBase {
       * Physical Meaning:
       *   The "/ 30" essentially means: "For every meter of distance, square it 
       *   and divide by 30 to get the uncertainty multiplier."
-      *   At 3 meters: (3²/30) = 0.3, so uncertainty increases by 30%
-      *   At 5 meters: (5²/30) = 0.83, so uncertainty increases by 83%
+      *   XY uncertainty scaling:
+      *     At 3 meters: (3²/20) = 0.45, so 1.45x multiplier
+      *     At 5 meters: (5²/20) = 1.25, so 2.25x multiplier
+      *   Theta uncertainty scaling (less aggressive):
+      *     At 3 meters: (3²/40) = 0.225, so 1.225x multiplier
+      *     At 5 meters: (5²/40) = 0.625, so 1.625x multiplier
       */
 
     // Base standard deviations (empirically determined)
@@ -298,10 +297,8 @@ public class VisionSubsystem extends SubsystemBase {
   private void logTargets(PhotonPipelineResult result, String cameraName) {
     double currentTime = Timer.getFPGATimestamp();    
     if (currentTime - lastTargetLogTimestamp > VisionConstants.kTargetLogTimeSeconds) {
-      Utils.logInfo(cameraName + " detected " + result.getTargets().size() + " targets:");      
-      for (PhotonTrackedTarget target : result.getTargets()) {
-        Utils.logInfo("ID=" + target.getFiducialId());
-      }      
+      List<Integer> ids = result.getTargets().stream().map(PhotonTrackedTarget::getFiducialId).toList();
+      Utils.logInfo(cameraName + " detected " + result.getTargets().size() + " targets: " + ids);
       lastTargetLogTimestamp = currentTime;
     }
   }
@@ -426,29 +423,38 @@ public class VisionSubsystem extends SubsystemBase {
     builder.addDoubleProperty("Total Targets", this::getTotalTargetCount, null);
     builder.addIntegerProperty("Measurements", () -> latestMeasurements.size(), null);
     
-    // Individual camera status (using cached data)
+    // Individual camera status - call getLatestResult() in the lambda
     for (Camera camera : cameras) {
       String prefix = "Camera/" + camera.getName() + "/";
-      PhotonPipelineResult result = camera.getLatestResult();
-      
+    
       builder.addBooleanProperty(prefix + "Connected", () -> camera.getCamera().isConnected(), null);
-      builder.addBooleanProperty(prefix + "Has Targets", () -> result.hasTargets(), null);
-      builder.addDoubleProperty(prefix + "Target Count", () -> result.getTargets().size(), null);
+      builder.addBooleanProperty(prefix + "Has Targets", () -> camera.getLatestResult().hasTargets(), null);
+      builder.addDoubleProperty(prefix + "Target Count", () -> camera.getLatestResult().getTargets().size(), null);
       builder.addDoubleProperty(prefix + "Unread Results", () -> camera.getCachedResults().size(), null);
       
-      if (result.hasTargets()) {
-        PhotonTrackedTarget bestTarget = result.getBestTarget();
-        builder.addDoubleProperty(prefix + "Best Target ID", () -> bestTarget.getFiducialId(), null);
-        builder.addDoubleProperty(prefix + "Best Target Distance", () -> bestTarget.getBestCameraToTarget().getTranslation().getNorm(), null);
-        builder.addDoubleProperty(prefix + "Best Target Ambiguity", () -> bestTarget.getPoseAmbiguity(), null);
-      }
+      // For best target data, check if targets exist each time
+      builder.addDoubleProperty(prefix + "Best Target ID", () -> {
+        PhotonPipelineResult r = camera.getLatestResult();
+        return r.hasTargets() ? r.getBestTarget().getFiducialId() : -1;
+      }, null);
+      builder.addDoubleProperty(prefix + "Best Target Distance", () -> {
+        PhotonPipelineResult r = camera.getLatestResult();
+        return r.hasTargets() ? r.getBestTarget().getBestCameraToTarget().getTranslation().getNorm() : 0;
+      }, null);
+      builder.addDoubleProperty(prefix + "Best Target Ambiguity", () -> {
+        PhotonPipelineResult r = camera.getLatestResult();
+        return r.hasTargets() ? r.getBestTarget().getPoseAmbiguity() : 0;
+      }, null);
     }
     
     // Latest measurements
-    if (!latestMeasurements.isEmpty()) {
-      VisionMeasurement latestMeasurement = latestMeasurements.get(latestMeasurements.size() - 1);
-      builder.addStringProperty("Latest Pose", () -> latestMeasurement.getPose().toString(), null);
-      builder.addDoubleProperty("Latest Timestamp", () -> latestMeasurement.getTimestampSeconds(), null);
-    }
+    builder.addStringProperty("Latest Pose", () -> {
+      if (latestMeasurements.isEmpty()) return "None";
+      return latestMeasurements.get(latestMeasurements.size() - 1).getPose().toString();
+    }, null);
+    builder.addDoubleProperty("Latest Timestamp", () -> {
+      if (latestMeasurements.isEmpty()) return 0;
+      return latestMeasurements.get(latestMeasurements.size() - 1).getTimestampSeconds();
+    }, null);
   }
 }
