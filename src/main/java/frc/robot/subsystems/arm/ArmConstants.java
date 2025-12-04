@@ -11,7 +11,7 @@ public final class ArmConstants {
   /**
    * Named positions for the arm (in degrees)
    */
-  public final class Positions {
+  public static final class Positions {
     public static final double HOME = 0.0;
     public static final double CORALMOVE = 3.5;
     public static final double CORAL1 = 15.0;

@@ -11,7 +11,7 @@ public final class ElevatorConstants {
   /**
    * Named positions for the elevator (in inches)
    */
-  public final class Positions {
+  public static final class Positions {
     public static final double GROUND = 0.0;
     public static final double CORAL1 = 1.9685;
     public static final double CORAL2 = 9.25197;
