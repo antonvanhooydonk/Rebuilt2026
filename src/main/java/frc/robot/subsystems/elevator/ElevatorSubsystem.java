@@ -4,202 +4,417 @@
 
 package frc.robot.subsystems.elevator;
 
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.configs.VoltageConfigs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.CANConstants;
 import frc.robot.util.Utils;
 
+/**
+ * Elevator subsystem using dual TalonFX motors in leader-follower configuration.
+ * 
+ * Features:
+ * - Motion Magic for smooth profiled motion
+ * - Soft limits for safety
+ * - Gravity compensation (kG)
+ * - Stall detection with current monitoring
+ * - Named setpoint positions for easy use
+ */
 public class ElevatorSubsystem extends SubsystemBase {
-  private TalonFX leftElevatorMotor;
-  private TalonFX rightElevatorMotor;
-  private TalonFXConfiguration eleMotorConfig;
-  private double targetPosition;
-  private double zeroPoint;
-
-  /** Creates a new ElevatorSubsystem. */
-  public ElevatorSubsystem() {
-    leftElevatorMotor= new TalonFX(CANConstants.LeftElevatorID);
-    rightElevatorMotor = new TalonFX(CANConstants.RightElevatorID);
-
-    eleMotorConfig = new TalonFXConfiguration()
-      .withMotorOutput(new MotorOutputConfigs()
-        .withInverted(InvertedValue.Clockwise_Positive)
-        .withNeutralMode( NeutralModeValue.Brake))
-      .withFeedback(new FeedbackConfigs()
-        .withSensorToMechanismRatio(0.08910703) )
-      .withCurrentLimits(new CurrentLimitsConfigs()
-        .withSupplyCurrentLimit(70)
-        .withSupplyCurrentLowerLimit(40)
-        .withSupplyCurrentLowerTime(1)
-        .withSupplyCurrentLimitEnable(true))
-      .withVoltage(new VoltageConfigs()
-        .withPeakForwardVoltage(16)
-        .withPeakReverseVoltage(-16))
-      .withMotionMagic(new MotionMagicConfigs()
-        .withMotionMagicAcceleration(ElevatorConstants.MMAcceleration)
-        .withMotionMagicCruiseVelocity(ElevatorConstants.MMVelocity)
-        .withMotionMagicJerk(ElevatorConstants.MMJerk));
-      // .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
-      //   .withForwardSoftLimitEnable(true)
-      //   .withForwardSoftLimitThreshold(0)
-      //   .withReverseSoftLimitEnable(true)
-      //   .withReverseSoftLimitThreshold(ElevatorConstants.MaxHeightPosition));
-
-    eleMotorConfig.Slot0 = new Slot0Configs()
-      .withKP(1)
-      .withKD(0)
-      .withKG(0.0)
-      .withKA(0.0)
-      .withKV(0.0)
-      .withKS(0.0);   
+  // Hardware
+  private final TalonFX leaderMotor;
+  private final TalonFX followerMotor;
   
-    // Apply the configuration settings
-    leftElevatorMotor.getConfigurator().apply(eleMotorConfig);
-    rightElevatorMotor.getConfigurator().apply(eleMotorConfig);
-    
-    // We want the right motor to follow the left motor
-    rightElevatorMotor.setControl(new Follower(CANConstants.LeftElevatorID, false));
-    
-    // Initialize the target position
-    targetPosition = 0;
-
-    // We start the match with the elevator at the bottom, 
-    // so set the current position as the zero point.
-    setZeroPoint();
-
-    // Initialize dashboard values
-    SmartDashboard.putData("Elevator", this);
-
-    // Output initialization progress
-    Utils.logInfo("Elevator subsystem intialized");
-  }
-
+  // Control requests (reused for efficiency)
+  private final MotionMagicVoltage mmRequest = new MotionMagicVoltage(0).withSlot(0);
+  private final NeutralOut neutralRequest = new NeutralOut();
+  
+  // State tracking
+  private double targetPositionInches = 0;
+  private double lastStallCheckTime = 0;
+  
   /**
-   * This method will be called once per scheduler run
+   * Creates a new ElevatorSubsystem
    */
+  public ElevatorSubsystem() {
+    // Initialize motors
+    leaderMotor = new TalonFX(CANConstants.LeftElevatorID);
+    followerMotor = new TalonFX(CANConstants.RightElevatorID);
+    
+    // Configure motors
+    configureLeaderMotor();
+    configureFollowerMotor();
+    
+    // Zero the elevator (assumes starting at bottom)
+    resetPosition();
+    
+    // Initialize dashboard
+    SmartDashboard.putData("Elevator", this);
+    
+    // Output initialization progress
+    Utils.logInfo("Elevator subsystem initialized");
+  }
+  
+  /**
+   * Configures the leader (left) motor
+   */
+  private void configureLeaderMotor() {
+    TalonFXConfiguration config = new TalonFXConfiguration();
+    
+    // Motor output configuration
+    config.MotorOutput
+      .withInverted(InvertedValue.CounterClockwise_Positive)
+      .withNeutralMode(NeutralModeValue.Brake);
+    
+    // Current limits - protect motors and mechanisms
+    config.CurrentLimits
+      .withSupplyCurrentLimitEnable(true)
+      .withSupplyCurrentLimit(60.0) // Peak current threshold
+      .withSupplyCurrentLowerLimit(40) // Continuous limit
+      .withSupplyCurrentLowerTime(0.5) // Time at peak before limiting
+      .withStatorCurrentLimitEnable(true)
+      .withStatorCurrentLimit(80.0); // Thermal protection
+    
+    // Voltage limits
+    config.Voltage
+      .withPeakForwardVoltage(12.0)
+      .withPeakReverseVoltage(-12.0);
+    
+    // Motion Magic configuration
+    config.MotionMagic
+      .withMotionMagicCruiseVelocity(ElevatorConstants.kCruiseVelocityRPS)
+      .withMotionMagicAcceleration(ElevatorConstants.kAccelerationRPS2)
+      .withMotionMagicJerk(ElevatorConstants.kJerkRPS3);
+    
+    // PID + Feedforward (Slot 0)
+    config.Slot0
+      .withKP(ElevatorConstants.kP)
+      .withKI(ElevatorConstants.kI)
+      .withKD(ElevatorConstants.kD)
+      .withKG(ElevatorConstants.kG)  // Gravity compensation - CRITICAL for elevators
+      .withKV(ElevatorConstants.kV)  // Velocity feedforward
+      .withKS(ElevatorConstants.kS); // Static friction
+    
+    // Software limit switches - CRITICAL SAFETY FEATURE
+    config.SoftwareLimitSwitch
+      .withForwardSoftLimitEnable(true)
+      .withForwardSoftLimitThreshold(inchesToRotations(ElevatorConstants.Positions.MAX))
+      .withReverseSoftLimitEnable(true)
+      .withReverseSoftLimitThreshold(0);
+    
+    // Apply configuration
+    leaderMotor.getConfigurator().apply(config);
+    
+    // Optimize CAN bus utilization
+    leaderMotor.optimizeBusUtilization();
+  }
+  
+  /**
+   * Configures the follower (right) motor
+   */
+  private void configureFollowerMotor() {
+    TalonFXConfiguration config = new TalonFXConfiguration();
+    
+    // Motor output - opposite inversion of leader for mechanical opposition
+    config.MotorOutput
+      .withInverted(InvertedValue.Clockwise_Positive)
+      .withNeutralMode(NeutralModeValue.Brake);
+    
+    // Current limits (same as leader)
+    config.CurrentLimits
+      .withSupplyCurrentLimitEnable(true)
+      .withSupplyCurrentLimit(60.0) // Peak current threshold
+      .withSupplyCurrentLowerLimit(40) // Continuous limit
+      .withSupplyCurrentLowerTime(0.5) // Time at peak before limiting
+      .withStatorCurrentLimitEnable(true)
+      .withStatorCurrentLimit(80.0);
+    
+    // Apply configuration
+    followerMotor.getConfigurator().apply(config);
+    
+    // Set follower mode (opposeLeaderInvert = true for mechanical opposition)
+    followerMotor.setControl(new Follower(CANConstants.LeftElevatorID, true));
+    
+    // Optimize CAN bus
+    followerMotor.optimizeBusUtilization();
+  }
+  
   @Override
   public void periodic() {
-
+    // Check for stall conditions periodically (every 0.5 seconds)
+    double currentTime = Timer.getFPGATimestamp();
+    if (currentTime - lastStallCheckTime > 0.5) {
+      if (isStalling()) {
+        Utils.logInfo("Elevator stalling! Current: " + leaderMotor.getSupplyCurrent().getValueAsDouble() + "A");
+      }
+      lastStallCheckTime = currentTime;
+    }
   }
-
+  
+  // ============================================================
+  // Position Control Methods
+  // ============================================================
+  
   /**
-   * Get the elevator's current position
-   * @return
+   * Sets the elevator to a target position in inches
+   * @param inches Target height in inches from the ground
    */
-  public double getPosition() {
-    return leftElevatorMotor.getPosition().getValueAsDouble();
+  public void setPositionInches(double inches) {
+    // Clamp to safe range
+    inches = Math.max(ElevatorConstants.Positions.GROUND, Math.min(inches, ElevatorConstants.Positions.MAX));
+    
+    targetPositionInches = inches;
+    double rotations = inchesToRotations(inches);
+    
+    leaderMotor.setControl(mmRequest.withPosition(rotations));
   }
-
+  
   /**
-   * Get the elevator's target position
-   * @return
+   * Sets the elevator to a named position
+   * @param position One of the Positions constants
    */
-  public double getTargetPosition() {
-    return targetPosition;
+  public void setPosition(double position) {
+    setPositionInches(position);
   }
-
+  
   /**
-   * Sets the elevator to a position relative to the 0 set by setZeroPoint(). 
-   * @param height double that controls how many millimeters from the distance sensor
+   * Stops the elevator (applies neutral output)
    */
-  public void setTargetPosition(double position) {
-    targetPosition = position + zeroPoint;
-    MotionMagicVoltage request = new MotionMagicVoltage(targetPosition);
-    leftElevatorMotor.setControl(request);
+  public void stop() {
+    leaderMotor.setControl(neutralRequest);
   }
-
+  
   /**
-   * Determines if the elevator is at the target position
-   * @return
+   * Resets the elevator position to zero
+   * Should be called when elevator is at the bottom
    */
-  public boolean isAtTargetPosition() {
-    return Math.abs(getPosition() - targetPosition) < ElevatorConstants.ErrorThreshold;
+  public void resetPosition() {
+    leaderMotor.setPosition(0);
+    followerMotor.setPosition(0);
+    targetPositionInches = 0;
+    Utils.logInfo("Elevator position reset to zero");
   }
-
+  
+  // ============================================================
+  // State Query Methods
+  // ============================================================
+  
   /**
-   * Determine if the elevator's is currently stalling.
-   * This happens when the elevator is trying to move
-   * but can't because it is at a limit or obstructed.
-   * @return
+   * Gets the current elevator position in inches
+   * @return Current position in inches
+   */
+  public double getPositionInches() {
+    return rotationsToInches(leaderMotor.getPosition().getValueAsDouble());
+  }
+  
+  /**
+   * Gets the current elevator position in rotations
+   * @return Current position in motor rotations
+   */
+  public double getPositionRotations() {
+    return leaderMotor.getPosition().getValueAsDouble();
+  }
+  
+  /**
+   * Gets the target position in inches
+   * @return Target position in inches
+   */
+  public double getTargetPositionInches() {
+    return targetPositionInches;
+  }
+  
+  /**
+   * Gets the current velocity in inches per second
+   * @return Velocity in inches/second
+   */
+  public double getVelocityInchesPerSecond() {
+    double rps = leaderMotor.getVelocity().getValueAsDouble();
+    return rps * ElevatorConstants.kInchesPerRotation;
+  }
+  
+  /**
+   * Checks if the elevator is at the target position
+   * @return True if within tolerance
+   */
+  public boolean atTarget() {
+    double error = Math.abs(getPositionInches() - targetPositionInches);
+    return error < ElevatorConstants.kPositionToleranceInches;
+  }
+  
+  /**
+   * Checks if the elevator is stalling
+   * A stall is detected when:
+   * 1. Not at target position
+   * 2. Velocity is near zero
+   * 3. Current draw is high
+   * @return True if stalling
    */
   public boolean isStalling() {
-    return !isAtTargetPosition() && (
-      (leftElevatorMotor.getVelocity().getValueAsDouble() == 0 && leftElevatorMotor.getMotorVoltage().getValueAsDouble() != 0.0) ||
-      (rightElevatorMotor.getVelocity().getValueAsDouble() == 0 && rightElevatorMotor.getMotorVoltage().getValueAsDouble() != 0.0)
-    );
+    // Skip if at target (expected to have zero velocity)
+    if (atTarget()) return false;
+    
+    double velocity = Math.abs(leaderMotor.getVelocity().getValueAsDouble());
+    double current = leaderMotor.getSupplyCurrent().getValueAsDouble();
+    
+    return velocity < ElevatorConstants.kStallVelocityThreshold && 
+           current > ElevatorConstants.kStallCurrentThreshold;
   }
-
+  
   /**
-   * Determines if the elevator should stop moving
-   * 1. The elevator is stalling
-   * 2. The elevator is at the target position
-   * @return
+   * Gets the current supply current draw
+   * @return Current in amps
    */
-  public boolean shouldStop() {
-    return isStalling() || isAtTargetPosition();
+  public double getCurrentAmps() {
+    return leaderMotor.getSupplyCurrent().getValueAsDouble();
   }
-
+  
   /**
-   * Get the current target position of the PID controller of the elevator
-   * @return
+   * Gets the closed loop error in inches
+   * @return Error in inches
    */
-  public double getPIDTarget() {
-    return leftElevatorMotor.getClosedLoopReference().getValueAsDouble();
+  public double getErrorInches() {
+    return rotationsToInches(leaderMotor.getClosedLoopError().getValueAsDouble());
   }
-
+  
+  // ============================================================
+  // Unit Conversion Methods
+  // ============================================================
+  
   /**
-   * Stops the elevator motors
+   * Converts inches to motor rotations
+   * @param inches Height in inches
+   * @return Motor rotations
    */
-  public void stopElevator(){
-    leftElevatorMotor.set(0);
+  private double inchesToRotations(double inches) {
+    return inches / ElevatorConstants.kInchesPerRotation;
   }
-
+  
   /**
-   * Get the value of zeroPoint
-   * @return
+   * Converts motor rotations to inches
+   * @param rotations Motor rotations
+   * @return Height in inches
    */
-  public double getZeroPoint() {
-    return zeroPoint;
+  private double rotationsToInches(double rotations) {
+    return rotations * ElevatorConstants.kInchesPerRotation;
   }
-
+  
+  // ============================================================
+  // Command Factory Methods
+  // ============================================================
+  
   /**
-   * Sets the current position of the elevator as the zero point
+   * Creates a command to move to a specific position
+   * @param inches Target position in inches
+   * @return Command that moves to position and ends when reached
    */
-  public void setZeroPoint( ){
-    zeroPoint = leftElevatorMotor.getPosition().getValueAsDouble();
+  public Command moveToPositionCommand(double inches) {
+    return runOnce(() -> setPositionInches(inches))
+      .andThen(run(() -> {}).until(this::atTarget))
+      .withName("MoveElevatorTo_" + inches);
   }
-
+  
   /**
-   * Get the value of elevator's closed loop error
-   * @return
+   * Creates a command to move to ground position
    */
-  public double getError() {
-    return leftElevatorMotor.getClosedLoopError().getValueAsDouble();
+  public Command moveToGroundCommand() {
+    return moveToPositionCommand(ElevatorConstants.Positions.GROUND).withName("ElevatorGround");
   }
-
+  
   /**
-   * Initialize Sendable for SmartDashboard
+   * Creates a command to move to coral level 1 position
    */
+  public Command moveToCoralOneCommand() {
+    return moveToPositionCommand(ElevatorConstants.Positions.CORAL1).withName("ElevatorCoralOne");
+  }
+  
+  /**
+   * Creates a command to move to coral level 2 position
+   */
+  public Command moveToCoralTwoCommand() {
+    return moveToPositionCommand(ElevatorConstants.Positions.CORAL2).withName("ElevatorCoralTwo");
+  }
+  
+  /**
+   * Creates a command to move to coral level 3 position
+   */
+  public Command moveToCoralThreeCommand() {
+    return moveToPositionCommand(ElevatorConstants.Positions.CORAL3).withName("ElevatorCoralThree");
+  }
+  
+  /**
+   * Creates a command to move to coral level 4 position
+   */
+  public Command moveToCoralFourCommand() {
+    return moveToPositionCommand(ElevatorConstants.Positions.CORAL4).withName("ElevatorCoralFour");
+  }
+  
+  /**
+   * Creates a command to move to algae level 1 position
+   */
+  public Command moveToAlgaeOneCommand() {
+    return moveToPositionCommand(ElevatorConstants.Positions.ALGAE1).withName("ElevatorAlgaeOne");
+  }
+  
+  /**
+   * Creates a command to move to algae level 2 position
+   */
+  public Command moveToAlgaeTwoCommand() {
+    return moveToPositionCommand(ElevatorConstants.Positions.ALGAE2).withName("ElevatorAlgaeTwo");
+  }
+  
+  /**
+   * Creates a command to move to algae level 3 position
+   */
+  public Command moveToAlgaeThreeCommand() {
+    return moveToPositionCommand(ElevatorConstants.Positions.ALGAE3).withName("ElevatorAlgaeThree");
+  }
+  
+  /**
+   * Creates a command to reset the elevator position
+   * Use when elevator is manually positioned at bottom
+   */
+  public Command resetPositionCommand() {
+    return runOnce(this::resetPosition).withName("ResetElevatorPosition");
+  }
+  
+  // ============================================================
+  // Motor Control Methods (for testing/tuning)
+  // ============================================================
+  
+  /**
+   * Sets motor brake mode
+   * @param brake True for brake, false for coast
+   */
+  public void setBrakeMode(boolean brake) {
+    NeutralModeValue mode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
+    
+    leaderMotor.setNeutralMode(mode);
+    followerMotor.setNeutralMode(mode);
+  }
+  
+  // ============================================================
+  // Dashboard/Telemetry
+  // ============================================================
+  
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addDoubleProperty("Error", this::getError, null);
-    builder.addDoubleProperty("Current Position", this::getPosition, null);
-    builder.addDoubleProperty("Target Position", this::getTargetPosition, null);
-    builder.addBooleanProperty("At Target Position", this::isAtTargetPosition, null);
+    builder.addDoubleProperty("Position (in)", this::getPositionInches, null);
+    builder.addDoubleProperty("Target (in)", this::getTargetPositionInches, null);
+    builder.addDoubleProperty("Error (in)", this::getErrorInches, null);
+    builder.addDoubleProperty("Velocity (in/s)", this::getVelocityInchesPerSecond, null);
+    builder.addDoubleProperty("Current (A)", this::getCurrentAmps, null);
+    builder.addBooleanProperty("At Target", this::atTarget, null);
+    builder.addBooleanProperty("Stalling", this::isStalling, null);
   }
 }
