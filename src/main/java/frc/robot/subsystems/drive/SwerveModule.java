@@ -186,6 +186,7 @@ public class SwerveModule implements Sendable {
 
     // -------------------------------------------------------
     // OPTIMIZE CAN STATUS FRAMES for reduced lag
+    // -------------------------------------------------------
 
     // HIGH PRIORITY - Critical for control (100Hz = 10ms)
     driveMotor.getVelocity().setUpdateFrequency(100.0);     // Velocity feedback

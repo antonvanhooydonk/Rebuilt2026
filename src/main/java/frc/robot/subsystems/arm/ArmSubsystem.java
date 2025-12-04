@@ -112,6 +112,13 @@ public class ArmSubsystem extends SubsystemBase {
     // Apply configuration
     angleMotor.getConfigurator().apply(config);
     
+    // Set status frame periods (in Hz) to optimize CAN bus usage
+    angleMotor.getPosition().setUpdateFrequency(50);      // Position - 50 Hz (20ms)
+    angleMotor.getVelocity().setUpdateFrequency(50);      // Velocity - 50 Hz
+    angleMotor.getMotorVoltage().setUpdateFrequency(10);  // Voltage - 10 Hz (100ms)
+    angleMotor.getSupplyCurrent().setUpdateFrequency(10); // Current - 10 Hz
+    angleMotor.getDeviceTemp().setUpdateFrequency(4);     // Temperature - 4 Hz (250ms)
+
     // Optimize CAN bus utilization
     angleMotor.optimizeBusUtilization();
   }

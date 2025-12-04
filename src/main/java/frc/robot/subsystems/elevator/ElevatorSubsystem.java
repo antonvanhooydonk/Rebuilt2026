@@ -115,6 +115,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     
     // Apply configuration
     leaderMotor.getConfigurator().apply(config);
+
+    // Set status frame periods (in Hz) to optimize CAN bus usage
+    leaderMotor.getPosition().setUpdateFrequency(50);      // Position - 50 Hz (20ms)
+    leaderMotor.getVelocity().setUpdateFrequency(50);      // Velocity - 50 Hz
+    leaderMotor.getMotorVoltage().setUpdateFrequency(10);  // Voltage - 10 Hz (100ms)
+    leaderMotor.getSupplyCurrent().setUpdateFrequency(10); // Current - 10 Hz
+    leaderMotor.getDeviceTemp().setUpdateFrequency(4);     // Temperature - 4 Hz (250ms)
     
     // Optimize CAN bus utilization
     leaderMotor.optimizeBusUtilization();
@@ -146,6 +153,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Set follower mode (opposeLeaderInvert = true for mechanical opposition)
     followerMotor.setControl(new Follower(CANConstants.LeftElevatorID, true));
     
+    // Set slower frame rates for follower
+    followerMotor.getPosition().setUpdateFrequency(10);      // 10 Hz
+    followerMotor.getVelocity().setUpdateFrequency(10);      // 10 Hz
+    followerMotor.getMotorVoltage().setUpdateFrequency(4);   // 4 Hz
+    followerMotor.getSupplyCurrent().setUpdateFrequency(4);  // 4 Hz
+    followerMotor.getDeviceTemp().setUpdateFrequency(1);     // 1 Hz
+
     // Optimize CAN bus
     followerMotor.optimizeBusUtilization();
   }
