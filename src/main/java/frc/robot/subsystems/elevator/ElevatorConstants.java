@@ -13,14 +13,14 @@ public final class ElevatorConstants {
    */
   public final class Positions {
     public static final double GROUND = 0.0;
-    public static final double CORAL1 = 12.0;
-    public static final double CORAL2 = 20.0;
-    public static final double CORAL3 = 28.0;
-    public static final double CORAL4 = 36.0;
-    public static final double ALGAE1 = 12.0;
-    public static final double ALGAE2 = 20.0;
-    public static final double ALGAE3 = 28.0;
-    public static final double MAX = 40.0; // Absolute maximum
+    public static final double CORAL1 = 1.9685;
+    public static final double CORAL2 = 9.25197;
+    public static final double CORAL3 = 21.6535;
+    public static final double CORAL4 = 44.09449;
+    public static final double ALGAE1 = 12.9921;
+    public static final double ALGAE2 = 25.9843;
+    public static final double ALGAE3 = 42.51969;
+    public static final double MAX = 45.5; // Absolute maximum
   }
 
   // ============================================================
