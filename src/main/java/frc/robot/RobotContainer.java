@@ -11,9 +11,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -62,7 +59,7 @@ public class RobotContainer {
     // Turning/rotatiton is controlled by the X axis of the right stick.
     // Robot drives field relative by default.
     // See: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
-    driveSubsystem.setDefaultCommand(new RunCommand(() -> 
+    driveSubsystem.setDefaultCommand(Commands.run(() -> 
       driveSubsystem.drive(
         -driverXbox.getLeftY(),
         -driverXbox.getLeftX(),
@@ -121,15 +118,15 @@ public class RobotContainer {
 
     // Configure the available auto delay options
     delayCommandChooser.setDefaultOption("No delay", Commands.none());
-    delayCommandChooser.addOption("1.0 second", new WaitCommand(1.0));
-    delayCommandChooser.addOption("1.5 seconds", new WaitCommand(1.5));
-    delayCommandChooser.addOption("2.0 seconds", new WaitCommand(2.0));
-    delayCommandChooser.addOption("2.5 seconds", new WaitCommand(2.5));
-    delayCommandChooser.addOption("3.0 seconds", new WaitCommand(3.0));
-    delayCommandChooser.addOption("3.5 seconds", new WaitCommand(3.5));
-    delayCommandChooser.addOption("4.0 seconds", new WaitCommand(4.0));
-    delayCommandChooser.addOption("4.5 seconds", new WaitCommand(4.5));
-    delayCommandChooser.addOption("5.0 seconds", new WaitCommand(5.0));
+    delayCommandChooser.addOption("1.0 second", Commands.waitSeconds(1.0));
+    delayCommandChooser.addOption("1.5 seconds", Commands.waitSeconds(1.5));
+    delayCommandChooser.addOption("2.0 seconds", Commands.waitSeconds(2.0));
+    delayCommandChooser.addOption("2.5 seconds", Commands.waitSeconds(2.5));
+    delayCommandChooser.addOption("3.0 seconds", Commands.waitSeconds(3.0));
+    delayCommandChooser.addOption("3.5 seconds", Commands.waitSeconds(3.5));
+    delayCommandChooser.addOption("4.0 seconds", Commands.waitSeconds(4.0));
+    delayCommandChooser.addOption("4.5 seconds", Commands.waitSeconds(4.5));
+    delayCommandChooser.addOption("5.0 seconds", Commands.waitSeconds(5.0));
     
     // Add delay chooser to dashboard
     SmartDashboard.putData("Auto Delay", delayCommandChooser);
@@ -145,12 +142,12 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Zero gyro yaw when start+back is pushed
     driverXbox.start().onTrue(
-      new RunCommand(() -> driveSubsystem.zeroHeading(), driveSubsystem).ignoringDisable(true)
+      Commands.run(() -> driveSubsystem.zeroHeading(), driveSubsystem).ignoringDisable(true)
     );
 
     // Set robot to robot-relative driving when back is pressed
     driverXbox.back().onTrue(
-      new RunCommand(() -> driveSubsystem.setFieldRelative(true), driveSubsystem)
+      Commands.run(() -> driveSubsystem.setFieldRelative(true), driveSubsystem)
     );
 
     // Score at coral level 1
@@ -188,25 +185,25 @@ public class RobotContainer {
       armSubsystem.moveToAlgaeMoveCommand()
       .andThen(elevatorSubsystem.moveToGroundCommand())
       .andThen(armSubsystem.moveToAlgaeProcessorCommand())
-      .andThen(new RunCommand(() -> driveSubsystem.setSlowMode(false), driveSubsystem))
+      .andThen(Commands.run(() -> driveSubsystem.setSlowMode(false), driveSubsystem))
     );
     opController2.button(Controller2Constants.ButtonBlue2).onTrue(
       armSubsystem.moveToAlgaeMoveCommand()
       .andThen(elevatorSubsystem.moveToAlgaeOneCommand())
       .andThen(armSubsystem.moveToAlgaeOneCommand())
-      .andThen(new RunCommand(() -> driveSubsystem.setSlowMode(false), driveSubsystem))
+      .andThen(Commands.run(() -> driveSubsystem.setSlowMode(false), driveSubsystem))
     );
     opController2.button(Controller2Constants.ButtonBlue3).onTrue(
       armSubsystem.moveToAlgaeMoveCommand()
       .andThen(elevatorSubsystem.moveToAlgaeTwoCommand())
       .andThen(armSubsystem.moveToAlgaeTwoCommand())
-      .andThen(new RunCommand(() -> driveSubsystem.setSlowMode(false), driveSubsystem))
+      .andThen(Commands.run(() -> driveSubsystem.setSlowMode(false), driveSubsystem))
     );
     opController2.button(Controller2Constants.ButtonBlue4).onTrue(
       armSubsystem.moveToAlgaeMoveCommand()
       .andThen(elevatorSubsystem.moveToAlgaeThreeCommand())
       .andThen(armSubsystem.moveToAlgaeNetCommand())
-      .andThen(new RunCommand(() -> driveSubsystem.setSlowMode(true), driveSubsystem))
+      .andThen(Commands.run(() -> driveSubsystem.setSlowMode(true), driveSubsystem))
     );
 
     // Configure operator controller 1 - other buttons
@@ -226,31 +223,31 @@ public class RobotContainer {
       armSubsystem.moveToCoralMoveCommand()
       .andThen(elevatorSubsystem.moveToGroundCommand())
       .andThen(armSubsystem.moveToHomeCommand())
-      .andThen(new RunCommand(() -> driveSubsystem.setSlowMode(false), driveSubsystem))
+      .andThen(Commands.run(() -> driveSubsystem.setSlowMode(false), driveSubsystem))
     );
     opController2.button(Controller2Constants.ButtonRed2).onTrue(
       armSubsystem.moveToCoralMoveCommand()
       .andThen(elevatorSubsystem.moveToCoralOneCommand())
       .andThen(armSubsystem.moveToCoralOneCommand())
-      .andThen(new RunCommand(() -> driveSubsystem.setSlowMode(true), driveSubsystem))
+      .andThen(Commands.run(() -> driveSubsystem.setSlowMode(true), driveSubsystem))
     );
     opController2.button(Controller2Constants.ButtonRed3).onTrue(
       armSubsystem.moveToCoralMoveCommand()
       .andThen(elevatorSubsystem.moveToCoralTwoCommand())
       .andThen(armSubsystem.moveToCoralTwoCommand())
-      .andThen(new RunCommand(() -> driveSubsystem.setSlowMode(true), driveSubsystem))
+      .andThen(Commands.run(() -> driveSubsystem.setSlowMode(true), driveSubsystem))
     );
     opController2.button(Controller2Constants.ButtonRed4).onTrue(
       armSubsystem.moveToCoralMoveCommand()
       .andThen(elevatorSubsystem.moveToCoralThreeCommand())
       .andThen(armSubsystem.moveToCoralThreeCommand())
-      .andThen(new RunCommand(() -> driveSubsystem.setSlowMode(true), driveSubsystem))
+      .andThen(Commands.run(() -> driveSubsystem.setSlowMode(true), driveSubsystem))
     );
     opController2.button(Controller2Constants.ButtonRed5).onTrue(
       armSubsystem.moveToCoralMoveCommand()
       .andThen(elevatorSubsystem.moveToCoralFourCommand())
       .andThen(armSubsystem.moveToCoralFourCommand())
-      .andThen(new RunCommand(() -> driveSubsystem.setSlowMode(true), driveSubsystem))
+      .andThen(Commands.run(() -> driveSubsystem.setSlowMode(true), driveSubsystem))
     );
   }
 
@@ -268,9 +265,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new SequentialCommandGroup(
-      delayCommandChooser.getSelected(),  // run the selected delay command
-      autoCommandChooser.getSelected()    // then run the selected auto command
+    return Commands.sequence(
+      delayCommandChooser.getSelected(), // run the selected delay command
+      autoCommandChooser.getSelected()   // then run the selected auto command
     );
   }
 
