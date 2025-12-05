@@ -44,11 +44,11 @@ public final class FeedbackConstants {
   
   // ==================== Team Colors (Optional) ====================
   
-  /** Team color option 1 */
-  public static final Color TeamColor1 = new Color(0.0, 0.2, 0.8); // Example: Blue
+  /** Team color - Green */
+  public static final Color TeamGreen = new Color(0.0, 0.8, 0.2);
   
-  /** Team color option 2 */
-  public static final Color TeamColor2 = new Color(1.0, 0.8, 0.0); // Example: Gold
+  /** Team color - Copper */
+  public static final Color TeamCopper = new Color(0.72, 0.45, 0.20);
   
   // ==================== LED Display Modes ====================
   
@@ -81,6 +81,9 @@ public final class FeedbackConstants {
     ERROR,
     
     /** Rainbow animation */
-    RAINBOW
+    RAINBOW,
+    
+    /** Team colors gradient chase */
+    TEAM_COLORS
   }
 }

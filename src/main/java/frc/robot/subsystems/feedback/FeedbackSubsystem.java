@@ -44,7 +44,7 @@ public class FeedbackSubsystem extends SubsystemBase {
     ledStrip.start();
 
     // Set default command to idle display
-    this.setDefaultCommand(this.idleCommand());
+    this.setDefaultCommand(this.teamColorsCommand());
     
     // Output initialization progress
     Utils.logInfo("Feedback subsystem initialized");
@@ -109,6 +109,10 @@ public class FeedbackSubsystem extends SubsystemBase {
         
       case RAINBOW:
         rainbowPattern();
+        break;
+        
+      case TEAM_COLORS:
+        teamColorsPattern();
         break;
     }
   }
@@ -176,6 +180,49 @@ public class FeedbackSubsystem extends SubsystemBase {
       int hue = (offset + (i * 180 / ledBuffer.getLength())) % 180;
       ledBuffer.setHSV(i, hue, 255, 128);
     }
+  }
+  
+  /**
+   * Team colors gradient pattern that chases across the strip
+   * Creates a smooth green-to-copper gradient that moves along the LEDs
+   */
+  private void teamColorsPattern() {
+    // Update offset for chase effect (moves 10 pixels per second)
+    if (animationTimer % 0.1 < 0.02) {
+      animationOffset = (animationOffset + 1) % ledBuffer.getLength();
+    }
+    
+    // Length of one complete gradient cycle (in LEDs)
+    int gradientLength = ledBuffer.getLength() / 2;
+    
+    for (int i = 0; i < ledBuffer.getLength(); i++) {
+      // Calculate position in gradient with offset for chase effect
+      int position = (i + animationOffset) % gradientLength;
+      double gradientPosition = (double) position / gradientLength;
+      
+      // Interpolate between green and copper
+      Color interpolatedColor = interpolateColor(
+          FeedbackConstants.TeamGreen,
+          FeedbackConstants.TeamCopper,
+          gradientPosition
+      );
+      
+      ledBuffer.setLED(i, interpolatedColor);
+    }
+  }
+  
+  /**
+   * Interpolate between two colors
+   * @param color1 Starting color
+   * @param color2 Ending color
+   * @param t Position in gradient (0.0 to 1.0)
+   * @return Interpolated color
+   */
+  private Color interpolateColor(Color color1, Color color2, double t) {
+    double r = color1.red + (color2.red - color1.red) * t;
+    double g = color1.green + (color2.green - color1.green) * t;
+    double b = color1.blue + (color2.blue - color1.blue) * t;
+    return new Color(r, g, b);
   }
   
   // ==================== Rumble Control Methods ====================
@@ -314,5 +361,13 @@ public class FeedbackSubsystem extends SubsystemBase {
    */
   public Command idleCommand() {
     return setDisplayCommand(DisplayMode.IDLE);
+  }
+  
+  /**
+   * Command to display team colors gradient
+   * @return Command that shows green-to-copper gradient chase
+   */
+  public Command teamColorsCommand() {
+    return setDisplayCommand(DisplayMode.TEAM_COLORS);
   }
 }
