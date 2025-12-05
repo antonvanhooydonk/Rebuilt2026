@@ -43,8 +43,8 @@ public class FeedbackSubsystem extends SubsystemBase {
     ledStrip.setData(ledBuffer);
     ledStrip.start();
 
-    // Set default command to idle display
-    this.setDefaultCommand(this.teamColorsCommand());
+    // Set default command to display
+    setDefaultCommand(teamColorsCommand());
     
     // Output initialization progress
     Utils.logInfo("Feedback subsystem initialized");
