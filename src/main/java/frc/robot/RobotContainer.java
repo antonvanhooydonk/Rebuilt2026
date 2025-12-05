@@ -20,15 +20,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import frc.robot.Constants.Controller1Constants;
 import frc.robot.Constants.Controller2Constants;
-import frc.robot.commands.roller.HoldAlgaeCommand;
-import frc.robot.commands.roller.IntakeAlgaeCommand;
-import frc.robot.commands.roller.IntakeCoralCommand;
-import frc.robot.commands.roller.OutputAlgaeCommand;
-import frc.robot.commands.roller.OutputCoralCommand;
-import frc.robot.commands.rumble.RumbleControllerCommand;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.feedback.FeedbackSubsystem;
 import frc.robot.subsystems.roller.RollerSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.Utils;
@@ -40,17 +35,18 @@ import frc.robot.util.Utils;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  private final ArmSubsystem armSubsystem = new ArmSubsystem();
-  private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
-  private final RollerSubsystem rollerSubsystem = new RollerSubsystem();
-  private final VisionSubsystem visionSubsystem = new VisionSubsystem();
-  private final DriveSubsystem driveSubsystem = new DriveSubsystem(visionSubsystem);
-
   // Initialize our controllers
   private final CommandXboxController driverXbox = new CommandXboxController(0);
   private final CommandGenericHID opController1 = new CommandGenericHID(1);
   private final CommandGenericHID opController2 = new CommandGenericHID(2);
+
+  // The robot's subsystems and commands are defined here...
+  private final ArmSubsystem armSubsystem = new ArmSubsystem();
+  private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+  private final FeedbackSubsystem feedbackSubsystem = new FeedbackSubsystem(driverXbox);
+  private final RollerSubsystem rollerSubsystem = new RollerSubsystem();
+  private final VisionSubsystem visionSubsystem = new VisionSubsystem();
+  private final DriveSubsystem driveSubsystem = new DriveSubsystem(visionSubsystem);
 
   // Auto choosers
   private SendableChooser<Command> autoCommandChooser = new SendableChooser<>();
@@ -78,8 +74,11 @@ public class RobotContainer {
     // Configure the autonomous command chooser
     configureAutos();
 
-    // Configure the trigger/button bindings
+    // Configure the controller button bindings
     configureButtonBindings();
+
+    // Configure other event triggers
+    configureTriggers();
 
     // Silence joystick warnings during testing
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -167,14 +166,16 @@ public class RobotContainer {
     driverXbox.y().onTrue(Commands.none());
     
     // Drive to left scoring pose of the current camera target
-    driverXbox.leftBumper()
-      .whileTrue(driveSubsystem.driveToPoseCommand(Utils.getLeftScoringPose(visionSubsystem, "FRONT_CAMERA"))
-      .andThen(new RumbleControllerCommand(driverXbox, 2.0)));
+    driverXbox.leftBumper().whileTrue(
+      driveSubsystem.driveToPoseCommand(Utils.getLeftScoringPose(visionSubsystem, "FRONT_CAMERA"))
+      .andThen(feedbackSubsystem.doubleRumbleCommand())
+    );
     
     // Drive to right scoring pose of the current camera target
-    driverXbox.rightBumper()
-      .whileTrue(driveSubsystem.driveToPoseCommand(Utils.getRightScoringPose(visionSubsystem, "FRONT_CAMERA"))
-      .andThen(new RumbleControllerCommand(driverXbox, 2.0)));
+    driverXbox.rightBumper().whileTrue(
+      driveSubsystem.driveToPoseCommand(Utils.getRightScoringPose(visionSubsystem, "FRONT_CAMERA"))
+      .andThen(feedbackSubsystem.doubleRumbleCommand())
+    );
 
     // Manually toggle "slow" mode
     driverXbox.rightTrigger().onTrue(Commands.runOnce(() -> 
@@ -210,15 +211,15 @@ public class RobotContainer {
 
     // Configure operator controller 1 - other buttons
     opController1.button(Controller1Constants.ButtonYellow)
-      .whileTrue(new IntakeCoralCommand(rollerSubsystem));
+      .whileTrue(rollerSubsystem.intakeCoralUntilDetectedCommand());
     opController1.button(Controller1Constants.ButtonGreen)
-      .whileTrue(new OutputCoralCommand(rollerSubsystem));
+      .whileTrue(rollerSubsystem.outputCoralCommand());
     opController1.button(Controller1Constants.ButtonPlayer1)
-      .whileTrue(new IntakeAlgaeCommand(rollerSubsystem));
+      .whileTrue(rollerSubsystem.intakeAlgaeCommand());
     opController1.button(Controller1Constants.ButtonPlayer2)
-      .whileTrue(new OutputAlgaeCommand(rollerSubsystem));
+      .whileTrue(rollerSubsystem.outputAlgaeCommand());
     opController1.button(Controller1Constants.ButtonBlack2)
-      .whileTrue(new HoldAlgaeCommand(rollerSubsystem));
+      .whileTrue(rollerSubsystem.holdAlgaeCommand());
 
     // Configure operator controller 2 - red buttons
     opController2.button(Controller2Constants.ButtonRed1).onTrue(
@@ -251,6 +252,15 @@ public class RobotContainer {
       .andThen(armSubsystem.moveToCoralFourCommand())
       .andThen(new RunCommand(() -> driveSubsystem.setSlowMode(true), driveSubsystem))
     );
+  }
+
+  /**
+   * Configure triggers for various events.
+   */
+  public void configureTriggers() {    
+    // Trigger feedback when game piece acquired
+    new Trigger(rollerSubsystem::hasGamePiece)
+      .onTrue(feedbackSubsystem.gamePieceAcquiredCommand());
   }
 
   /**

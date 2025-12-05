@@ -12,6 +12,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -185,12 +186,9 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @param inches Target height in inches from the ground
    */
   public void setPositionInches(double inches) {
-    // Clamp to safe range
-    inches = Math.max(ElevatorConstants.Positions.GROUND, Math.min(inches, ElevatorConstants.Positions.MAX));
-    
-    targetPositionInches = inches;
-    double rotations = inchesToRotations(inches);
-    
+    double clampedInches = MathUtil.clamp(inches, ElevatorConstants.Positions.GROUND, ElevatorConstants.Positions.MAX);
+    targetPositionInches = clampedInches;
+    double rotations = inchesToRotations(clampedInches);
     leaderMotor.setControl(mmRequest.withPosition(rotations));
   }
   

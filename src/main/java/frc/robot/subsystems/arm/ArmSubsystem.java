@@ -11,6 +11,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -144,12 +145,9 @@ public class ArmSubsystem extends SubsystemBase {
    * @param degrees Target angle in degrees from the home position
    */
   public void setPositionDegrees(double degrees) {
-    // Clamp to safe range
-    degrees = Math.max(ArmConstants.Positions.HOME, Math.min(degrees, ArmConstants.Positions.MAX));
-    
-    targetPositionDegrees = degrees;
-    double rotations = degreesToRotations(degrees);
-    
+    double clampedDegrees = MathUtil.clamp(degrees, ArmConstants.Positions.HOME, ArmConstants.Positions.MAX);    
+    targetPositionDegrees = clampedDegrees;
+    double rotations = degreesToRotations(clampedDegrees);    
     angleMotor.setControl(mmRequest.withPosition(rotations));
   }
   
