@@ -254,10 +254,9 @@ public class RobotContainer {
   /**
    * Configure triggers for various events.
    */
-  public void configureTriggers() {    
+  public void configureTriggers() {
     // Trigger feedback when game piece acquired
-    new Trigger(rollerSubsystem::hasGamePiece)
-      .onTrue(feedbackSubsystem.gamePieceAcquiredCommand());
+    new Trigger(rollerSubsystem::hasGamePiece).onTrue(feedbackSubsystem.gamePieceAcquiredCommand());
   }
 
   /**

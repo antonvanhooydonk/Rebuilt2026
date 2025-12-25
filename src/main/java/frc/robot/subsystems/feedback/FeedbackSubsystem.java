@@ -283,7 +283,7 @@ public class FeedbackSubsystem extends SubsystemBase {
    * @return Command that does a strong rumble
    */
   public Command strongRumbleCommand() {
-    return rumbleCommand(1.0, 0.3);
+    return rumbleCommand(1.0, 0.4);
   }
   
   /**

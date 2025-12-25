@@ -13,7 +13,7 @@ package frc.robot.subsystems.roller;
  * constants are needed, to reduce verbosity.
  */
 public final class RollerConstants {
-  // motor speeds from -0.1 to 1.0 (-100% to 100% -> x 12 for voltage control)
+  // motor speeds from -1.0 to 1.0 (-100% to 100% -> x 12 for voltage control)
   public static double IntakeCoralVoltage = -0.5 * 12; 
   public static double OutputCoralVoltage = -0.8 * 12; 
   public static double IntakeAlgaeVoltage = 0.8 * 12; 

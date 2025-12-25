@@ -104,8 +104,4 @@ public final class Constants {
   public static final class DIOConstants {
     public static final int BeamBreakSensorPort = 0;
   }
-
-  public static class PWMConstants{
-    public static final int LEDStringID = 0;
-  }
 }

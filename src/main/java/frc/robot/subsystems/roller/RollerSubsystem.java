@@ -110,8 +110,8 @@ public class RollerSubsystem extends SubsystemBase {
    * @param voltage Voltage to apply (-12.0 to 12.0)
    */
   public void setVoltage(double voltage) {
-    double clampledVoltage = MathUtil.clamp(voltage, -12, 12);
-    rollerMotor.setControl(voltageRequest.withOutput(clampledVoltage));
+    double clampedVoltage = MathUtil.clamp(voltage, -12, 12);
+    rollerMotor.setControl(voltageRequest.withOutput(clampedVoltage));
   }
   
   /**
