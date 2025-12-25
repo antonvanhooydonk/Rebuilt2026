@@ -409,8 +409,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @param brake True for brake, false for coast
    */
   public void setBrakeMode(boolean brake) {
-    NeutralModeValue mode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
-    
+    NeutralModeValue mode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;    
     leaderMotor.setNeutralMode(mode);
     followerMotor.setNeutralMode(mode);
   }
