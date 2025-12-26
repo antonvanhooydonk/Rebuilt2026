@@ -51,7 +51,7 @@ public class RobotContainer {
 
   /** 
    * The container for the robot. 
-   * Contains subsystems, OI devices, and commands. 
+   * Contains subsystems, IO devices, and commands. 
    */
   public RobotContainer() {
     // Initialize the default driving command.
