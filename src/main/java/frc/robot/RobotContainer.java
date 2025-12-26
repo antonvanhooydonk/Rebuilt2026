@@ -67,6 +67,9 @@ public class RobotContainer {
       ), 
       driveSubsystem
     ));
+  
+    // Register named commands to be used in Pathplanner
+    configureNamedCommands();
 
     // Configure the autonomous command chooser
     configureAutos();
@@ -83,11 +86,11 @@ public class RobotContainer {
 
   /**
    * Register named commands to be used in PathPlanner autos.
+   * Register named commands before the creation of any PathPlanner Autos or Paths. 
+   * It is recommended to do this in RobotContainer, after subsystem 
+   * initialization, but before the creation of any other commands.
    */
-  public void registerNamedCommands() {
-    // Register named commands before the creation of any PathPlanner Autos or Paths. 
-    // It is recommended to do this in RobotContainer, after subsystem initialization, 
-    // but before the creation of any other commands.
+  public void configureNamedCommands() {
     // NamedCommands.registerCommand("ScoreLevel1Coral", new ScoreLevel1CoralCommand(
     //   driveSubsystem,
     //   elevatorSubsystem,
@@ -102,9 +105,6 @@ public class RobotContainer {
    * which pulls in all autos defined in the PathPlanner deploy folder.
    */
   public void configureAutos() {
-    // Register named commands to be used in Pathplanner
-    registerNamedCommands();
-
     // Build the auto chooser and add it to the dashboard
     // This will use Commands.none() as the default option.
     autoCommandChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
@@ -140,14 +140,14 @@ public class RobotContainer {
    * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
    */
   private void configureButtonBindings() {
-    // Zero gyro yaw when start+back is pushed
+    // Zero gyro yaw when start button is pushed
     driverXbox.start().onTrue(
-      Commands.run(() -> driveSubsystem.zeroHeading(), driveSubsystem).ignoringDisable(true)
+      Commands.runOnce(() -> driveSubsystem.zeroHeading(), driveSubsystem).ignoringDisable(true)
     );
 
-    // Set robot to robot-relative driving when back is pressed
+    // Toggle field-relative driving when back button is pressed
     driverXbox.back().onTrue(
-      Commands.run(() -> driveSubsystem.setFieldRelative(true), driveSubsystem)
+      Commands.runOnce(() -> driveSubsystem.setFieldRelative(!driveSubsystem.isFieldRelative()), driveSubsystem)
     );
 
     // Score at coral level 1
