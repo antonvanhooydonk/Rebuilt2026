@@ -11,6 +11,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
+import frc.robot.config.CANConstants;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -120,11 +122,11 @@ public final class DriveConstants {
   // Front Left Module - Module 0
   public static final SwerveModule kFrontLeftSwerveModule = new SwerveModule(
     "FL",
-    11,
-    2,
+    CANConstants.kFrontLeftDriveID,
+    CANConstants.kFrontLeftSteerID,
     false,
     false,
-    0,
+    CANConstants.kFrontLeftAbsEncoderID,
     Units.degreesToRadians(7.8),
     false
   );
@@ -132,35 +134,35 @@ public final class DriveConstants {
   // Front Right Module - Module 1
   public static final SwerveModule kFrontRightSwerveModule = new SwerveModule(
     "FR",
-    12,
-    8,
+    CANConstants.kFrontRightDriveID,
+    CANConstants.kFrontRightSteerID,
     false,
     false,
-    1,    
+    CANConstants.kFrontRightAbsEncoderID,    
     Units.degreesToRadians(119.7),
     false
   );
 
-  // Rear Left Module - Module 2
+  // Back Left Module - Module 2
   public static final SwerveModule kBackLeftSwerveModule = new SwerveModule(
     "BL",
-    14,
-    4,
+    CANConstants.kBackLeftDriveID,
+    CANConstants.kBackLeftSteerID,
     false,
     false,
-    3,
+    CANConstants.kBackLeftAbsEncoderID,
     Units.degreesToRadians(68.7),
     false
   );
 
-  // Rear Right Module - Module 3
+  // Back Right Module - Module 3
   public static final SwerveModule kBackRightSwerveModule = new SwerveModule(
     "BR",
-    13,
-    6,
+    CANConstants.kBackRightDriveID,
+    CANConstants.kBackRightSteerID,
     false,
     false,
-    2,
+    CANConstants.kBackRightAbsEncoderID,
     Units.degreesToRadians(297.5),
     false
   );

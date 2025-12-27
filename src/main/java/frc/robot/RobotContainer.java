@@ -15,8 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
-import frc.robot.Constants.Controller1Constants;
-import frc.robot.Constants.Controller2Constants;
+import frc.robot.config.ControllerConstants;
 import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
@@ -181,25 +180,25 @@ public class RobotContainer {
     ));    
  
     // Configure operator controller 1 - blue buttons
-    opController1.button(Controller1Constants.ButtonBlue1).onTrue(
+    opController1.button(ControllerConstants.Operator1.ButtonBlue1).onTrue(
       armSubsystem.moveToAlgaeMoveCommand()
       .andThen(elevatorSubsystem.moveToGroundCommand())
       .andThen(armSubsystem.moveToAlgaeProcessorCommand())
       .andThen(Commands.run(() -> driveSubsystem.setSlowMode(false), driveSubsystem))
     );
-    opController2.button(Controller2Constants.ButtonBlue2).onTrue(
+    opController2.button(ControllerConstants.Operator2.ButtonBlue2).onTrue(
       armSubsystem.moveToAlgaeMoveCommand()
       .andThen(elevatorSubsystem.moveToAlgaeOneCommand())
       .andThen(armSubsystem.moveToAlgaeOneCommand())
       .andThen(Commands.run(() -> driveSubsystem.setSlowMode(false), driveSubsystem))
     );
-    opController2.button(Controller2Constants.ButtonBlue3).onTrue(
+    opController2.button(ControllerConstants.Operator2.ButtonBlue3).onTrue(
       armSubsystem.moveToAlgaeMoveCommand()
       .andThen(elevatorSubsystem.moveToAlgaeTwoCommand())
       .andThen(armSubsystem.moveToAlgaeTwoCommand())
       .andThen(Commands.run(() -> driveSubsystem.setSlowMode(false), driveSubsystem))
     );
-    opController2.button(Controller2Constants.ButtonBlue4).onTrue(
+    opController2.button(ControllerConstants.Operator2.ButtonBlue4).onTrue(
       armSubsystem.moveToAlgaeMoveCommand()
       .andThen(elevatorSubsystem.moveToAlgaeThreeCommand())
       .andThen(armSubsystem.moveToAlgaeNetCommand())
@@ -207,43 +206,43 @@ public class RobotContainer {
     );
 
     // Configure operator controller 1 - other buttons
-    opController1.button(Controller1Constants.ButtonYellow)
+    opController1.button(ControllerConstants.Operator1.ButtonYellow)
       .whileTrue(rollerSubsystem.intakeCoralUntilDetectedCommand());
-    opController1.button(Controller1Constants.ButtonGreen)
+    opController1.button(ControllerConstants.Operator1.ButtonGreen)
       .whileTrue(rollerSubsystem.outputCoralCommand());
-    opController1.button(Controller1Constants.ButtonPlayer1)
+    opController1.button(ControllerConstants.Operator1.ButtonPlayer1)
       .whileTrue(rollerSubsystem.intakeAlgaeCommand());
-    opController1.button(Controller1Constants.ButtonPlayer2)
+    opController1.button(ControllerConstants.Operator1.ButtonPlayer2)
       .whileTrue(rollerSubsystem.outputAlgaeCommand());
-    opController1.button(Controller1Constants.ButtonBlack2)
+    opController1.button(ControllerConstants.Operator1.ButtonBlack2)
       .whileTrue(rollerSubsystem.holdAlgaeCommand());
 
     // Configure operator controller 2 - red buttons
-    opController2.button(Controller2Constants.ButtonRed1).onTrue(
+    opController2.button(ControllerConstants.Operator2.ButtonRed1).onTrue(
       armSubsystem.moveToCoralMoveCommand()
       .andThen(elevatorSubsystem.moveToGroundCommand())
       .andThen(armSubsystem.moveToHomeCommand())
       .andThen(Commands.run(() -> driveSubsystem.setSlowMode(false), driveSubsystem))
     );
-    opController2.button(Controller2Constants.ButtonRed2).onTrue(
+    opController2.button(ControllerConstants.Operator2.ButtonRed2).onTrue(
       armSubsystem.moveToCoralMoveCommand()
       .andThen(elevatorSubsystem.moveToCoralOneCommand())
       .andThen(armSubsystem.moveToCoralOneCommand())
       .andThen(Commands.run(() -> driveSubsystem.setSlowMode(true), driveSubsystem))
     );
-    opController2.button(Controller2Constants.ButtonRed3).onTrue(
+    opController2.button(ControllerConstants.Operator2.ButtonRed3).onTrue(
       armSubsystem.moveToCoralMoveCommand()
       .andThen(elevatorSubsystem.moveToCoralTwoCommand())
       .andThen(armSubsystem.moveToCoralTwoCommand())
       .andThen(Commands.run(() -> driveSubsystem.setSlowMode(true), driveSubsystem))
     );
-    opController2.button(Controller2Constants.ButtonRed4).onTrue(
+    opController2.button(ControllerConstants.Operator2.ButtonRed4).onTrue(
       armSubsystem.moveToCoralMoveCommand()
       .andThen(elevatorSubsystem.moveToCoralThreeCommand())
       .andThen(armSubsystem.moveToCoralThreeCommand())
       .andThen(Commands.run(() -> driveSubsystem.setSlowMode(true), driveSubsystem))
     );
-    opController2.button(Controller2Constants.ButtonRed5).onTrue(
+    opController2.button(ControllerConstants.Operator2.ButtonRed5).onTrue(
       armSubsystem.moveToCoralMoveCommand()
       .andThen(elevatorSubsystem.moveToCoralFourCommand())
       .andThen(armSubsystem.moveToCoralFourCommand())

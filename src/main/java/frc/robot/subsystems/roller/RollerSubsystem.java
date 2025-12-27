@@ -17,8 +17,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import frc.robot.Constants.CANConstants;
-import frc.robot.Constants.DIOConstants;
+import frc.robot.config.DIOConstants;
+import frc.robot.config.PWMConstants;
 import frc.robot.util.Utils;
 
 public class RollerSubsystem extends SubsystemBase {
@@ -32,8 +32,8 @@ public class RollerSubsystem extends SubsystemBase {
   /** Creates a new RollerSubsystem. */
   public RollerSubsystem() {
     // Initialize hardware
-    beamBreakSensor = new DigitalInput(DIOConstants.BeamBreakSensorPort);
-    rollerMotor = new TalonFX(CANConstants.RollerID);
+    beamBreakSensor = new DigitalInput(DIOConstants.kBeamBreakSensorID);
+    rollerMotor = new TalonFX(PWMConstants.RollerID);
     
     // Configure motor
     configureMotor();    

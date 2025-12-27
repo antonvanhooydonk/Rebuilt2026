@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import frc.robot.Constants.FieldConstants;
+import frc.robot.config.FieldConstants;
 import frc.robot.sensors.Camera;
 import frc.robot.util.Utils;
 
@@ -207,9 +207,9 @@ public class VisionSubsystem extends SubsystemBase {
     // Check if pose is within field boundaries
     if (
       pose2d.getX() < -VisionConstants.kFieldBorderMargin || 
-      pose2d.getX() > FieldConstants.fieldLengthMeters + VisionConstants.kFieldBorderMargin ||
+      pose2d.getX() > FieldConstants.kFieldLengthMeters + VisionConstants.kFieldBorderMargin ||
       pose2d.getY() < -VisionConstants.kFieldBorderMargin || 
-      pose2d.getY() > FieldConstants.fieldWidthMeters + VisionConstants.kFieldBorderMargin
+      pose2d.getY() > FieldConstants.kFieldWidthMeters + VisionConstants.kFieldBorderMargin
     ) {
       return false;
     }

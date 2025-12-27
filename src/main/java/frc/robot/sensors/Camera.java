@@ -12,7 +12,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.geometry.Transform3d;
 
-import frc.robot.Constants.FieldConstants;
+import frc.robot.config.FieldConstants;
 
 public class Camera {
   private final String name;
@@ -33,7 +33,7 @@ public class Camera {
 
     // Initialize PhotonPoseEstimator
     PhotonPoseEstimator poseEstimator = new PhotonPoseEstimator(
-      FieldConstants.fieldLayout,
+      FieldConstants.kFieldLayout,
       PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
       robotToCamera
     );

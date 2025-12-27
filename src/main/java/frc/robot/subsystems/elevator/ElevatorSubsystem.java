@@ -18,8 +18,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import frc.robot.Constants.CANConstants;
+import frc.robot.config.CANConstants;
+import frc.robot.config.PWMConstants;
 import frc.robot.util.Utils;
 
 /**
@@ -50,8 +50,8 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public ElevatorSubsystem() {
     // Initialize motors
-    leaderMotor = new TalonFX(CANConstants.LeftElevatorID);
-    followerMotor = new TalonFX(CANConstants.RightElevatorID);
+    leaderMotor = new TalonFX(PWMConstants.LeftElevatorID);
+    followerMotor = new TalonFX(PWMConstants.RightElevatorID);
     
     // Configure motors
     configureLeaderMotor();
@@ -152,7 +152,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     followerMotor.getConfigurator().apply(config);
     
     // Set follower mode (opposeLeaderInvert = true for mechanical opposition)
-    followerMotor.setControl(new Follower(CANConstants.LeftElevatorID, true));
+    followerMotor.setControl(new Follower(PWMConstants.LeftElevatorID, true));
     
     // Set slower frame rates for follower
     followerMotor.getPosition().setUpdateFrequency(10);      // 10 Hz
