@@ -142,6 +142,12 @@ public class RobotContainer {
     // Trigger feedback when game piece acquired
     new Trigger(rollerSubsystem::hasGamePiece).onTrue(feedbackSubsystem.gamePieceAcquiredCommand());
   
+    // Stop forcing the elevator down if it is stalling
+    new Trigger(elevatorSubsystem::isStalling).onTrue(
+      Commands.runOnce(() -> elevatorSubsystem.resetPosition(), elevatorSubsystem)
+      .andThen(armSubsystem.moveToHomeCommand())
+    );
+  
     // -------------------------------------------------------------------
     // Configure button triggers
     // -------------------------------------------------------------------
