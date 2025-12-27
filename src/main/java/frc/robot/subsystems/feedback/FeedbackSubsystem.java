@@ -253,8 +253,7 @@ public class FeedbackSubsystem extends SubsystemBase {
    * @return Command that sets the LED display
    */
   public Command setDisplayCommand(DisplayMode mode) {
-    return runOnce(() -> setDisplayMode(mode))
-      .withName("SetLED_" + mode.name());
+    return runOnce(() -> setDisplayMode(mode)).withName("SetLED_" + mode.name());
   }
   
   /**
