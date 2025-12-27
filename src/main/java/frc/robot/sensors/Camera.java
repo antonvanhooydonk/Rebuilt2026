@@ -12,7 +12,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.geometry.Transform3d;
 
-import frc.robot.config.FieldConstants;
+import frc.robot.Constants.FieldConstants;
 
 public class Camera {
   private final String name;
