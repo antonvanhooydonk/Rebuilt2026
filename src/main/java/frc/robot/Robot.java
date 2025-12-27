@@ -72,11 +72,7 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledPeriodic() {
-    if (Timer.getMatchTime() <= 0.00) {
-      m_robotContainer.setMotorBrake(false);
-    }
-  }
+  public void disabledPeriodic() {}
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
