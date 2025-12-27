@@ -32,7 +32,7 @@ public final class Constants {
   }
 
   /**
-   * CAN  Bus Constants
+   * CAN Bus Constants
    */
   public static class CANConstants {
     public static final int kFrontLeftDriveID   = 11;
