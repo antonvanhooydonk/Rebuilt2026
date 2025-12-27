@@ -73,10 +73,7 @@ public class RobotContainer {
     // Configure the autonomous command chooser
     configureAutos();
 
-    // Configure the controller button bindings
-    configureButtonBindings();
-
-    // Configure other event triggers
+    // Configure the event triggers & button bindings
     configureTriggers();
 
     // Silence joystick warnings during testing
@@ -138,7 +135,16 @@ public class RobotContainer {
    * subclasses for {@link CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller PS4} 
    * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
    */
-  private void configureButtonBindings() {
+  private void configureTriggers() {
+    // -------------------------------------------------------------------
+    // Configure trigger -> command mappings
+    // -------------------------------------------------------------------    
+    // Trigger feedback when game piece acquired
+    new Trigger(rollerSubsystem::hasGamePiece).onTrue(feedbackSubsystem.gamePieceAcquiredCommand());
+  
+    // -------------------------------------------------------------------
+    // Configure button triggers
+    // -------------------------------------------------------------------
     // Zero gyro yaw when start button is pushed
     driverXbox.start().onTrue(
       Commands.runOnce(() -> driveSubsystem.zeroHeading(), driveSubsystem).ignoringDisable(true)
@@ -248,14 +254,6 @@ public class RobotContainer {
       .andThen(armSubsystem.moveToCoralFourCommand())
       .andThen(Commands.run(() -> driveSubsystem.setSlowMode(true), driveSubsystem))
     );
-  }
-
-  /**
-   * Configure triggers for various events.
-   */
-  public void configureTriggers() {
-    // Trigger feedback when game piece acquired
-    new Trigger(rollerSubsystem::hasGamePiece).onTrue(feedbackSubsystem.gamePieceAcquiredCommand());
   }
 
   /**
