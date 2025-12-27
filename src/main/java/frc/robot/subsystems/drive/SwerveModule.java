@@ -297,8 +297,7 @@ public class SwerveModule implements Sendable {
    * @param desiredState The desired SwerveModuleState
    */
   public void setDesiredState(SwerveModuleState desiredState) {
-    // Anti-jitter: ignore tiny velocity commands
-    // Could also try 0.001 m/s
+    // Anti-jitter: ignore tiny velocity commands (could also try 0.001 m/s)
     if (Math.abs(desiredState.speedMetersPerSecond) < 0.01) {
       stop();
       return;
