@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
+import frc.robot.config.AnalogConstants;
 import frc.robot.config.CANConstants;
 
 /**
@@ -126,7 +127,7 @@ public final class DriveConstants {
     CANConstants.kFrontLeftSteerID,
     false,
     false,
-    CANConstants.kFrontLeftAbsEncoderID,
+    AnalogConstants.kFrontLeftAbsEncoderID,
     Units.degreesToRadians(7.8),
     false
   );
@@ -138,7 +139,7 @@ public final class DriveConstants {
     CANConstants.kFrontRightSteerID,
     false,
     false,
-    CANConstants.kFrontRightAbsEncoderID,    
+    AnalogConstants.kFrontRightAbsEncoderID,    
     Units.degreesToRadians(119.7),
     false
   );
@@ -150,7 +151,7 @@ public final class DriveConstants {
     CANConstants.kBackLeftSteerID,
     false,
     false,
-    CANConstants.kBackLeftAbsEncoderID,
+    AnalogConstants.kBackLeftAbsEncoderID,
     Units.degreesToRadians(68.7),
     false
   );
@@ -162,7 +163,7 @@ public final class DriveConstants {
     CANConstants.kBackRightSteerID,
     false,
     false,
-    CANConstants.kBackRightAbsEncoderID,
+    AnalogConstants.kBackRightAbsEncoderID,
     Units.degreesToRadians(297.5),
     false
   );
