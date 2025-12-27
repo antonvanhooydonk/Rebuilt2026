@@ -49,7 +49,7 @@ public final class Constants {
   /**
    * USB Controller Constants
    */
-  public class ControllerConstants {
+  public static class ControllerConstants {
 
     /**
      * Operator 1 Button Constants
@@ -101,7 +101,7 @@ public final class Constants {
      * left side scoring poses for each reef AprilTag
      * @return hashmap 
      */
-    private static HashMap<Integer, Pose2d> getLeftScoringPoses() {      
+    private static HashMap<Integer, Pose2d> getLeftScoringPoses() {
       HashMap<Integer, Pose2d> map = new HashMap<>();
       map.put( 6, new Pose2d(13.533212698834394, 2.845061489129294, Rotation2d.fromDegrees(300)) );
       map.put( 7, new Pose2d(14.3193412054922, 3.8461651986517804, Rotation2d.fromDegrees(0)) );   
