@@ -6,6 +6,7 @@ package frc.robot.subsystems.drive;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -222,6 +223,270 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
+   * This method will take in desired/target robot-relative chassis speeds and
+   * generate a swerve setpoint, then set the desired state for each module.
+   * @param speeds The desired robot-relative speeds
+   */
+  private void driveWithChassisSpeeds(ChassisSpeeds speeds) {
+    // By-pass the setpoint generator if necessary
+    if (Robot.isSimulation()) {
+      setModuleStates(kinematics.toSwerveModuleStates(speeds));
+      return;
+    }
+
+    // Note: It is important to not discretize speeds, that is,
+    // call SwerveDriveKinematics.desaturateWheelSpeeds(), 
+    // before or after using the setpoint generator, as 
+    // it will discretize them for you.
+    SwerveSetpoint nextSetpoint = setpointGenerator.generateSetpoint(
+      currentSetpoint,                      // The previous "current" setpoint
+      speeds,                               // The desired target speeds
+      DriveConstants.kPeriodicTimeSeconds   // The loop time of the robot code, in seconds
+    );
+
+    // Set each module state directly from the setpoint
+    SwerveModuleState[] desiredStates = nextSetpoint.moduleStates();
+    for (int i = 0; i < 4; i++) {
+      modules[i].setDesiredState(desiredStates[i]);
+    }
+
+    // Update the current setpoint
+    currentSetpoint = nextSetpoint;
+  }
+
+  /**
+   * Sets the desired state for each swerve module. Do not call this from driveWithChassisSpeeds.
+   * @param desiredStates Array of desired SwerveModuleStates
+   */
+  private void setModuleStates(SwerveModuleState[] desiredStates) {    
+    // Normalize wheel speeds 
+    SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.kMaxSpeedMetersPerSecond);
+    
+    // Set each module state
+    for (int i = 0; i < 4; i++) {
+      modules[i].setDesiredState(desiredStates[i]);
+    }
+  }
+
+  /**
+   * Set each swerver module to brake/coast mode
+   * @param brake True to enable motor brake, false for coast
+   */
+  private void setMotorBrake(boolean brake) {
+    for (var module : modules) {
+      module.setMotorBrake(brake);
+    }
+  }
+
+  /**
+   * Stop the robot
+   */
+  private void stop() {
+    for (var module : modules) {
+      module.stop();
+    }
+  }
+
+  /**
+   * Stop the robot and sets wheel positions to an X formation 
+   * to resist being pushed by other robots while on defense.
+   */
+  private void stopAndLockWheels() {
+    // Stop the robot
+    stop();
+
+    // Set modules to X formation
+    SwerveModuleState[] states = {
+      new SwerveModuleState(0, Rotation2d.fromDegrees(45)), // Front Left
+      new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),        // Front Right
+      new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),        // Back Left
+      new SwerveModuleState(0, Rotation2d.fromDegrees(45))  // Back Right
+    };
+    setModuleStates(states);
+  }
+
+  /**
+   * Resets all the swerve module encoders and resets the pose estimator.
+   * NOTE: Should never need to call this if vision is working properly.
+   */
+  private void resetEncoders() {
+    // reset each swerve module's encoders
+    for (var module : modules) {
+      module.resetEncoders();
+    }
+
+    // reset pose estimator
+    resetPose(poseEstimator.getEstimatedPosition());
+  }
+
+  /**
+   * Zeros the gyroscope heading and resets the pose estimator.
+   * NOTE: Should never need to call this if vision is working properly.
+   */
+  private void zeroHeading() {
+    // Reset gyro
+    gyro.reset();
+
+    // Reset pose estimator
+    resetPose(poseEstimator.getEstimatedPosition());
+  }
+
+  /**
+   * Gets the current heading of the robot from the pose estimator.
+   * This is what should be fed into the drive (auto and teleop)
+   * functions when calculating chassis speeds & module states.
+   * @return Current heading as a Rotation2d
+   */
+  private Rotation2d getHeading() {
+    return poseEstimator.getEstimatedPosition().getRotation(); 
+  }
+
+  /**
+   * Gets the current pose of the robot
+   * @return Current pose 
+   */
+  private Pose2d getPose() {
+    return poseEstimator.getEstimatedPosition();
+  }
+
+  /**
+   * Resets the pose to a given pose
+   * @param pose New pose
+   */
+  private void resetPose(Pose2d pose) {
+    poseEstimator.resetPosition(gyro.getAngle(), getModulePositions(), pose);
+  }
+
+  /**
+   * Gets the current chassis speeds
+   * @return Current ChassisSpeeds
+   */
+  private ChassisSpeeds getChassisSpeeds() {
+    return kinematics.toChassisSpeeds(getModuleStates());
+  }
+
+  /**
+   * Gets the current module states
+   * @return Array of current SwerveModuleStates
+   */
+  private SwerveModuleState[] getModuleStates() {
+    return new SwerveModuleState[] {
+      modules[0].getState(),  // front left
+      modules[1].getState(),  // front right
+      modules[2].getState(),  // back left
+      modules[3].getState()   // back right
+    };
+  }
+
+  /**
+   * Gets the current module positions
+   * @return Array of current SwerveModulePositions
+   */
+  private SwerveModulePosition[] getModulePositions() {
+    return new SwerveModulePosition[] {
+      modules[0].getPosition(), // front left
+      modules[1].getPosition(), // front right
+      modules[2].getPosition(), // back left
+      modules[3].getPosition()  // back right
+    };
+  }
+
+  /**
+   * Checks if all modules are at their steer target angles
+   * @return
+   */
+  public boolean isSteerAtTarget() {
+    for (var module : modules) {
+      if (!module.isSteerAtTarget()) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Gets whether field-relative driving is enabled
+   * @return Field-relative status
+   */
+  public boolean isFieldRelative() {
+    return fieldRelative;
+  }
+
+  /**
+   * Gets whether slow mode is enabled
+   * @return Slow mode status
+   */
+  public boolean isSlowMode() {
+    return slowMode;
+  }
+
+  // ============================================================
+  // Command Factory Methods
+  // ============================================================
+
+  /**
+   * Drive the robot using the raw joystick inputs.
+   * This function applies deadband, squaring (default) / cubing (in slow mode) 
+   * and slew rate limiting. Joystick inputs are scaled up to speeds in m/s and rad/s.
+   * Field relative driving is automatically disabled if the gyro is disconnected. 
+   * @param xSpeedSupplier Speed in x direction (-1 to 1)
+   * @param ySpeedSupplier Speed in y direction (-1 to 1)
+   * @param rSpeedSupplier Rotation speed (-1 to 1)
+   */
+  public Command driveCommand(
+    DoubleSupplier xSpeedSupplier, 
+    DoubleSupplier ySpeedSupplier, 
+    DoubleSupplier rSpeedSupplier
+  ) {
+    // Get raw joystick inputs from the suppliers
+    double xSpeed = xSpeedSupplier.getAsDouble();
+    double ySpeed = ySpeedSupplier.getAsDouble();
+    double rSpeed = rSpeedSupplier.getAsDouble();
+
+    // Apply deadband to the raw joystick inputs.
+    // This ignores noise from the joystick when it's in the neutral position.
+    xSpeed = MathUtil.applyDeadband(xSpeed, DriveConstants.kJoystickDeadband);
+    ySpeed = MathUtil.applyDeadband(ySpeed, DriveConstants.kJoystickDeadband);
+    rSpeed = MathUtil.applyDeadband(rSpeed, DriveConstants.kJoystickDeadband);
+
+    // Square the inputs (while preserving sign) for finer control at low speeds.
+    // Cubing is used in "slow" mode because it gives even finer control. 
+    // Joystick input is linear by default. May need to remove cubing?
+    xSpeed = Math.copySign(Math.pow(xSpeed, (slowMode ? 3 : 2)), xSpeed);
+    ySpeed = Math.copySign(Math.pow(ySpeed, (slowMode ? 3 : 2)), ySpeed);
+    rSpeed = Math.copySign(Math.pow(rSpeed, (slowMode ? 3 : 2)), rSpeed);
+
+    // Then apply slew rate limiters for a smoother acceleration ramp 
+    xSpeed = xSpeedLimiter.calculate(xSpeed);
+    ySpeed = ySpeedLimiter.calculate(ySpeed);
+    rSpeed = rSpeedLimiter.calculate(rSpeed);
+
+    // Convert joystick's -1..1 to m/s and rad/s velocitys
+    double xSpeedMPS = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
+    double ySpeedMPS = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
+    double rSpeedRad = rSpeed * DriveConstants.kMaxAngularSpeedRadsPerSecond;
+
+    // Force robot-relative if gyro disconnected
+    if (fieldRelative && !gyro.isConnected()) {
+      fieldRelative = false;
+    }
+
+    // Convert input velocitys into robot-relative chassis speeds
+    ChassisSpeeds chassisSpeeds;
+    if (fieldRelative) {
+      int invert = Utils.isRedAlliance() ? -1 : 1;
+      chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+        xSpeedMPS * invert, ySpeedMPS * invert, rSpeedRad, getHeading()
+      );
+    } else {
+      chassisSpeeds = new ChassisSpeeds(xSpeedMPS, ySpeedMPS, rSpeedRad);
+    }
+
+    // Drive the robot with robot-relative speeds
+    return run(() -> driveWithChassisSpeeds(chassisSpeeds));
+  }
+
+  /**
    * Creates a command to aim the robot at a specified target pose
    * @param targetPose The Pose2d to aim at
    * @return Command to aim at the target pose
@@ -281,277 +546,66 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
-   * Drive the robot using the raw joystick inputs.
-   * This function applies deadband, squaring (default) / cubing (in slow mode) 
-   * and slew rate limiting. Joystick inputs are scaled up to speeds in m/s and rad/s.
-   * Field relative driving is automatically disabled if the gyro is disconnected. 
-   * @param xSpeed Speed in x direction (-1 to 1)
-   * @param ySpeed Speed in y direction (-1 to 1)
-   * @param rSpeed Rotation speed (-1 to 1)
+   * Zeros the gyroscope heading
    */
-  public void drive(double xSpeed, double ySpeed, double rSpeed) {
-    // Apply deadband to the raw joystick inputs.
-    // This ignores noise from the joystick when it's in the neutral position.
-    xSpeed = MathUtil.applyDeadband(xSpeed, DriveConstants.kJoystickDeadband);
-    ySpeed = MathUtil.applyDeadband(ySpeed, DriveConstants.kJoystickDeadband);
-    rSpeed = MathUtil.applyDeadband(rSpeed, DriveConstants.kJoystickDeadband);
-
-    // Square the inputs (while preserving sign) for finer control at low speeds.
-    // Cubing is used in "slow" mode because it gives even finer control. 
-    // Joystick input is linear by default. May need to remove cubing?
-    xSpeed = Math.copySign(Math.pow(xSpeed, (slowMode ? 3 : 2)), xSpeed);
-    ySpeed = Math.copySign(Math.pow(ySpeed, (slowMode ? 3 : 2)), ySpeed);
-    rSpeed = Math.copySign(Math.pow(rSpeed, (slowMode ? 3 : 2)), rSpeed);
-
-    // Then apply slew rate limiters for a smoother acceleration ramp 
-    xSpeed = xSpeedLimiter.calculate(xSpeed);
-    ySpeed = ySpeedLimiter.calculate(ySpeed);
-    rSpeed = rSpeedLimiter.calculate(rSpeed);
-
-    // Convert joystick's -1..1 to m/s and rad/s velocitys
-    double xSpeedMPS = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
-    double ySpeedMPS = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
-    double rSpeedRad = rSpeed * DriveConstants.kMaxAngularSpeedRadsPerSecond;
-
-    // Force robot-relative if gyro disconnected
-    if (fieldRelative && !gyro.isConnected()) {
-      fieldRelative = false;
-    }
-
-    // Convert input velocitys into robot-relative chassis speeds
-    ChassisSpeeds chassisSpeeds;
-    if (fieldRelative) {
-      int invert = Utils.isRedAlliance() ? -1 : 1;
-      chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-        xSpeedMPS * invert, ySpeedMPS * invert, rSpeedRad, getHeading()
-      );
-    } else {
-      chassisSpeeds = new ChassisSpeeds(xSpeedMPS, ySpeedMPS, rSpeedRad);
-    }
-
-    // Drive the robot with robot-relative speeds
-    driveWithChassisSpeeds(chassisSpeeds);
+  public Command zeroHeadingCommand() {
+    return runOnce(() -> zeroHeading());
   }
 
   /**
-   * This method will take in desired/target robot-relative chassis speeds and
-   * generate a swerve setpoint, then set the desired state for each module.
-   * @param speeds The desired robot-relative speeds
+   * Reset the swerve module encoders and pose estimator
    */
-  public void driveWithChassisSpeeds(ChassisSpeeds speeds) {
-    // By-pass the setpoint generator if necessary
-    if (Robot.isSimulation()) {
-      setModuleStates(kinematics.toSwerveModuleStates(speeds));
-      return;
-    }
-
-    // Note: It is important to not discretize speeds, that is,
-    // call SwerveDriveKinematics.desaturateWheelSpeeds(), 
-    // before or after using the setpoint generator, as 
-    // it will discretize them for you.
-    SwerveSetpoint nextSetpoint = setpointGenerator.generateSetpoint(
-      currentSetpoint,                      // The previous "current" setpoint
-      speeds,                               // The desired target speeds
-      DriveConstants.kPeriodicTimeSeconds   // The loop time of the robot code, in seconds
-    );
-
-    // Set each module state directly from the setpoint
-    SwerveModuleState[] desiredStates = nextSetpoint.moduleStates();
-    for (int i = 0; i < 4; i++) {
-      modules[i].setDesiredState(desiredStates[i]);
-    }
-
-    // Update the current setpoint
-    currentSetpoint = nextSetpoint;
+  public Command resetEncodersCommand() {
+    return runOnce(() -> this.resetEncoders());
   }
 
   /**
-   * Sets the desired state for each swerve module. Do not call this from driveWithChassisSpeeds.
-   * @param desiredStates Array of desired SwerveModuleStates
+   * Stop the robot and set the wheels to an X formation
    */
-  public void setModuleStates(SwerveModuleState[] desiredStates) {    
-    // Normalize wheel speeds 
-    SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.kMaxSpeedMetersPerSecond);
-    
-    // Set each module state
-    for (int i = 0; i < 4; i++) {
-      modules[i].setDesiredState(desiredStates[i]);
-    }
+  public Command stopAndLockWheelsCommand() {
+    return runOnce(() -> this.stopAndLockWheels());
   }
 
   /**
-   * Set each swerver module to brake/coast mode
-   * @param brake True to enable motor brake, false for coast
+   * Enables/disables field-relative driving mode
    */
-  public void setMotorBrake(boolean brake) {
-    for (var module : modules) {
-      module.setMotorBrake(brake);
-    }
-  }
-
-  /**
-   * Stop the robot
-   */
-  public void stop() {
-    for (var module : modules) {
-      module.stop();
-    }
-  }
-
-  /**
-   * Sets modules to X formation for defense
-   */
-  public void stopAndLock() {
-    // Stop the robot
-    stop();
-
-    // Set modules to X formation
-    SwerveModuleState[] states = {
-      new SwerveModuleState(0, Rotation2d.fromDegrees(45)), // Front Left
-      new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),        // Front Right
-      new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),        // Back Left
-      new SwerveModuleState(0, Rotation2d.fromDegrees(45))  // Back Right
-    };
-    setModuleStates(states);
-  }
-
-  /**
-   * Resets all the swerve module encoders and resets the pose estimator.
-   * NOTE: Should never need to call this if vision is working properly.
-   */
-  public void resetEncoders() {
-    // reset each swerve module's encoders
-    for (var module : modules) {
-      module.resetEncoders();
-    }
-
-    // reset pose estimator
-    resetPose(poseEstimator.getEstimatedPosition());
-  }
-
-  /**
-   * Zeros the gyroscope heading and resets the pose estimator.
-   * NOTE: Should never need to call this if vision is working properly.
-   */
-  public void zeroHeading() {
-    // Reset gyro
-    gyro.reset();
-
-    // Reset pose estimator
-    resetPose(poseEstimator.getEstimatedPosition());
-  }
-
-  /**
-   * Gets the current heading of the robot from the pose estimator.
-   * This is what should be fed into the drive (auto and teleop)
-   * functions when calculating chassis speeds & module states.
-   * @return Current heading as a Rotation2d
-   */
-  public Rotation2d getHeading() {
-    return poseEstimator.getEstimatedPosition().getRotation(); 
-  }
-
-  /**
-   * Gets the current pose of the robot
-   * @return Current pose 
-   */
-  public Pose2d getPose() {
-    return poseEstimator.getEstimatedPosition();
-  }
-
-  /**
-   * Resets the pose to a given pose
-   * @param pose New pose
-   */
-  public void resetPose(Pose2d pose) {
-    poseEstimator.resetPosition(gyro.getAngle(), getModulePositions(), pose);
-  }
-
-  /**
-   * Gets the current chassis speeds
-   * @return Current ChassisSpeeds
-   */
-  public ChassisSpeeds getChassisSpeeds() {
-    return kinematics.toChassisSpeeds(getModuleStates());
-  }
-
-  /**
-   * Gets the current module states
-   * @return Array of current SwerveModuleStates
-   */
-  public SwerveModuleState[] getModuleStates() {
-    return new SwerveModuleState[] {
-      modules[0].getState(),  // front left
-      modules[1].getState(),  // front right
-      modules[2].getState(),  // back left
-      modules[3].getState()   // back right
-    };
-  }
-
-  /**
-   * Gets the current module positions
-   * @return Array of current SwerveModulePositions
-   */
-  public SwerveModulePosition[] getModulePositions() {
-    return new SwerveModulePosition[] {
-      modules[0].getPosition(), // front left
-      modules[1].getPosition(), // front right
-      modules[2].getPosition(), // back left
-      modules[3].getPosition()  // back right
-    };
-  }
-
-  /**
-   * Checks if all modules are at their steer target angles
-   * @return
-   */
-  public boolean isSteerAtTarget() {
-    for (var module : modules) {
-      if (!module.isSteerAtTarget()) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * Enables/disables field-relative driving
-   * @param enabled Whether field-relative is enabled
-   */
-  public void setFieldRelative(boolean enabled) {
-    this.fieldRelative = enabled;
-  }
-
-  /**
-   * Gets whether field-relative driving is enabled
-   * @return Field-relative status
-   */
-  public boolean isFieldRelative() {
-    return fieldRelative;
+  public Command toggleFieldRelativeModeCommand() {
+    return runOnce(() -> this.fieldRelative = !this.fieldRelative);
   }
 
   /**
    * Enables/disables slow mode
-   * @param enabled Whether slow mode is enabled
    */
-  public void setSlowMode(boolean enabled) {
-    this.slowMode = enabled;
+  public Command toggleSlowModeCommand() {
+    return runOnce(() -> this.slowMode = !this.slowMode);
   }
 
   /**
-   * Gets whether slow mode is enabled
-   * @return Slow mode status
+   * Enable slow mode
    */
-  public boolean isSlowMode() {
-    return slowMode;
+  public Command enableSlowModeCommand() {
+    return runOnce(() -> this.slowMode = true);
   }
 
   /**
-   * Gets the SwerveDriveKinematics object
-   * @return Kinematics object
+   * Disable slow mode
    */
-  public SwerveDriveKinematics getKinematics() {
-    return kinematics;
+  public Command disableSlowModeCommand() {
+    return runOnce(() -> this.slowMode = false);
+  }
+
+  /**
+   * Enable motor brake mode, motors resist motion when no power applied
+   */
+  public Command enableMotorBrakeCommand() {
+    return runOnce(() -> this.setMotorBrake(true));
+  }
+
+  /**
+   * Disable motor brake mode, motors coast when no power applied
+   */
+  public Command disableMotorBrakeCommand() {
+    return runOnce(() -> this.setMotorBrake(false));
   }
 
   /**

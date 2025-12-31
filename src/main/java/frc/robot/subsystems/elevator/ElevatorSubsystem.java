@@ -58,7 +58,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     configureFollowerMotor();
     
     // Zero the elevator (assumes starting at bottom)
-    resetPosition();
+    resetGroundPosition();
     
     // Initialize dashboard
     SmartDashboard.putData("Elevator", this);
@@ -185,7 +185,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    * Sets the elevator to a target position in inches
    * @param inches Target height in inches from the ground
    */
-  public void setPositionInches(double inches) {
+  private void setPositionInches(double inches) {
     double clampedInches = MathUtil.clamp(inches, ElevatorConstants.Positions.GROUND, ElevatorConstants.Positions.MAX);
     targetPositionInches = clampedInches;
     double rotations = inchesToRotations(clampedInches);
@@ -193,17 +193,9 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
   
   /**
-   * Sets the elevator to a named position
-   * @param position One of the Positions constants
-   */
-  public void setPosition(double position) {
-    setPositionInches(position);
-  }
-  
-  /**
    * Stops the elevator (applies neutral output)
    */
-  public void stop() {
+  private void stop() {
     leaderMotor.setControl(neutralRequest);
   }
   
@@ -211,11 +203,21 @@ public class ElevatorSubsystem extends SubsystemBase {
    * Resets the elevator position to zero
    * Should be called when elevator is at the bottom
    */
-  public void resetPosition() {
+  private void resetGroundPosition() {
     leaderMotor.setPosition(0);
     followerMotor.setPosition(0);
     targetPositionInches = 0;
     Utils.logInfo("Elevator position reset to zero");
+  }
+
+  /**
+   * Sets motor brake mode
+   * @param brake True for brake, false for coast
+   */
+  private void setBrakeMode(boolean brake) {
+    NeutralModeValue mode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;    
+    leaderMotor.setNeutralMode(mode);
+    followerMotor.setNeutralMode(mode);
   }
   
   // ============================================================
@@ -393,27 +395,27 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
   
   /**
-   * Creates a command to reset the elevator position
-   * Use when elevator is manually positioned at bottom
+   * Creates a command to reset the elevator ground position.
+   * Use when elevator is manually positioned at bottom.
    */
-  public Command resetPositionCommand() {
-    return runOnce(this::resetPosition).withName("ResetElevatorPosition");
+  public Command resetGroundPositionCommand() {
+    return runOnce(this::resetGroundPosition).withName("ElevatorResetGroundPosition");
   }
-  
-  // ============================================================
-  // Motor Control Methods (for testing/tuning)
-  // ============================================================
   
   /**
-   * Sets motor brake mode
-   * @param brake True for brake, false for coast
+   * Stop the elevator
    */
-  public void setBrakeMode(boolean brake) {
-    NeutralModeValue mode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;    
-    leaderMotor.setNeutralMode(mode);
-    followerMotor.setNeutralMode(mode);
+  public Command stopCommand() {
+    return runOnce(this::stop).withName("ElevatorStop");
   }
   
+  /**
+   * Stop the elevator
+   */
+  public Command setBrakeModeCommand(boolean brake) {
+    return runOnce(() -> setBrakeMode(brake)).withName("ElevatorSetBrakeMode_" + brake);
+  }
+
   // ============================================================
   // Dashboard/Telemetry
   // ============================================================

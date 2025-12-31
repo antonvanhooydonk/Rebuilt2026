@@ -144,7 +144,7 @@ public class ArmSubsystem extends SubsystemBase {
    * Sets the arm to a target position in degrees
    * @param degrees Target angle in degrees from the home position
    */
-  public void setPositionDegrees(double degrees) {
+  private void setPositionDegrees(double degrees) {
     double clampedDegrees = MathUtil.clamp(degrees, ArmConstants.Positions.HOME, ArmConstants.Positions.MAX);    
     targetPositionDegrees = clampedDegrees;
     double rotations = degreesToRotations(clampedDegrees);    
@@ -152,17 +152,9 @@ public class ArmSubsystem extends SubsystemBase {
   }
   
   /**
-   * Sets the arm to a named position
-   * @param position One of the Positions constants
-   */
-  public void setPosition(double position) {
-    setPositionDegrees(position);
-  }
-  
-  /**
    * Stops the arm (applies neutral output)
    */
-  public void stop() {
+  private void stop() {
     angleMotor.setControl(neutralRequest);
   }
   
@@ -170,12 +162,21 @@ public class ArmSubsystem extends SubsystemBase {
    * Resets the arm position to zero
    * Should be called when arm is at the bottom
    */
-  public void resetPosition() {
+  private void resetPosition() {
     angleMotor.setPosition(0);
     targetPositionDegrees = 0;
     Utils.logInfo("Arm position reset to zero");
   }
-  
+    
+  /**
+   * Sets motor brake mode
+   * @param brake True for brake, false for coast
+   */
+  public void setBrakeMode(boolean brake) {
+    NeutralModeValue mode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
+    angleMotor.setNeutralMode(mode);
+  }
+
   // ============================================================
   // State Query Methods
   // ============================================================
@@ -376,20 +377,15 @@ public class ArmSubsystem extends SubsystemBase {
    * Use when arm is manually positioned at bottom
    */
   public Command resetPositionCommand() {
-    return runOnce(this::resetPosition).withName("ResetArmPosition");
+    return runOnce(this::resetPosition).withName("ArmResetPosition");
   }
   
-  // ============================================================
-  // Motor Control Methods (for testing/tuning)
-  // ============================================================
-  
   /**
-   * Sets motor brake mode
-   * @param brake True for brake, false for coast
+   * Creates a command to reset the arm position
+   * Use when arm is manually positioned at bottom
    */
-  public void setBrakeMode(boolean brake) {
-    NeutralModeValue mode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
-    angleMotor.setNeutralMode(mode);
+  public Command stopCommand() {
+    return runOnce(this::stop).withName("ArmStop");
   }
   
   // ============================================================

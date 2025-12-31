@@ -56,15 +56,11 @@ public class RobotContainer {
     // Initialize the default driving command.
     // The left stick controls translation of the robot.
     // Turning/rotatiton is controlled by the X axis of the right stick.
-    // Robot drives field relative by default.
     // See: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
-    driveSubsystem.setDefaultCommand(Commands.run(() -> 
-      driveSubsystem.drive(
-        -driverXbox.getLeftY(),
-        -driverXbox.getLeftX(),
-        -driverXbox.getRightX()
-      ), 
-      driveSubsystem
+    driveSubsystem.setDefaultCommand(driveSubsystem.driveCommand(
+      () -> -driverXbox.getLeftY(),
+      () -> -driverXbox.getLeftX(),
+      () -> -driverXbox.getRightX()
     ));
   
     // Register named commands to be used in Pathplanner
@@ -144,7 +140,7 @@ public class RobotContainer {
   
     // Stop forcing the elevator down if it is stalling
     new Trigger(elevatorSubsystem::isStalling).onTrue(
-      Commands.runOnce(() -> elevatorSubsystem.resetPosition(), elevatorSubsystem)
+      elevatorSubsystem.resetGroundPositionCommand()
       .andThen(armSubsystem.moveToHomeCommand())
     );
   
@@ -152,26 +148,22 @@ public class RobotContainer {
     // Configure button triggers
     // -------------------------------------------------------------------
     // Zero gyro yaw when start button is pushed
-    driverXbox.start().onTrue(
-      Commands.runOnce(() -> driveSubsystem.zeroHeading(), driveSubsystem).ignoringDisable(true)
-    );
+    driverXbox.start().onTrue(driveSubsystem.zeroHeadingCommand().ignoringDisable(true));
 
     // Toggle field-relative driving when back button is pressed
-    driverXbox.back().onTrue(
-      Commands.runOnce(() -> driveSubsystem.setFieldRelative(!driveSubsystem.isFieldRelative()), driveSubsystem)
-    );
+    driverXbox.back().onTrue(driveSubsystem.toggleFieldRelativeModeCommand().ignoringDisable(true));
 
-    // Score at coral level 1
+    // Set the arm to the home position
     driverXbox.a().onTrue(armSubsystem.moveToHomeCommand());
     
-    // Score at coral level 2
-    driverXbox.x().onTrue(Commands.none());
+    // Stop and lock wheels
+    driverXbox.x().onTrue(driveSubsystem.stopAndLockWheelsCommand());
 
-    // Score at coral level 3
+    // Set the arm to the coral move position
     driverXbox.b().onTrue(armSubsystem.moveToCoralMoveCommand());
     
-    // Score at coral level 4
-    driverXbox.y().onTrue(Commands.none());
+    // Manually toggle "slow" mode
+    driverXbox.y().onTrue(driveSubsystem.toggleSlowModeCommand().ignoringDisable(true));
     
     // Drive to left scoring pose of the current camera target
     driverXbox.leftBumper().whileTrue(
@@ -184,37 +176,31 @@ public class RobotContainer {
       driveSubsystem.driveToPoseCommand(Utils.getRightScoringPose(visionSubsystem, "FRONT_CAMERA"))
       .andThen(feedbackSubsystem.doubleRumbleCommand())
     );
-
-    // Manually toggle "slow" mode
-    driverXbox.rightTrigger().onTrue(Commands.runOnce(() -> 
-      driveSubsystem.setSlowMode(!driveSubsystem.isSlowMode()),
-      driveSubsystem
-    ));    
  
     // Configure operator controller 1 - blue buttons
     opController1.button(ControllerConstants.Operator1.ButtonBlue1).onTrue(
       armSubsystem.moveToAlgaeMoveCommand()
       .andThen(elevatorSubsystem.moveToGroundCommand())
       .andThen(armSubsystem.moveToAlgaeProcessorCommand())
-      .andThen(Commands.run(() -> driveSubsystem.setSlowMode(false), driveSubsystem))
+      .andThen(driveSubsystem.disableSlowModeCommand())
     );
     opController2.button(ControllerConstants.Operator2.ButtonBlue2).onTrue(
       armSubsystem.moveToAlgaeMoveCommand()
       .andThen(elevatorSubsystem.moveToAlgaeOneCommand())
       .andThen(armSubsystem.moveToAlgaeOneCommand())
-      .andThen(Commands.run(() -> driveSubsystem.setSlowMode(false), driveSubsystem))
+      .andThen(driveSubsystem.enableSlowModeCommand())
     );
     opController2.button(ControllerConstants.Operator2.ButtonBlue3).onTrue(
       armSubsystem.moveToAlgaeMoveCommand()
       .andThen(elevatorSubsystem.moveToAlgaeTwoCommand())
       .andThen(armSubsystem.moveToAlgaeTwoCommand())
-      .andThen(Commands.run(() -> driveSubsystem.setSlowMode(false), driveSubsystem))
+      .andThen(driveSubsystem.enableSlowModeCommand())
     );
     opController2.button(ControllerConstants.Operator2.ButtonBlue4).onTrue(
       armSubsystem.moveToAlgaeMoveCommand()
       .andThen(elevatorSubsystem.moveToAlgaeThreeCommand())
       .andThen(armSubsystem.moveToAlgaeNetCommand())
-      .andThen(Commands.run(() -> driveSubsystem.setSlowMode(true), driveSubsystem))
+      .andThen(driveSubsystem.enableSlowModeCommand())
     );
 
     // Configure operator controller 1 - other buttons
@@ -234,31 +220,31 @@ public class RobotContainer {
       armSubsystem.moveToCoralMoveCommand()
       .andThen(elevatorSubsystem.moveToGroundCommand())
       .andThen(armSubsystem.moveToHomeCommand())
-      .andThen(Commands.run(() -> driveSubsystem.setSlowMode(false), driveSubsystem))
+      .andThen(driveSubsystem.disableSlowModeCommand())
     );
     opController2.button(ControllerConstants.Operator2.ButtonRed2).onTrue(
       armSubsystem.moveToCoralMoveCommand()
       .andThen(elevatorSubsystem.moveToCoralOneCommand())
       .andThen(armSubsystem.moveToCoralOneCommand())
-      .andThen(Commands.run(() -> driveSubsystem.setSlowMode(true), driveSubsystem))
+      .andThen(driveSubsystem.enableSlowModeCommand())
     );
     opController2.button(ControllerConstants.Operator2.ButtonRed3).onTrue(
       armSubsystem.moveToCoralMoveCommand()
       .andThen(elevatorSubsystem.moveToCoralTwoCommand())
       .andThen(armSubsystem.moveToCoralTwoCommand())
-      .andThen(Commands.run(() -> driveSubsystem.setSlowMode(true), driveSubsystem))
+      .andThen(driveSubsystem.enableSlowModeCommand())
     );
     opController2.button(ControllerConstants.Operator2.ButtonRed4).onTrue(
       armSubsystem.moveToCoralMoveCommand()
       .andThen(elevatorSubsystem.moveToCoralThreeCommand())
       .andThen(armSubsystem.moveToCoralThreeCommand())
-      .andThen(Commands.run(() -> driveSubsystem.setSlowMode(true), driveSubsystem))
+      .andThen(driveSubsystem.enableSlowModeCommand())
     );
     opController2.button(ControllerConstants.Operator2.ButtonRed5).onTrue(
       armSubsystem.moveToCoralMoveCommand()
       .andThen(elevatorSubsystem.moveToCoralFourCommand())
       .andThen(armSubsystem.moveToCoralFourCommand())
-      .andThen(Commands.run(() -> driveSubsystem.setSlowMode(true), driveSubsystem))
+      .andThen(driveSubsystem.enableSlowModeCommand())
     );
   }
 
@@ -274,10 +260,9 @@ public class RobotContainer {
   }
 
   /**
-   * Set the motors to brake or coast mode.
-   * @param brake True to enable motor brake, false for coast
+   * Set the swerve module motors to brake mode when no power is applied.
    */
-  public void setMotorBrake(boolean brake) {
-    driveSubsystem.setMotorBrake(brake);
+  public void enableMotorBrake() {
+    driveSubsystem.enableMotorBrakeCommand().schedule();
   }
 }

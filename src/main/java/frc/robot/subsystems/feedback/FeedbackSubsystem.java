@@ -62,7 +62,7 @@ public class FeedbackSubsystem extends SubsystemBase {
    * Set the current LED display mode
    * @param mode Display mode to show
    */
-  public void setDisplayMode(DisplayMode mode) {
+  private void setDisplayMode(DisplayMode mode) {
     currentMode = mode;
     animationTimer = 0;
     animationOffset = 0;
@@ -231,7 +231,7 @@ public class FeedbackSubsystem extends SubsystemBase {
    * Set controller rumble
    * @param intensity Rumble intensity (0.0 to 1.0)
    */
-  public void setRumble(double intensity) {
+  private void setRumble(double intensity) {
     if (controller != null) {
       double clampedIntensity = MathUtil.clamp(intensity, 0.0, 1.0);
       controller.getHID().setRumble(RumbleType.kBothRumble, clampedIntensity);
@@ -241,7 +241,7 @@ public class FeedbackSubsystem extends SubsystemBase {
   /**
    * Stop controller rumble
    */
-  public void stopRumble() {
+  private void stopRumble() {
     setRumble(0);
   }
   
