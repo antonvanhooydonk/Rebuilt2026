@@ -473,6 +473,7 @@ public class DriveSubsystem extends SubsystemBase {
       double rSpeedRad = rSpeed * DriveConstants.kMaxAngularSpeedRadsPerSecond;
 
       // Force robot-relative if gyro disconnected
+      // Not ideal, but better than unexpected robot behavior
       if (this.fieldRelative && !gyro.isConnected()) {
         this.fieldRelative = false;
       }
@@ -480,7 +481,11 @@ public class DriveSubsystem extends SubsystemBase {
       // Convert input velocitys into robot-relative chassis speeds
       ChassisSpeeds chassisSpeeds;
       if (this.fieldRelative) {
+        // Invert translation inputs for red alliance so that pushing the joystick
+        // forward always moves the robot away from the driver station
         int invert = Utils.isRedAlliance() ? -1 : 1;
+
+        // Convert field-relative speeds to robot-relative speeds
         chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
           xSpeedMPS * invert, 
           ySpeedMPS * invert, 
@@ -488,6 +493,7 @@ public class DriveSubsystem extends SubsystemBase {
           this.getHeading()
         );
       } else {
+        // Use robot-relative speeds directly
         chassisSpeeds = new ChassisSpeeds(xSpeedMPS, ySpeedMPS, rSpeedRad);
       }
 
