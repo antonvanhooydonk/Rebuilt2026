@@ -385,7 +385,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   // ============================================================
-  // Public State Query Methods
+  // State Query Methods
   // ============================================================
 
   /**
