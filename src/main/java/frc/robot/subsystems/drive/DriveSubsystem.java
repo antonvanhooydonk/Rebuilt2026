@@ -241,7 +241,7 @@ public class DriveSubsystem extends SubsystemBase {
       modules[i].setDesiredState(desiredStates[i]);
     }
 
-    // Update the current setpoint
+    // Update the last setpoint
     lastSetpoint = nextSetpoint;
   }
 
