@@ -458,9 +458,9 @@ public class DriveSubsystem extends SubsystemBase {
       // Square the inputs (while preserving sign) for finer control at low speeds.
       // Cubing is used in "slow" mode because it gives even finer control. 
       // Joystick input is linear by default. May need to remove cubing?
-      xSpeed = Math.copySign(Math.pow(xSpeed, (slowMode ? 3 : 2)), xSpeed);
-      ySpeed = Math.copySign(Math.pow(ySpeed, (slowMode ? 3 : 2)), ySpeed);
-      rSpeed = Math.copySign(Math.pow(rSpeed, (slowMode ? 3 : 2)), rSpeed);
+      xSpeed = Math.copySign(Math.pow(xSpeed, (this.slowMode ? 3 : 2)), xSpeed);
+      ySpeed = Math.copySign(Math.pow(ySpeed, (this.slowMode ? 3 : 2)), ySpeed);
+      rSpeed = Math.copySign(Math.pow(rSpeed, (this.slowMode ? 3 : 2)), rSpeed);
 
       // Then apply slew rate limiters for a smoother acceleration ramp 
       xSpeed = xSpeedLimiter.calculate(xSpeed);
