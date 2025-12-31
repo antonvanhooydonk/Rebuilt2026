@@ -473,23 +473,26 @@ public class DriveSubsystem extends SubsystemBase {
       double rSpeedRad = rSpeed * DriveConstants.kMaxAngularSpeedRadsPerSecond;
 
       // Force robot-relative if gyro disconnected
-      if (fieldRelative && !gyro.isConnected()) {
-        fieldRelative = false;
+      if (this.fieldRelative && !gyro.isConnected()) {
+        this.fieldRelative = false;
       }
 
       // Convert input velocitys into robot-relative chassis speeds
       ChassisSpeeds chassisSpeeds;
-      if (fieldRelative) {
+      if (this.fieldRelative) {
         int invert = Utils.isRedAlliance() ? -1 : 1;
         chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-          xSpeedMPS * invert, ySpeedMPS * invert, rSpeedRad, getHeading()
+          xSpeedMPS * invert, 
+          ySpeedMPS * invert, 
+          rSpeedRad, 
+          this.getHeading()
         );
       } else {
         chassisSpeeds = new ChassisSpeeds(xSpeedMPS, ySpeedMPS, rSpeedRad);
       }
 
       // Drive the robot with robot-relative speeds
-      driveWithChassisSpeeds(chassisSpeeds);
+      this.driveWithChassisSpeeds(chassisSpeeds);
     });
   }
 
