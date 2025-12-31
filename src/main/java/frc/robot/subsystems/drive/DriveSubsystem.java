@@ -67,7 +67,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   // Setpoint generator
   private final SwerveSetpointGenerator setpointGenerator;
-  private SwerveSetpoint currentSetpoint;
+  private SwerveSetpoint lastSetpoint;
 
   // Vision subsystem reference
   private final VisionSubsystem visionSubsystem;
@@ -120,8 +120,8 @@ public class DriveSubsystem extends SubsystemBase {
       DriveConstants.kMaxAngularSpeedRadsPerSecond // The max rotation velocity of a swerve module in radians per second.
     );
     
-    // Initialize the current setpoint to the robot's speeds & module states
-    currentSetpoint = new SwerveSetpoint(getChassisSpeeds(), getModuleStates(), DriveFeedforwards.zeros(4));
+    // Initialize the "last" setpoint to the robot's speeds & module states
+    lastSetpoint = new SwerveSetpoint(getChassisSpeeds(), getModuleStates(), DriveFeedforwards.zeros(4));
 
     // Configure AutoBuilder for path following
     AutoBuilder.configure(
@@ -222,29 +222,27 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
-   * This method will take in desired/target robot-relative chassis speeds and
-   * generate a swerve setpoint, then set the desired state for each module.
+   * Drive the robot using the given robot-relative chassis speeds.
    * @param speeds The desired robot-relative speeds
    */
   private void driveWithChassisSpeeds(ChassisSpeeds speeds) {
-    // Note: It is important to not discretize speeds, that is,
-    // call SwerveDriveKinematics.desaturateWheelSpeeds(), 
-    // before or after using the setpoint generator, as 
-    // it will discretize them for you.
+    // Create a new target setpoint based on the last setpoint & the desired chassis speeds.
+    // NOTE: Do NOT discretize speeds, call SwerveDriveKinematics.desaturateWheelSpeeds(), 
+    // before or after using the setpoint generator, as it will discretize them for you.
     SwerveSetpoint nextSetpoint = setpointGenerator.generateSetpoint(
-      currentSetpoint,                      // The previous "current" setpoint
+      lastSetpoint,                         // The last calculated setpoint
       speeds,                               // The desired target speeds
       DriveConstants.kPeriodicTimeSeconds   // The loop time of the robot code, in seconds
     );
 
-    // Set each module state directly from the setpoint
+    // Set each swerve module state directly from the next calculated setpoint
     SwerveModuleState[] desiredStates = nextSetpoint.moduleStates();
     for (int i = 0; i < 4; i++) {
       modules[i].setDesiredState(desiredStates[i]);
     }
 
     // Update the current setpoint
-    currentSetpoint = nextSetpoint;
+    lastSetpoint = nextSetpoint;
   }
 
   /**
