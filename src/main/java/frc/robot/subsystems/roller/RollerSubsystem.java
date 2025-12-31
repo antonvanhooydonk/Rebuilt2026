@@ -213,7 +213,7 @@ public class RollerSubsystem extends SubsystemBase {
    * Get current motor velocity in rotations per second
    * @return velocity in RPS
    */
-  public double getVelocityRPS() {
+  private double getVelocityRPS() {
     return rollerMotor.getVelocity().getValueAsDouble();
   }
   
@@ -221,7 +221,7 @@ public class RollerSubsystem extends SubsystemBase {
    * Get current motor supply current
    * @return current in amps
    */
-  public double getCurrent() {
+  private double getCurrent() {
     return rollerMotor.getSupplyCurrent().getValueAsDouble();
   }
   
@@ -229,7 +229,7 @@ public class RollerSubsystem extends SubsystemBase {
    * Get current motor voltage
    * @return voltage in volts
    */
-  public double getVoltage() {
+  private double getVoltage() {
     return rollerMotor.getMotorVoltage().getValueAsDouble();
   }
   
@@ -237,7 +237,7 @@ public class RollerSubsystem extends SubsystemBase {
    * Get motor temperature
    * @return temperature in Celsius
    */
-  public double getTemperature() {
+  private double getTemperature() {
     return rollerMotor.getDeviceTemp().getValueAsDouble();
   }
 
@@ -249,6 +249,7 @@ public class RollerSubsystem extends SubsystemBase {
     builder.setSmartDashboardType("RollerSubsystem");
     builder.addBooleanProperty("Has Game Piece", this::hasGamePiece, null);
     builder.addDoubleProperty("Velocity (RPS)", this::getVelocityRPS, null);
+    builder.addDoubleProperty("Voltage (V)", this::getVoltage, null);
     builder.addDoubleProperty("Current (A)", this::getCurrent, null);
     builder.addDoubleProperty("Temperature (C)", this::getTemperature, null);
   }
