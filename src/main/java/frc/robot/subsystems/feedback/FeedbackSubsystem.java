@@ -300,10 +300,9 @@ public class FeedbackSubsystem extends SubsystemBase {
    * @return Command with LED and rumble feedback
    */
   public Command gamePieceAcquiredCommand() {
-    return Commands.parallel(
-      setDisplayCommand(DisplayMode.HAS_GAME_PIECE),
-      quickRumbleCommand()
-    ).withName("GamePieceAcquired");
+    return setDisplayCommand(DisplayMode.HAS_GAME_PIECE)
+      .andThen(quickRumbleCommand())
+      .withName("GamePieceAcquired");
   }
   
   /**
@@ -311,12 +310,11 @@ public class FeedbackSubsystem extends SubsystemBase {
    * @return Command with LED and rumble feedback
    */
   public Command successfulShotCommand() {
-    return Commands.parallel(
-      setDisplayCommand(DisplayMode.SHOOTING)
-        .andThen(Commands.waitSeconds(0.5))
-        .andThen(setDisplayCommand(DisplayMode.IDLE)),
-      doubleRumbleCommand()
-    ).withName("SuccessfulShot");
+    return setDisplayCommand(DisplayMode.SHOOTING)
+      .andThen(Commands.waitSeconds(0.25))
+      .andThen(setDisplayCommand(DisplayMode.IDLE))
+      .andThen(doubleRumbleCommand())
+      .withName("SuccessfulShot");
   }
   
   /**
@@ -324,12 +322,11 @@ public class FeedbackSubsystem extends SubsystemBase {
    * @return Command with LED and rumble feedback
    */
   public Command autoAlignCompleteCommand() {
-    return Commands.parallel(
-      setDisplayCommand(DisplayMode.AUTO_ALIGN)
-        .andThen(Commands.waitSeconds(0.3))
-        .andThen(setDisplayCommand(DisplayMode.IDLE)),
-      rumbleCommand(0.3, 0.2)
-    ).withName("AutoAlignComplete");
+    return setDisplayCommand(DisplayMode.AUTO_ALIGN)
+      .andThen(Commands.waitSeconds(0.3))
+      .andThen(setDisplayCommand(DisplayMode.IDLE))
+      .andThen(rumbleCommand(0.3, 0.2))
+      .withName("AutoAlignComplete");
   }
   
   /**
@@ -337,10 +334,9 @@ public class FeedbackSubsystem extends SubsystemBase {
    * @return Command with LED and rumble feedback
    */
   public Command errorCommand() {
-    return Commands.parallel(
-      setDisplayCommand(DisplayMode.ERROR),
-      rumbleCommand(1.0, 0.5)
-    ).withName("Error");
+    return setDisplayCommand(DisplayMode.ERROR)
+      .andThen(rumbleCommand(1.0, 0.5))
+      .withName("Error");
   }
   
   /**
@@ -348,10 +344,9 @@ public class FeedbackSubsystem extends SubsystemBase {
    * @return Command with LED and rumble feedback
    */
   public Command warningCommand() {
-    return Commands.parallel(
-      setDisplayCommand(DisplayMode.WARNING),
-      rumbleCommand(0.4, 0.3)
-    ).withName("Warning");
+    return setDisplayCommand(DisplayMode.WARNING)
+      .andThen(rumbleCommand(0.4, 0.3))
+      .withName("Warning");
   }
   
   /**

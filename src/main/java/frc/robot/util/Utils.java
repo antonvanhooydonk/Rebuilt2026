@@ -4,6 +4,8 @@
 
 package frc.robot.util;
 
+import java.text.DecimalFormat;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -36,6 +38,16 @@ public final class Utils {
    */
   public static boolean isRedAlliance() {
     return DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
+  }
+
+  /**
+   * Format a double value to 4 decimal places.
+   * @param value The double value to format.
+   * @return String representation of the double value formatted to 4 decimal places.
+   */
+  public static double fmtDouble(double value) {
+    DecimalFormat df = new DecimalFormat("0.0000");
+    return Double.valueOf(df.format(value));
   }
 
   /**

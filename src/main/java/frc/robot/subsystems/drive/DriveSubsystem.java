@@ -228,12 +228,6 @@ public class DriveSubsystem extends SubsystemBase {
    * @param speeds The desired robot-relative speeds
    */
   private void driveWithChassisSpeeds(ChassisSpeeds speeds) {
-    // By-pass the setpoint generator if necessary
-    if (Robot.isSimulation()) {
-      setModuleStates(kinematics.toSwerveModuleStates(speeds));
-      return;
-    }
-
     // Note: It is important to not discretize speeds, that is,
     // call SwerveDriveKinematics.desaturateWheelSpeeds(), 
     // before or after using the setpoint generator, as 
