@@ -442,52 +442,55 @@ public class DriveSubsystem extends SubsystemBase {
     DoubleSupplier ySpeedSupplier, 
     DoubleSupplier rSpeedSupplier
   ) {
-    // Get raw joystick inputs from the suppliers
-    double xSpeed = xSpeedSupplier.getAsDouble();
-    double ySpeed = ySpeedSupplier.getAsDouble();
-    double rSpeed = rSpeedSupplier.getAsDouble();
+    // Return a command that runs the drive logic
+    return run(() -> {
+      // Get raw joystick inputs from the suppliers every cycle
+      double xSpeed = xSpeedSupplier.getAsDouble();
+      double ySpeed = ySpeedSupplier.getAsDouble();
+      double rSpeed = rSpeedSupplier.getAsDouble();
 
-    // Apply deadband to the raw joystick inputs.
-    // This ignores noise from the joystick when it's in the neutral position.
-    xSpeed = MathUtil.applyDeadband(xSpeed, DriveConstants.kJoystickDeadband);
-    ySpeed = MathUtil.applyDeadband(ySpeed, DriveConstants.kJoystickDeadband);
-    rSpeed = MathUtil.applyDeadband(rSpeed, DriveConstants.kJoystickDeadband);
+      // Apply deadband to the raw joystick inputs.
+      // This ignores noise from the joystick when it's in the neutral position.
+      xSpeed = MathUtil.applyDeadband(xSpeed, DriveConstants.kJoystickDeadband);
+      ySpeed = MathUtil.applyDeadband(ySpeed, DriveConstants.kJoystickDeadband);
+      rSpeed = MathUtil.applyDeadband(rSpeed, DriveConstants.kJoystickDeadband);
 
-    // Square the inputs (while preserving sign) for finer control at low speeds.
-    // Cubing is used in "slow" mode because it gives even finer control. 
-    // Joystick input is linear by default. May need to remove cubing?
-    xSpeed = Math.copySign(Math.pow(xSpeed, (slowMode ? 3 : 2)), xSpeed);
-    ySpeed = Math.copySign(Math.pow(ySpeed, (slowMode ? 3 : 2)), ySpeed);
-    rSpeed = Math.copySign(Math.pow(rSpeed, (slowMode ? 3 : 2)), rSpeed);
+      // Square the inputs (while preserving sign) for finer control at low speeds.
+      // Cubing is used in "slow" mode because it gives even finer control. 
+      // Joystick input is linear by default. May need to remove cubing?
+      xSpeed = Math.copySign(Math.pow(xSpeed, (slowMode ? 3 : 2)), xSpeed);
+      ySpeed = Math.copySign(Math.pow(ySpeed, (slowMode ? 3 : 2)), ySpeed);
+      rSpeed = Math.copySign(Math.pow(rSpeed, (slowMode ? 3 : 2)), rSpeed);
 
-    // Then apply slew rate limiters for a smoother acceleration ramp 
-    xSpeed = xSpeedLimiter.calculate(xSpeed);
-    ySpeed = ySpeedLimiter.calculate(ySpeed);
-    rSpeed = rSpeedLimiter.calculate(rSpeed);
+      // Then apply slew rate limiters for a smoother acceleration ramp 
+      xSpeed = xSpeedLimiter.calculate(xSpeed);
+      ySpeed = ySpeedLimiter.calculate(ySpeed);
+      rSpeed = rSpeedLimiter.calculate(rSpeed);
 
-    // Convert joystick's -1..1 to m/s and rad/s velocitys
-    double xSpeedMPS = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
-    double ySpeedMPS = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
-    double rSpeedRad = rSpeed * DriveConstants.kMaxAngularSpeedRadsPerSecond;
+      // Convert joystick's -1..1 to m/s and rad/s velocitys
+      double xSpeedMPS = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
+      double ySpeedMPS = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
+      double rSpeedRad = rSpeed * DriveConstants.kMaxAngularSpeedRadsPerSecond;
 
-    // Force robot-relative if gyro disconnected
-    if (fieldRelative && !gyro.isConnected()) {
-      fieldRelative = false;
-    }
+      // Force robot-relative if gyro disconnected
+      if (fieldRelative && !gyro.isConnected()) {
+        fieldRelative = false;
+      }
 
-    // Convert input velocitys into robot-relative chassis speeds
-    ChassisSpeeds chassisSpeeds;
-    if (fieldRelative) {
-      int invert = Utils.isRedAlliance() ? -1 : 1;
-      chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-        xSpeedMPS * invert, ySpeedMPS * invert, rSpeedRad, getHeading()
-      );
-    } else {
-      chassisSpeeds = new ChassisSpeeds(xSpeedMPS, ySpeedMPS, rSpeedRad);
-    }
+      // Convert input velocitys into robot-relative chassis speeds
+      ChassisSpeeds chassisSpeeds;
+      if (fieldRelative) {
+        int invert = Utils.isRedAlliance() ? -1 : 1;
+        chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+          xSpeedMPS * invert, ySpeedMPS * invert, rSpeedRad, getHeading()
+        );
+      } else {
+        chassisSpeeds = new ChassisSpeeds(xSpeedMPS, ySpeedMPS, rSpeedRad);
+      }
 
-    // Drive the robot with robot-relative speeds
-    return run(() -> driveWithChassisSpeeds(chassisSpeeds));
+      // Drive the robot with robot-relative speeds
+      driveWithChassisSpeeds(chassisSpeeds);
+    });
   }
 
   /**
@@ -496,15 +499,15 @@ public class DriveSubsystem extends SubsystemBase {
    * @return Command to aim at the target pose
    */  
   public Command aimAtTargetCommand(Pose2d targetPose) {
-    // Check for null target pose
-    if (targetPose == null) {
-      return Commands.none();
-    }
-
-    // Use PathPlanner to drive to current position with rotation toward target
     // Deferred command to get latest pose when scheduled
     // Set.of(this) ensures driveSubsystem is required
     return Commands.defer(() -> {
+      // Check for null target pose
+      if (targetPose == null) {
+        return Commands.none();
+      }
+
+      // Use PathPlanner to drive to current position with rotation toward target
       Pose2d currentPose = getPose();
       double dx = targetPose.getX() - currentPose.getX();
       double dy = targetPose.getY() - currentPose.getY();
@@ -532,28 +535,32 @@ public class DriveSubsystem extends SubsystemBase {
    * @return Command to drive via PathPlanner to the target pose
    */
   public Command driveToPoseCommand(Pose2d targetPose) {
-    // Check for null target pose
-    if (targetPose == null) {
-      return Commands.none();
-    }
+    // Deferred command to get latest pose when scheduled
+    // Set.of(this) ensures driveSubsystem is required
+    return Commands.defer(() -> {
+      // Check for null target pose
+      if (targetPose == null) {
+        return Commands.none();
+      }
 
-    // Create the constraints to use while pathfinding
-    PathConstraints constraints = new PathConstraints(
-      DriveConstants.kMaxSpeedMetersPerSecond, 
-      DriveConstants.kMaxAccelMetersPerSecondSq,
-      DriveConstants.kMaxAngularSpeedRadsPerSecond, 
-      DriveConstants.kMaxAngularAccelRadsPerSecondSq
-    );
+      // Create the constraints to use while pathfinding
+      PathConstraints constraints = new PathConstraints(
+        DriveConstants.kMaxSpeedMetersPerSecond, 
+        DriveConstants.kMaxAccelMetersPerSecondSq,
+        DriveConstants.kMaxAngularSpeedRadsPerSecond, 
+        DriveConstants.kMaxAngularAccelRadsPerSecondSq
+      );
 
-    // Since AutoBuilder is configured, we can use it to build pathfinding commands
-    return AutoBuilder.pathfindToPose(targetPose, constraints, 0.0);
+      // Since AutoBuilder is configured, we can use it to build pathfinding commands
+      return AutoBuilder.pathfindToPose(targetPose, constraints, 0.0);
+    }, Set.of(this));
   }
 
   /**
    * Zeros the gyroscope heading
    */
   public Command zeroHeadingCommand() {
-    return runOnce(() -> zeroHeading());
+    return runOnce(() -> this.zeroHeading());
   }
 
   /**
