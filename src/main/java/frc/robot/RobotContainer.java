@@ -180,27 +180,35 @@ public class RobotContainer {
     // Configure operator controller 1 - blue buttons
     opController1.button(ControllerConstants.Operator1.ButtonBlue1).onTrue(
       armSubsystem.moveToAlgaeMoveCommand()
-      .andThen(elevatorSubsystem.moveToGroundCommand())
-      .andThen(armSubsystem.moveToAlgaeProcessorCommand())
-      .andThen(driveSubsystem.disableSlowModeCommand())
+      .andThen(Commands.parallel(
+        elevatorSubsystem.moveToGroundCommand(),
+        armSubsystem.moveToAlgaeProcessorCommand(),
+        driveSubsystem.disableSlowModeCommand()
+      ))
     );
     opController2.button(ControllerConstants.Operator2.ButtonBlue2).onTrue(
       armSubsystem.moveToAlgaeMoveCommand()
-      .andThen(elevatorSubsystem.moveToAlgaeOneCommand())
-      .andThen(armSubsystem.moveToAlgaeOneCommand())
-      .andThen(driveSubsystem.enableSlowModeCommand())
+      .andThen(Commands.parallel(
+        elevatorSubsystem.moveToAlgaeOneCommand(),
+        armSubsystem.moveToAlgaeOneCommand(),
+        driveSubsystem.enableSlowModeCommand()
+      ))
     );
     opController2.button(ControllerConstants.Operator2.ButtonBlue3).onTrue(
       armSubsystem.moveToAlgaeMoveCommand()
-      .andThen(elevatorSubsystem.moveToAlgaeTwoCommand())
-      .andThen(armSubsystem.moveToAlgaeTwoCommand())
-      .andThen(driveSubsystem.enableSlowModeCommand())
+      .andThen(Commands.parallel(
+        elevatorSubsystem.moveToAlgaeTwoCommand(),
+        armSubsystem.moveToAlgaeTwoCommand(),
+        driveSubsystem.enableSlowModeCommand()
+      ))
     );
     opController2.button(ControllerConstants.Operator2.ButtonBlue4).onTrue(
       armSubsystem.moveToAlgaeMoveCommand()
-      .andThen(elevatorSubsystem.moveToAlgaeThreeCommand())
-      .andThen(armSubsystem.moveToAlgaeNetCommand())
-      .andThen(driveSubsystem.enableSlowModeCommand())
+      .andThen(Commands.parallel(
+        elevatorSubsystem.moveToAlgaeThreeCommand(),
+        armSubsystem.moveToAlgaeNetCommand(),
+        driveSubsystem.enableSlowModeCommand()
+      ))
     );
 
     // Configure operator controller 1 - other buttons
@@ -218,33 +226,43 @@ public class RobotContainer {
     // Configure operator controller 2 - red buttons
     opController2.button(ControllerConstants.Operator2.ButtonRed1).onTrue(
       armSubsystem.moveToCoralMoveCommand()
-      .andThen(elevatorSubsystem.moveToGroundCommand())
-      .andThen(armSubsystem.moveToHomeCommand())
-      .andThen(driveSubsystem.disableSlowModeCommand())
+      .andThen(Commands.parallel(
+        elevatorSubsystem.moveToGroundCommand(),
+        armSubsystem.moveToHomeCommand(),
+        driveSubsystem.disableSlowModeCommand()
+      ))
     );
     opController2.button(ControllerConstants.Operator2.ButtonRed2).onTrue(
       armSubsystem.moveToCoralMoveCommand()
-      .andThen(elevatorSubsystem.moveToCoralOneCommand())
-      .andThen(armSubsystem.moveToCoralOneCommand())
-      .andThen(driveSubsystem.enableSlowModeCommand())
+      .andThen(Commands.parallel(
+        elevatorSubsystem.moveToCoralOneCommand(),
+        armSubsystem.moveToCoralOneCommand(),
+        driveSubsystem.enableSlowModeCommand()
+      ))
     );
     opController2.button(ControllerConstants.Operator2.ButtonRed3).onTrue(
       armSubsystem.moveToCoralMoveCommand()
-      .andThen(elevatorSubsystem.moveToCoralTwoCommand())
-      .andThen(armSubsystem.moveToCoralTwoCommand())
-      .andThen(driveSubsystem.enableSlowModeCommand())
+      .andThen(Commands.parallel(
+        elevatorSubsystem.moveToCoralTwoCommand(),
+        armSubsystem.moveToCoralTwoCommand(),
+        driveSubsystem.enableSlowModeCommand()
+      ))
     );
     opController2.button(ControllerConstants.Operator2.ButtonRed4).onTrue(
       armSubsystem.moveToCoralMoveCommand()
-      .andThen(elevatorSubsystem.moveToCoralThreeCommand())
-      .andThen(armSubsystem.moveToCoralThreeCommand())
-      .andThen(driveSubsystem.enableSlowModeCommand())
+      .andThen(Commands.parallel(
+        elevatorSubsystem.moveToCoralThreeCommand(),
+        armSubsystem.moveToCoralThreeCommand(),
+        driveSubsystem.enableSlowModeCommand()
+      ))
     );
     opController2.button(ControllerConstants.Operator2.ButtonRed5).onTrue(
       armSubsystem.moveToCoralMoveCommand()
-      .andThen(elevatorSubsystem.moveToCoralFourCommand())
-      .andThen(armSubsystem.moveToCoralFourCommand())
-      .andThen(driveSubsystem.enableSlowModeCommand())
+      .andThen(Commands.parallel(
+        elevatorSubsystem.moveToCoralFourCommand(),
+        armSubsystem.moveToCoralFourCommand(),
+        driveSubsystem.enableSlowModeCommand()
+      ))
     );
   }
 

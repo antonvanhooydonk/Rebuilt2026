@@ -391,6 +391,10 @@ public class DriveSubsystem extends SubsystemBase {
     };
   }
 
+  // ============================================================
+  // Public State Query Methods
+  // ============================================================
+
   /**
    * Checks if all modules are at their steer target angles
    * @return
