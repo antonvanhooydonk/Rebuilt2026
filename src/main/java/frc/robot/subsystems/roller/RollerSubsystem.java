@@ -68,15 +68,6 @@ public class RollerSubsystem extends SubsystemBase {
       .withPeakForwardVoltage(12.0)
       .withPeakReverseVoltage(-12.0);
     
-    // Slot 0 PID configuration (if needed for closed-loop control)
-    config.Slot0
-      .withKP(1)
-      .withKI(0)
-      .withKD(0)
-      .withKS(0)
-      .withKV(0)
-      .withKA(0);
-    
     // Apply configuration
     rollerMotor.getConfigurator().apply(config);
 
@@ -185,6 +176,7 @@ public class RollerSubsystem extends SubsystemBase {
   public Command intakeUntilGamePieceCommand(double voltage) {
     return run(() -> setVoltage(voltage))
       .until(this::hasGamePiece)
+      .withTimeout(5.0) // Safety timeout
       .finallyDo(this::stop)
       .withName("IntakeUntilGamePiece");
   }
