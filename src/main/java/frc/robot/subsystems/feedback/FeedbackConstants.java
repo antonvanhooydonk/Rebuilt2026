@@ -13,9 +13,6 @@ public final class FeedbackConstants {
   
   // ==================== LED Hardware ====================
   
-  /** PWM port for LED strip */
-  public static final int LEDPort = 0;
-  
   /** Number of LEDs in the strip */
   public static final int LEDLength = 60;
   

@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
+import frc.robot.Constants.PWMConstants;
 import frc.robot.subsystems.feedback.FeedbackConstants.DisplayMode;
 import frc.robot.util.Utils;
 
@@ -36,7 +37,7 @@ public class FeedbackSubsystem extends SubsystemBase {
     this.controller = controller;
 
     // Initialize LED strip
-    ledStrip = new AddressableLED(FeedbackConstants.LEDPort);
+    ledStrip = new AddressableLED(PWMConstants.LEDStripID);
     ledBuffer = new AddressableLEDBuffer(FeedbackConstants.LEDLength);
     
     ledStrip.setLength(ledBuffer.getLength());
