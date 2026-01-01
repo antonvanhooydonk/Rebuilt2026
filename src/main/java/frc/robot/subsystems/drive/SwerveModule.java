@@ -170,7 +170,7 @@ public class SwerveModule implements Sendable {
       .withPeakForwardVoltage(DriveConstants.kDriveMaxForwardVoltage)
       .withPeakReverseVoltage(DriveConstants.kDriveMaxReverseVoltage)
       .withSupplyVoltageTimeConstant(0.02);
-    
+
     // Velocity PID (runs on onboard motor controller)
     driveConfig.Slot0
       .withKP(DriveConstants.kDriveKP)
@@ -214,7 +214,7 @@ public class SwerveModule implements Sendable {
       .idleMode(IdleMode.kBrake)
       .inverted(steerMotorInverted)
       .smartCurrentLimit(DriveConstants.kSteerMotorMaxCurrent)
-      .secondaryCurrentLimit(DriveConstants.kSteerMotorMaxPeakCurrent)
+      .secondaryCurrentLimit(DriveConstants.kSteerMotorMaxPeakCurrent, 20)
       .voltageCompensation(12.0);
 
     // Closed-loop PID configuration
