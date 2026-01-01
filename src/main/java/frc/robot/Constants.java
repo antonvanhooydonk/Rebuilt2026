@@ -25,6 +25,7 @@ public final class Constants {
    * Analog Port Constants
    */
   public static class AnalogConstants {
+    // Swerve module absolute encoder IDs
     public static final int kFrontLeftAbsEncoderID  = 0;
     public static final int kFrontRightAbsEncoderID = 1;
     public static final int kBackLeftAbsEncoderID   = 3;
@@ -35,11 +36,13 @@ public final class Constants {
    * CAN Bus Constants
    */
   public static class CANConstants {
+    // Swerve module drive motor IDs
     public static final int kFrontLeftDriveID   = 11;
     public static final int kFrontRightDriveID  = 12;
     public static final int kBackLeftDriveID    = 14;
     public static final int kBackRightDriveID   = 13;
   
+    // Swerve module steer motor IDs
     public static final int kFrontLeftSteerID   = 2;
     public static final int kFrontRightSteerID  = 8;
     public static final int kBackLeftSteerID    = 4;
