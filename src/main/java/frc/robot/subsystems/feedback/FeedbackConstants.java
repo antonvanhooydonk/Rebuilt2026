@@ -80,9 +80,6 @@ public final class FeedbackConstants {
     /** Error state */
     ERROR,
     
-    /** Rainbow animation */
-    RAINBOW,
-    
     /** Team colors gradient chase */
     TEAM_COLORS
   }

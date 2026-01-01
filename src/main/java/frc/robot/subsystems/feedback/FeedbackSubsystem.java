@@ -55,7 +55,7 @@ public class FeedbackSubsystem extends SubsystemBase {
     updateLEDDisplay();
     ledStrip.setData(ledBuffer);
   }
-  
+
   // ==================== LED Control Methods ====================
   
   /**
@@ -105,10 +105,6 @@ public class FeedbackSubsystem extends SubsystemBase {
         
       case ERROR:
         blinkPattern(FeedbackConstants.ErrorColor, 0.15);
-        break;
-        
-      case RAINBOW:
-        rainbowPattern();
         break;
         
       case TEAM_COLORS:
@@ -168,17 +164,6 @@ public class FeedbackSubsystem extends SubsystemBase {
       } else {
         ledBuffer.setLED(i, Color.kBlack);
       }
-    }
-  }
-  
-  /**
-   * Rainbow pattern across the strip
-   */
-  private void rainbowPattern() {
-    int offset = (int)(animationTimer * 50) % 180;
-    for (int i = 0; i < ledBuffer.getLength(); i++) {
-      int hue = (offset + (i * 180 / ledBuffer.getLength())) % 180;
-      ledBuffer.setHSV(i, hue, 255, 128);
     }
   }
   
@@ -303,18 +288,6 @@ public class FeedbackSubsystem extends SubsystemBase {
     return setDisplayCommand(DisplayMode.HAS_GAME_PIECE)
       .andThen(quickRumbleCommand())
       .withName("GamePieceAcquired");
-  }
-  
-  /**
-   * Command to indicate successful shot
-   * @return Command with LED and rumble feedback
-   */
-  public Command successfulShotCommand() {
-    return setDisplayCommand(DisplayMode.SHOOTING)
-      .andThen(Commands.waitSeconds(0.25))
-      .andThen(setDisplayCommand(DisplayMode.IDLE))
-      .andThen(doubleRumbleCommand())
-      .withName("SuccessfulShot");
   }
   
   /**
