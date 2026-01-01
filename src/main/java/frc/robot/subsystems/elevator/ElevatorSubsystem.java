@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.PWMConstants;
-import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.util.Utils;
 
 /**
