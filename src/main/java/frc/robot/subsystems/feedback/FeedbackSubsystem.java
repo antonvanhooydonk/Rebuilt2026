@@ -84,7 +84,7 @@ public class FeedbackSubsystem extends SubsystemBase {
         break;
         
       case HAS_GAME_PIECE:
-        setAllLEDs(FeedbackConstants.HasGamePieceColor);
+        blinkPattern(FeedbackConstants.HasGamePieceColor, 0.5);
         break;
         
       case INTAKING:
@@ -154,9 +154,8 @@ public class FeedbackSubsystem extends SubsystemBase {
    * @param speed Speed of the chase (lower = faster)
    */
   private void chasePattern(Color color, double speed) {
-    if (animationTimer % speed < 0.02) {
-      animationOffset = (animationOffset + 1) % ledBuffer.getLength();
-    }
+    // Calculate offset directly from time
+    animationOffset = (int)(animationTimer / speed) % ledBuffer.getLength();
     
     for (int i = 0; i < ledBuffer.getLength(); i++) {
       if ((i + animationOffset) % 5 == 0) {
@@ -172,11 +171,9 @@ public class FeedbackSubsystem extends SubsystemBase {
    * Creates a smooth green-to-copper gradient that moves along the LEDs
    */
   private void teamColorsPattern() {
-    // Update offset for chase effect (moves 10 pixels per second)
-    if (animationTimer % 0.1 < 0.02) {
-      animationOffset = (animationOffset + 1) % ledBuffer.getLength();
-    }
-    
+    // Calculate offset directly from time
+    animationOffset = (int)(animationTimer * 10) % ledBuffer.getLength(); // 10 pixels/second
+      
     // Length of one complete gradient cycle (in LEDs)
     int gradientLength = ledBuffer.getLength() / 2;
     
