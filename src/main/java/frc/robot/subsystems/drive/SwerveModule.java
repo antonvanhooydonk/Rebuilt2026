@@ -302,23 +302,21 @@ public class SwerveModule implements Sendable {
       return;
     }
 
-    // Optimize the desired state to avoid spinning more than 90 degrees
+    // Optimize the desired state to avoid turning the wheel more than 90 degrees
     desiredState.optimize(getState().angle);
     
-    // Set the "lastState" to the given "desiredState" if there's a 
-    // meaningful change in either drive speed or steering angle
+    // Only command the robot to move if there's meaningful 
+    // change in either drive speed or steering angle
     if (
       Math.abs(desiredState.speedMetersPerSecond - lastState.speedMetersPerSecond) > 0.01 ||
       Math.abs(desiredState.angle.minus(lastState.angle).getRadians()) > 0.01
     ) {
-      lastState = desiredState;
+      setDriveVelocity(desiredState.speedMetersPerSecond);
+      setSteerAngle(desiredState.angle.getRadians());
     }
 
-    // Set drive motor speed (yes - lastState, not desiredState)
-    setDriveVelocity(lastState.speedMetersPerSecond);
-    
-    // Set steering angle (yes - lastState, not desiredState)
-    setSteerAngle(lastState.angle.getRadians());
+    // Cache desired state for next comparison
+    lastState = desiredState;
   }
 
   /**
