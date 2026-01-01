@@ -162,15 +162,6 @@ public class ArmSubsystem extends SubsystemBase {
     targetPositionDegrees = 0;
     Utils.logInfo("Arm position reset to zero");
   }
-    
-  /**
-   * Sets motor brake mode
-   * @param brake True for brake, false for coast
-   */
-  public void setBrakeMode(boolean brake) {
-    NeutralModeValue mode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
-    angleMotor.setNeutralMode(mode);
-  }
 
   // ============================================================
   // State Query Methods

@@ -203,16 +203,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     targetPositionInches = 0;
     Utils.logInfo("Elevator position reset to zero");
   }
-
-  /**
-   * Sets motor brake mode
-   * @param brake True for brake, false for coast
-   */
-  private void setBrakeMode(boolean brake) {
-    NeutralModeValue mode = brake ? NeutralModeValue.Brake : NeutralModeValue.Coast;    
-    leaderMotor.setNeutralMode(mode);
-    followerMotor.setNeutralMode(mode);
-  }
   
   // ============================================================
   // State Query Methods
@@ -419,13 +409,6 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public Command stopCommand() {
     return runOnce(this::stop).withName("ElevatorStop");
-  }
-  
-  /**
-   * Stop the elevator
-   */
-  public Command setBrakeModeCommand(boolean brake) {
-    return runOnce(() -> setBrakeMode(brake)).withName("ElevatorSetBrakeMode_" + brake);
   }
 
   // ============================================================
