@@ -158,6 +158,12 @@ public final class ArmConstants {
    */
   public static final double kStallCurrentThreshold = 50.0;
   
+  /**
+   * Duration threshold for stall detection (seconds)
+   * If stall duration is above this and the other stall conditions are met, consider it a stall
+   */
+  public static final double kStallDurationThreshold = 0.25;
+  
   // ============================================================
   // Tuning Guide
   // ============================================================

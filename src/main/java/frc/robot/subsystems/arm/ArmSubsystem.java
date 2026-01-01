@@ -16,13 +16,14 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.PWMConstants;
 import frc.robot.util.Utils;
 
 /**
- * Arm subsystem using dual TalonFX motors in leader-follower configuration.
+ * Arm subsystem using a TalonFX motor.
  * 
  * Features:
  * - Motion Magic for smooth profiled motion
@@ -41,7 +42,7 @@ public class ArmSubsystem extends SubsystemBase {
   
   // State tracking
   private double targetPositionDegrees = 0;
-  private double lastStallCheckTime = 0;
+  private double stallStartTime = 0;
   
   /**
    * Creates a new ArmSubsystem
@@ -126,14 +127,8 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Check for stall conditions periodically (every 0.5 seconds)
-    double currentTime = Timer.getFPGATimestamp();
-    if (currentTime - lastStallCheckTime > 0.5) {
-      if (isStalling()) {
-        Utils.logInfo("Arm stalling! Current: " + angleMotor.getSupplyCurrent().getValueAsDouble() + "A");
-      }
-      lastStallCheckTime = currentTime;
-    }
+    // This method will be called once per scheduler run
+    // Currently no periodic actions needed
   }
   
   // ============================================================
@@ -227,19 +222,37 @@ public class ArmSubsystem extends SubsystemBase {
    * Checks if the arm is stalling
    * A stall is detected when:
    * 1. Not at target position
-   * 2. Velocity is near zero
-   * 3. Current draw is high
+   * 2. Velocity is near zero & current draw is high & stall duration exceeded
    * @return True if stalling
    */
   public boolean isStalling() {
-    // Skip if at target (expected to have zero velocity)
-    if (atTarget()) return false;
+    // If at target, not stalling
+    if (atTarget()) {
+      stallStartTime = 0;
+      return false;
+    }
     
+    // Check velocity and current
     double velocity = Math.abs(angleMotor.getVelocity().getValueAsDouble());
     double current = angleMotor.getSupplyCurrent().getValueAsDouble();
     
-    return velocity < ArmConstants.kStallVelocityThreshold && 
-           current > ArmConstants.kStallCurrentThreshold;
+    // Determine if stalling
+    if (
+      velocity < ArmConstants.kStallVelocityThreshold && 
+      current > ArmConstants.kStallCurrentThreshold) 
+    {
+      // Start or continue stall timer
+      if (stallStartTime == 0) {
+        stallStartTime = Timer.getFPGATimestamp();
+      }
+
+      // Check if stall duration exceeded
+      return (Timer.getFPGATimestamp() - stallStartTime) > ArmConstants.kStallDurationThreshold;
+    } else {
+      // Not stalling, reset timer
+      stallStartTime = 0;
+      return false;
+    }
   }
   
   /**
@@ -291,7 +304,7 @@ public class ArmSubsystem extends SubsystemBase {
    */
   public Command moveToPositionCommand(double degrees) {
     return runOnce(() -> setPositionDegrees(degrees))
-      .andThen(run(() -> {}).until(this::atTarget))
+      .andThen(Commands.waitUntil(this::atTarget))
       .withName("MoveArmTo_" + degrees);
   }
   

@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.PWMConstants;
+import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.util.Utils;
 
 /**
@@ -43,7 +44,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   
   // State tracking
   private double targetPositionInches = 0;
-  private double lastStallCheckTime = 0;
+  private double stallStartTime = 0;
   
   /**
    * Creates a new ElevatorSubsystem
@@ -167,14 +168,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   
   @Override
   public void periodic() {
-    // Check for stall conditions periodically (every 0.5 seconds)
-    double currentTime = Timer.getFPGATimestamp();
-    if (currentTime - lastStallCheckTime > 0.5) {
-      if (isStalling()) {
-        Utils.logInfo("Elevator stalling! Current: " + leaderMotor.getSupplyCurrent().getValueAsDouble() + "A");
-      }
-      lastStallCheckTime = currentTime;
-    }
+    // This method will be called once per scheduler run
+    // Currently no periodic actions needed
   }
   
   // ============================================================
@@ -267,22 +262,40 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
   
   /**
-   * Checks if the elevator is stalling
+   * Checks if the arm is stalling
    * A stall is detected when:
    * 1. Not at target position
-   * 2. Velocity is near zero
-   * 3. Current draw is high
+   * 2. Velocity is near zero & current draw is high & stall duration exceeded
    * @return True if stalling
    */
   public boolean isStalling() {
-    // Skip if at target (expected to have zero velocity)
-    if (atTarget()) return false;
+    // If at target, not stalling
+    if (atTarget()) {
+      stallStartTime = 0;
+      return false;
+    }
     
+    // Check velocity and current
     double velocity = Math.abs(leaderMotor.getVelocity().getValueAsDouble());
     double current = leaderMotor.getSupplyCurrent().getValueAsDouble();
     
-    return velocity < ElevatorConstants.kStallVelocityThreshold && 
-           current > ElevatorConstants.kStallCurrentThreshold;
+    // Determine if stalling
+    if (
+      velocity < ElevatorConstants.kStallVelocityThreshold && 
+      current > ElevatorConstants.kStallCurrentThreshold) 
+    {
+      // Start or continue stall timer
+      if (stallStartTime == 0) {
+        stallStartTime = Timer.getFPGATimestamp();
+      }
+
+      // Check if stall duration exceeded
+      return (Timer.getFPGATimestamp() - stallStartTime) > ElevatorConstants.kStallDurationThreshold;
+    } else {
+      // Not stalling, reset timer
+      stallStartTime = 0;
+      return false;
+    }
   }
   
   /**
