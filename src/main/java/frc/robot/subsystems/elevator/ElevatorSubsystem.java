@@ -112,7 +112,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       .withForwardSoftLimitEnable(true)
       .withForwardSoftLimitThreshold(inchesToRotations(ElevatorConstants.Positions.MAX))
       .withReverseSoftLimitEnable(true)
-      .withReverseSoftLimitThreshold(inchesToRotations(ElevatorConstants.Positions.GROUND));
+      .withReverseSoftLimitThreshold(inchesToRotations(ElevatorConstants.Positions.GROUND - 0.5)); // 0.5" buffer  
     
     // Apply configuration
     leaderMotor.getConfigurator().apply(config);
