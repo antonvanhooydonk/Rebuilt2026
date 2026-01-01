@@ -387,19 +387,6 @@ public class DriveSubsystem extends SubsystemBase {
   // ============================================================
 
   /**
-   * Checks if all modules are at their steer target angles
-   * @return
-   */
-  public boolean isSteerAtTarget() {
-    for (var module : modules) {
-      if (!module.isSteerAtTarget()) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
    * Gets whether field-relative driving is enabled
    * @return Field-relative status
    */

@@ -23,7 +23,6 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -361,24 +360,6 @@ public class SwerveModule implements Sendable {
   public void stop() {
     driveMotor.stopMotor();
     steerMotor.stopMotor();
-  }
-  
-  /**
-   * Checks if the steering motor is at the target angle
-   * @return True if at target
-   */
-  public boolean isSteerAtTarget() {
-    // Calculate the absolute error between current and target angle
-    double error = Math.abs(lastState.angle.getRadians() - steerEncoder.getPosition());
-  
-    // Handle wrap around
-    if (error > Math.PI) {
-      error = 2 * Math.PI - error;
-    }
-  
-    // Consider at target if within 1.15 degrees (0.02 radians)
-    // Could also try 3 degrees (0.052 radians)
-    return error < Units.degreesToRadians(1.15);
   }
   
   /**
