@@ -26,20 +26,20 @@ public final class DriveConstants {
   // ------------------------------------------------------------
   // Maximum drive & turning speeds - adjust as necessary
   // ------------------------------------------------------------
-  public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(14); // ensure <= kMaxDriveVelocityAt12VoltsMPS, max translation speed in meters per second, set 7 in loft, 10 - 14 at competition
+  public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(14); // ensure <= kMaxDriveVelocityAt12VoltsMPS (15.5), max translation speed in meters per second, set 7 in loft, 10 - 14 at competition
   public static final double kMaxAccelMetersPerSecondSq = Units.feetToMeters(12); // max acceleration in meters per second squared (must be <= max speed)
   public static final double kMaxAngularSpeedRadsPerSecond = Units.rotationsToRadians(1.75); // 1.25 rotations per second (target 8-10 rad/s (2.5π - 3π))
   public static final double kMaxAngularAccelRadsPerSecondSq = Units.rotationsToRadians(1.3125); // set to 75% of angular speed
-
-  // ------------------------------------------------------------
-  // BELOW THIS LINE SHOULDN'T BE CHANGED AT COMPETITION
-  // ------------------------------------------------------------
 
   // ------------------------------------------------------------
   // Driver joystick settings
   // ------------------------------------------------------------
   public static final double kSlewRateLimit = 3.0; // slew rate, start at 3.0, decrease if too twitchy, increase if too sluggish 
   public static final double kJoystickDeadband = 0.1; // maybe use 0.5?, joystick deadband
+
+  // ------------------------------------------------------------
+  // BELOW THIS LINE SHOULDN'T BE CHANGED AT COMPETITION
+  // ------------------------------------------------------------
 
   // ------------------------------------------------------------
   // Physical constants - adjust these to robot each year
