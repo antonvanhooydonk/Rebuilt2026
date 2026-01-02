@@ -53,17 +53,7 @@ public final class DriveConstants {
   public static final double kRobotMassKg = Units.lbsToKilograms(134);
   public static final double kRobotMOI = 3.08607399254; // kg m^2, moment of inertia about center of robot
   public static final double kMaxDriveVelocityAt12VoltsMPS = Units.feetToMeters(15.5); // MK4i L2 Kraken non-FOC With 14t pinion (https://www.swervedrivespecialties.com/products/mk4i-swerve-module?variant=47316033798445)
-
-  public static final double kDriveMotorCurrentLimit = 60.0; // The max current draw in amps of a swerve module drive motor
-  public static final double kDriveMotorCurrentLowerLimit = 40.0; // The regular lower limit current draw in amps of a swerve module drive motor
-  public static final double kDriveMotorCurrentLowerTime = 0.5; // The time in seconds after which the lower current limit applies
-  public static final double kDriveMotorStatorCurrentLimit = 80.00; // The max current draw in amps of a swerve module drive motor stator
-  public static final double kDriveMaxForwardVoltage = 12.0; // Max voltage to apply to drive motors when driving forward
-  public static final double kDriveMaxReverseVoltage = -12.0; // Max voltage to apply to drive motors when driving backward
-  
-  public static final int    kSteerMotorMaxCurrent = 25; // The max steady state current draw in amps of a swerve module steer motor
-  public static final double kSteerMotorMaxPeakCurrent = 35; // The max burst/peak current draw in amps of a swerve module steer motor
-  
+   
   public static final double kGyroXAngleOffsetDegrees = 0.0; // default 0.0 - Rotate the gyro X axis if the gyro was not installed facing forward
   public static final double kPeriodicTimeSeconds = 0.02; // 0.13; // 20ms (default) + 110ms => 0.02 + 0.11 spark max velocity lag 
   public static final boolean kUseSetpointGenerator = true;
@@ -88,7 +78,7 @@ public final class DriveConstants {
       kMaxDriveVelocityAt12VoltsMPS,
       kWheelCOF, 
       DCMotor.getKrakenX60(1).withReduction(kDriveGearRatio),
-      kDriveMotorCurrentLimit,
+      60.0,
       1
     ),
     kSwerveModuleTranslations
