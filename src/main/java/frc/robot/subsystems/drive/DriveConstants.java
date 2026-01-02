@@ -117,7 +117,7 @@ public final class DriveConstants {
   // 2. Increase P until fast response without overshoot (typically 1.0 - 3.0)
   // 3. Add small D if oscillating (typically 0.01 - 0.1)
   // 4. Avoid I unless steady-state error (very rare in steering)
-  public static final double kSteerKP = 1.5; // 0.01
+  public static final double kSteerKP = 1.5;  // 0.01
   public static final double kSteerKI = 0.0;
   public static final double kSteerKD = 0.0;  // 0.32
   public static final double kSteerFF = 0.0;  // 0.0 to 0.2, feedforward to help with static friction. Rev recommends 0
