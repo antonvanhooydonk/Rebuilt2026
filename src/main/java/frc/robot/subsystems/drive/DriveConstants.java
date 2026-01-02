@@ -54,10 +54,10 @@ public final class DriveConstants {
   public static final double kRobotMOI = 3.08607399254; // kg m^2, moment of inertia about center of robot
   public static final double kMaxDriveVelocityAt12VoltsMPS = Units.feetToMeters(15.5); // MK4i L2 Kraken non-FOC With 14t pinion (https://www.swervedrivespecialties.com/products/mk4i-swerve-module?variant=47316033798445)
 
-  public static final double kDriveMotorCurrentLimit = 90.0; // The max current draw in amps of a swerve module drive motor
-  public static final double kDriveMotorCurrentLowerLimit = 70.0; // The regular lower limit current draw in amps of a swerve module drive motor
+  public static final double kDriveMotorCurrentLimit = 60.0; // The max current draw in amps of a swerve module drive motor
+  public static final double kDriveMotorCurrentLowerLimit = 40.0; // The regular lower limit current draw in amps of a swerve module drive motor
   public static final double kDriveMotorCurrentLowerTime = 0.5; // The time in seconds after which the lower current limit applies
-  public static final double kDriveMotorStatorCurrentLimit = 120.00; // The max current draw in amps of a swerve module drive motor stator
+  public static final double kDriveMotorStatorCurrentLimit = 80.00; // The max current draw in amps of a swerve module drive motor stator
   public static final double kDriveMaxForwardVoltage = 12.0; // Max voltage to apply to drive motors when driving forward
   public static final double kDriveMaxReverseVoltage = -12.0; // Max voltage to apply to drive motors when driving backward
   
