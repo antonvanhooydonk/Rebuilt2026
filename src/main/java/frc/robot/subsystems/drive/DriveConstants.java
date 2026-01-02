@@ -67,7 +67,7 @@ public final class DriveConstants {
   public static final double kGyroXAngleOffsetDegrees = 0.0; // default 0.0 - Rotate the gyro X axis if the gyro was not installed facing forward
   public static final double kPeriodicTimeSeconds = 0.02; // 0.13; // 20ms (default) + 110ms => 0.02 + 0.11 spark max velocity lag 
   public static final boolean kUseSetpointGenerator = true;
-  
+
   // Define the module translations from the robot's center
   // See: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html#coordinate-system
   public static final Translation2d[] kSwerveModuleTranslations = new Translation2d[] {
@@ -107,7 +107,7 @@ public final class DriveConstants {
   public static final double kDriveKD = 0.0;
   public static final double kDriveKS = 0.1;  // Static friction
   public static final double kDriveKV = 0.12; // Velocity feedforward, usually 0.11 to 0.13
-  public static final double kDriveKA = 0.0;  // Acceleration feedforward, usually 0.01 to 0.15
+  public static final double kDriveKA = 0.0;  // Acceleration feedforward, usually 0.0 to 0.15, adjust in 0.05 increments
 
   // ------------------------------------------------------------
   // Steering PID Constants (tune these each year for the robot)
