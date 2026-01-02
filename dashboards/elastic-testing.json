@@ -326,28 +326,7 @@
       "name": "Autonomous",
       "grid_layout": {
         "layouts": [],
-        "containers": [
-          {
-            "title": "Field",
-            "x": 275.0,
-            "y": 125.0,
-            "width": 825.0,
-            "height": 375.0,
-            "type": "Field",
-            "properties": {
-              "topic": "/SmartDashboard/Drive/Field",
-              "period": 0.06,
-              "field_game": "Reefscape",
-              "robot_width": 0.85,
-              "robot_length": 0.85,
-              "show_other_objects": true,
-              "show_trajectories": true,
-              "field_rotation": 0.0,
-              "robot_color": 4294198070,
-              "trajectory_color": 4294967295
-            }
-          }
-        ]
+        "containers": []
       }
     },
     {
@@ -624,14 +603,14 @@
             },
             "children": [
               {
-                "title": "Last Target Angle (deg)",
+                "title": "Absolute Encoder (deg)",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 150.0,
                 "height": 150.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/FL/Last Target Angle (deg)",
+                  "topic": "/SmartDashboard/Drive/Modules/FL/Absolute Encoder (deg)",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -652,20 +631,6 @@
                 }
               },
               {
-                "title": "Last Target Speed (mps)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/FL/Last Target Speed (mps)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
                 "title": "Current Speed (mps)",
                 "x": 0.0,
                 "y": 0.0,
@@ -674,20 +639,6 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "/SmartDashboard/Drive/Modules/FL/Current Speed (mps)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Absolute Encoder (deg)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/FL/Absolute Encoder (deg)",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -722,6 +673,48 @@
                 }
               },
               {
+                "title": "Drive Voltage (V)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/FL/Drive Voltage (V)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Last Target Angle (deg)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/FL/Last Target Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Last Target Speed (mps)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/FL/Last Target Speed (mps)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
                 "title": "Steer Current (A)",
                 "x": 0.0,
                 "y": 0.0,
@@ -748,6 +741,20 @@
                   "data_type": "double",
                   "show_submit_button": false
                 }
+              },
+              {
+                "title": "Steer Voltage (V)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/FL/Steer Voltage (V)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
               }
             ]
           },
@@ -763,14 +770,14 @@
             },
             "children": [
               {
-                "title": "Last Target Angle (deg)",
+                "title": "Absolute Encoder (deg)",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 150.0,
                 "height": 150.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/FR/Last Target Angle (deg)",
+                  "topic": "/SmartDashboard/Drive/Modules/FR/Absolute Encoder (deg)",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -791,20 +798,6 @@
                 }
               },
               {
-                "title": "Last Target Speed (mps)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/FR/Last Target Speed (mps)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
                 "title": "Current Speed (mps)",
                 "x": 0.0,
                 "y": 0.0,
@@ -813,20 +806,6 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "/SmartDashboard/Drive/Modules/FR/Current Speed (mps)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Absolute Encoder (deg)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/FR/Absolute Encoder (deg)",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -861,6 +840,48 @@
                 }
               },
               {
+                "title": "Drive Voltage (V)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/FR/Drive Voltage (V)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Last Target Angle (deg)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/FR/Last Target Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Last Target Speed (mps)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/FR/Last Target Speed (mps)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
                 "title": "Steer Current (A)",
                 "x": 0.0,
                 "y": 0.0,
@@ -887,6 +908,20 @@
                   "data_type": "double",
                   "show_submit_button": false
                 }
+              },
+              {
+                "title": "Steer Voltage (V)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/FR/Steer Voltage (V)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
               }
             ]
           },
@@ -902,14 +937,14 @@
             },
             "children": [
               {
-                "title": "Last Target Angle (deg)",
+                "title": "Absolute Encoder (deg)",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 150.0,
                 "height": 150.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/BL/Last Target Angle (deg)",
+                  "topic": "/SmartDashboard/Drive/Modules/BL/Absolute Encoder (deg)",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -930,20 +965,6 @@
                 }
               },
               {
-                "title": "Last Target Speed (mps)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/BL/Last Target Speed (mps)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
                 "title": "Current Speed (mps)",
                 "x": 0.0,
                 "y": 0.0,
@@ -958,14 +979,14 @@
                 }
               },
               {
-                "title": "Absolute Encoder (deg)",
+                "title": "Drive Current (A)",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 150.0,
                 "height": 150.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/BL/Absolute Encoder (deg)",
+                  "topic": "/SmartDashboard/Drive/Modules/BL/Drive Current (A)",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -986,14 +1007,42 @@
                 }
               },
               {
-                "title": "Drive Current (A)",
+                "title": "Drive Voltage (V)",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 150.0,
                 "height": 150.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/BL/Drive Current (A)",
+                  "topic": "/SmartDashboard/Drive/Modules/BL/Drive Voltage (V)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Last Target Angle (deg)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/BL/Last Target Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Last Target Speed (mps)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/BL/Last Target Speed (mps)",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -1026,6 +1075,20 @@
                   "data_type": "double",
                   "show_submit_button": false
                 }
+              },
+              {
+                "title": "Steer Voltage (V)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/BL/Steer Voltage (V)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
               }
             ]
           },
@@ -1041,14 +1104,14 @@
             },
             "children": [
               {
-                "title": "Last Target Angle (deg)",
+                "title": "Absolute Encoder (deg)",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 150.0,
                 "height": 150.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/BR/Last Target Angle (deg)",
+                  "topic": "/SmartDashboard/Drive/Modules/BR/Absolute Encoder (deg)",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -1069,20 +1132,6 @@
                 }
               },
               {
-                "title": "Last Target Speed (mps)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/BR/Last Target Speed (mps)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
                 "title": "Current Speed (mps)",
                 "x": 0.0,
                 "y": 0.0,
@@ -1091,20 +1140,6 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "/SmartDashboard/Drive/Modules/BR/Current Speed (mps)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Absolute Encoder (deg)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/BR/Absolute Encoder (deg)",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -1139,6 +1174,48 @@
                 }
               },
               {
+                "title": "Drive Voltage (V)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/BR/Drive Voltage (V)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Last Target Angle (deg)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/BR/Last Target Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Last Target Speed (mps)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/BR/Last Target Speed (mps)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
                 "title": "Steer Current (A)",
                 "x": 0.0,
                 "y": 0.0,
@@ -1161,6 +1238,20 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "/SmartDashboard/Drive/Modules/BR/Steer Temp (deg C)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Steer Voltage (V)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/BR/Steer Voltage (V)",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -1216,28 +1307,14 @@
             },
             "children": [
               {
-                "title": "Raw Angle (deg)",
+                "title": "Absolute Position",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 150.0,
                 "height": 150.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/FL/Raw Angle (deg)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Raw Angle (rad)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/FL/Raw Angle (rad)",
+                  "topic": "/SmartDashboard/Absolute Encoder/FL/Absolute Position",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -1272,20 +1349,6 @@
                 }
               },
               {
-                "title": "Absolute Position",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/FL/Absolute Position",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
                 "title": "Inverted",
                 "x": 0.0,
                 "y": 0.0,
@@ -1307,6 +1370,34 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "/SmartDashboard/Absolute Encoder/FL/Noise Count",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Angle (deg)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FL/Raw Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Angle (rad)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FL/Raw Angle (rad)",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -1371,28 +1462,14 @@
             },
             "children": [
               {
-                "title": "Raw Angle (deg)",
+                "title": "Absolute Position",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 150.0,
                 "height": 150.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/FR/Raw Angle (deg)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Raw Angle (rad)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/FR/Raw Angle (rad)",
+                  "topic": "/SmartDashboard/Absolute Encoder/FR/Absolute Position",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -1427,20 +1504,6 @@
                 }
               },
               {
-                "title": "Absolute Position",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/FR/Absolute Position",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
                 "title": "Inverted",
                 "x": 0.0,
                 "y": 0.0,
@@ -1462,6 +1525,34 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "/SmartDashboard/Absolute Encoder/FR/Noise Count",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Angle (deg)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FR/Raw Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Angle (rad)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/FR/Raw Angle (rad)",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -1526,28 +1617,14 @@
             },
             "children": [
               {
-                "title": "Raw Angle (deg)",
+                "title": "Absolute Position",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 150.0,
                 "height": 150.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/BL/Raw Angle (deg)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Raw Angle (rad)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/BL/Raw Angle (rad)",
+                  "topic": "/SmartDashboard/Absolute Encoder/BL/Absolute Position",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -1582,20 +1659,6 @@
                 }
               },
               {
-                "title": "Absolute Position",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/BL/Absolute Position",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
                 "title": "Inverted",
                 "x": 0.0,
                 "y": 0.0,
@@ -1617,6 +1680,34 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "/SmartDashboard/Absolute Encoder/BL/Noise Count",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Angle (deg)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BL/Raw Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Angle (rad)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BL/Raw Angle (rad)",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -1681,28 +1772,14 @@
             },
             "children": [
               {
-                "title": "Raw Angle (deg)",
+                "title": "Absolute Position",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 150.0,
                 "height": 150.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/BR/Raw Angle (deg)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Raw Angle (rad)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/BR/Raw Angle (rad)",
+                  "topic": "/SmartDashboard/Absolute Encoder/BR/Absolute Position",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -1737,20 +1814,6 @@
                 }
               },
               {
-                "title": "Absolute Position",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Absolute Encoder/BR/Absolute Position",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
                 "title": "Inverted",
                 "x": 0.0,
                 "y": 0.0,
@@ -1772,6 +1835,34 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "/SmartDashboard/Absolute Encoder/BR/Noise Count",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Angle (deg)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BR/Raw Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Raw Angle (rad)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Absolute Encoder/BR/Raw Angle (rad)",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false

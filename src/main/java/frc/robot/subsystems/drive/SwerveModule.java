@@ -370,8 +370,10 @@ public class SwerveModule implements Sendable {
     builder.addDoubleProperty("Current Speed (mps)", () -> getState().speedMetersPerSecond, null);
     builder.addDoubleProperty("Current Angle (deg)", () -> getState().angle.getDegrees(), null);
     builder.addDoubleProperty("Absolute Encoder (deg)", () -> absoluteEncoder.getAngleDegrees(), null);
+    builder.addDoubleProperty("Drive Voltage (V)", () -> driveMotor.getSupplyVoltage().getValueAsDouble(), null);
     builder.addDoubleProperty("Drive Current (A)", () -> driveMotor.getSupplyCurrent().getValueAsDouble(), null);
     builder.addDoubleProperty("Drive Temp (deg C)", () -> driveMotor.getDeviceTemp().getValueAsDouble(), null);
+    builder.addDoubleProperty("Steer Voltage (V)", () -> steerMotor.getAppliedOutput(), null);
     builder.addDoubleProperty("Steer Current (A)", () -> steerMotor.getOutputCurrent(), null);
     builder.addDoubleProperty("Steer Temp (deg C)", () -> steerMotor.getMotorTemperature(), null);
   }

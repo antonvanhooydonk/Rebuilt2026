@@ -30,7 +30,11 @@ public final class DriveConstants {
   public static final double kMaxAccelMetersPerSecondSq = Units.feetToMeters(12); // max acceleration in meters per second squared (must be <= max speed)
   public static final double kMaxAngularSpeedRadsPerSecond = Units.rotationsToRadians(1.75); // 1.25 rotations per second (target 8-10 rad/s (2.5π - 3π))
   public static final double kMaxAngularAccelRadsPerSecondSq = Units.rotationsToRadians(1.3125); // set to 75% of angular speed
- 
+
+  // ------------------------------------------------------------
+  // BELOW THIS LINE SHOULDN'T BE CHANGED AT COMPETITION
+  // ------------------------------------------------------------
+
   // ------------------------------------------------------------
   // Driver joystick settings
   // ------------------------------------------------------------
@@ -62,7 +66,8 @@ public final class DriveConstants {
   
   public static final double kGyroXAngleOffsetDegrees = 0.0; // default 0.0 - Rotate the gyro X axis if the gyro was not installed facing forward
   public static final double kPeriodicTimeSeconds = 0.02; // 0.13; // 20ms (default) + 110ms => 0.02 + 0.11 spark max velocity lag 
-
+  public static final boolean kUseSetpointGenerator = true;
+  
   // Define the module translations from the robot's center
   // See: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html#coordinate-system
   public static final Translation2d[] kSwerveModuleTranslations = new Translation2d[] {
@@ -101,8 +106,8 @@ public final class DriveConstants {
   public static final double kDriveKI = 0.0;
   public static final double kDriveKD = 0.0;
   public static final double kDriveKS = 0.1;  // Static friction
-  public static final double kDriveKV = 2.7;  // Velocity feedforward
-  public static final double kDriveKA = 0.3;  // Acceleration feedforward
+  public static final double kDriveKV = 0.12; // Velocity feedforward, usually 0.11 to 0.13
+  public static final double kDriveKA = 0.0;  // Acceleration feedforward, usually 0.01 to 0.15
 
   // ------------------------------------------------------------
   // Steering PID Constants (tune these each year for the robot)
@@ -110,7 +115,7 @@ public final class DriveConstants {
   // Tuning Process:
   // 1. Start with P only (I=0, D=0)
   // 2. Increase P until fast response without overshoot (typically 1.0 - 3.0)
-  // 3. Add small D if oscillating (typically 0.01-0.1)
+  // 3. Add small D if oscillating (typically 0.01 - 0.1)
   // 4. Avoid I unless steady-state error (very rare in steering)
   public static final double kSteerKP = 1.5; // 0.01
   public static final double kSteerKI = 0.0;
