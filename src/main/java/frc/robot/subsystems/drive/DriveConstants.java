@@ -37,9 +37,9 @@ public final class DriveConstants {
   public static final double kSlewRateLimit = 3.0; // slew rate, start at 3.0, decrease if too twitchy, increase if too sluggish 
   public static final double kJoystickDeadband = 0.1; // maybe use 0.5?, joystick deadband
 
-  // ------------------------------------------------------------
+  // ============================================================
   // BELOW THIS LINE SHOULDN'T BE CHANGED AT COMPETITION
-  // ------------------------------------------------------------
+  // ============================================================
 
   // ------------------------------------------------------------
   // Physical constants - adjust these to robot each year
