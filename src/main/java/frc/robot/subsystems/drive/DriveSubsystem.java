@@ -120,8 +120,12 @@ public class DriveSubsystem extends SubsystemBase {
       DriveConstants.kMaxAngularSpeedRadsPerSecond // The max rotation velocity of a swerve module in radians per second.
     );
     
-    // Initialize the "last" setpoint to the robot's speeds & module states
-    lastSetpoint = new SwerveSetpoint(getChassisSpeeds(), getModuleStates(), DriveFeedforwards.zeros(4));
+    // Initialize the "last" setpoint
+    lastSetpoint = new SwerveSetpoint(
+      new ChassisSpeeds(), 
+      getModuleStates(), 
+      DriveFeedforwards.zeros(4)
+    );
 
     // Configure AutoBuilder for path following
     AutoBuilder.configure(
