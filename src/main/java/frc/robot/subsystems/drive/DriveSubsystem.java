@@ -232,6 +232,9 @@ public class DriveSubsystem extends SubsystemBase {
     // Reset field relative to true
     fieldRelative = true;
     slowMode = false;
+
+    // Log initialization
+    Utils.logInfo("Drive subsystem initialized for autonomous");
   }
 
   /**
