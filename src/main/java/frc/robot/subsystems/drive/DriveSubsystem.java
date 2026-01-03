@@ -227,7 +227,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   private void driveWithChassisSpeeds(ChassisSpeeds speeds) {
     // Bypass the setpoint generator if necessary
-    if (!DriveConstants.kUseSetpointGenerator) {
+    if (!DriveConstants.kDriveWithSetpointGenerator) {
       setModuleStates(kinematics.toSwerveModuleStates(speeds));
       return;
     }
