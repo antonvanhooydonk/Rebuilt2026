@@ -7,6 +7,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -70,7 +71,7 @@ public class RobotContainer {
     configureAutos();
 
     // Configure the event triggers & button bindings
-    configureTriggers();
+    configureBindings();
 
     // Silence joystick warnings during testing
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -131,11 +132,17 @@ public class RobotContainer {
    * subclasses for {@link CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller PS4} 
    * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
    */
-  private void configureTriggers() {
+  private void configureBindings() {
     // -------------------------------------------------------------------
     // Configure trigger -> command mappings
-    // -------------------------------------------------------------------    
-    // Trigger feedback when game piece acquired
+    // -------------------------------------------------------------------
+    // Initialization when autonomous is enabled
+    new Trigger(RobotState::isAutonomous).onTrue(driveSubsystem.initAutonomousCommand());
+
+    // Initialization when teleop is enabled
+    new Trigger(RobotState::isTeleop).onTrue(driveSubsystem.initTeleopCommand());
+
+    // Feedback when game piece acquired
     new Trigger(rollerSubsystem::hasGamePiece).onTrue(feedbackSubsystem.gamePieceAcquiredCommand());
   
     // Stop forcing the elevator down if it is stalling
@@ -275,19 +282,5 @@ public class RobotContainer {
       delayCommandChooser.getSelected(), // run the selected delay command
       autoCommandChooser.getSelected()   // then run the selected auto command
     );
-  }
-
-  /**
-   * Set the swerve module motors to brake mode when no power is applied.
-   */
-  public void enableMotorBrake() {
-    driveSubsystem.enableMotorBrakeCommand().schedule();
-  }
-
-  /**
-   * Reset the drive slew rate limiters to prevent sudden jumps in speed.
-   */
-  public void resetSlewRateLimiters() {
-    driveSubsystem.resetSlewRateLimitersCommand().schedule();
   }
 }

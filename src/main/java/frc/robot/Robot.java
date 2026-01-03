@@ -33,12 +33,8 @@ public class Robot extends TimedRobot {
     // Record both DS control and joystick data
     DriverStation.startDataLog(DataLogManager.getLog());
 
-    // Set the periodic loop to run on a custom time (default 20 milliseconds)
-    // Comment this out to go back to use the default time cycle.
-    // super(DriveConstants.kPeriodicTimeSeconds);
-
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    // autonomous chooser on the dashboard.
+    // Instantiate our RobotContainer.
+    // This will perform all our button bindings, and put our autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
     // Start the camera server for streaming to the dashboard
@@ -66,10 +62,7 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {
-    // Set motors to brake mode when disabled
-    m_robotContainer.enableMotorBrake();
-  }
+  public void disabledInit() {}
 
   @Override
   public void disabledPeriodic() {}
@@ -77,9 +70,6 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    // Set motors to brake mode at start of autonomous
-    m_robotContainer.enableMotorBrake();
-
     // Get selected autonomous command
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -102,12 +92,6 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-
-    // Set motors to brake mode at start of teleop
-    m_robotContainer.enableMotorBrake();
-
-    // Reset slew rate limiters
-    m_robotContainer.resetSlewRateLimiters();
   }
 
   /** This function is called periodically during operator control. */

@@ -63,7 +63,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   // Kinematics and odometry
   private final SwerveDriveKinematics kinematics;
-  private final SwerveDrivePoseEstimator poseEstimator;
+  private SwerveDrivePoseEstimator poseEstimator;
 
   // Setpoint generator
   private final SwerveSetpointGenerator setpointGenerator;
@@ -188,8 +188,77 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
+   * Initializes the drive subsystem at the start of the autonomous phase.
+   * Should be called from Robot.autonomousInit() or a command scheduler binding.
+   */
+  private void initAutonomous() {
+    // Reset gyro if vision is not enabled
+    if (!isVisionEnabled()) {
+      zeroHeading();
+    }
+    
+    // Reset slew rate limiters to prevent jumps
+    xSpeedLimiter.reset(0);
+    ySpeedLimiter.reset(0);
+    rSpeedLimiter.reset(0);
+    
+    // Reset module encoders
+    resetEncoders();
+
+    // Reset the swerve pose estimator
+    // PathPlanner auto will set the correct starting pose
+    poseEstimator = new SwerveDrivePoseEstimator(
+      kinematics,           // The kinematics object
+      gyro.getAngle(),      // The current gyro angle
+      getModulePositions(), // The current module positions
+      new Pose2d()          // Will be updated by auto and vision
+    );
+    
+    // Reset last setpoint for setpoint generator
+    lastSetpoint = new SwerveSetpoint(
+      new ChassisSpeeds(), 
+      getModuleStates(), 
+      DriveFeedforwards.zeros(4)
+    );
+    
+    // Set motors to brake mode for match
+    setMotorBrake(true);
+    
+    // Reset field relative to true
+    fieldRelative = true;
+    slowMode = false;
+  }
+
+  /**
+   * Initializes the drive subsystem at the start of the teleop phase.
+   * Should be called from Robot.teleopInit() or a command scheduler binding.
+   */
+  private void initTeleop() {
+    // Reset slew rate limiters for smooth joystick control
+    xSpeedLimiter.reset(0);
+    ySpeedLimiter.reset(0);
+    rSpeedLimiter.reset(0);
+    
+    // DO NOT reset lastSetpoint - let it continue from autonomous
+    // The setpoint generator needs continuity of module states
+    
+    // Ensure brake mode is enabled
+    setMotorBrake(true);
+    
+    // Reset to default driving modes
+    fieldRelative = true;
+    slowMode = false;
+    
+    // DO NOT reset gyro, encoders, or pose estimator.
+    // We want to maintain position from autonomous.
+  
+    // Log initialization
+    Utils.logInfo("Drive subsystem initialized for teleop");
+  }
+
+  /**
    * Checks if vision subsystem is available
-   * @return
+   * @return Boolean indicating if vision is enabled
    */
   private boolean isVisionEnabled() {
     return visionSubsystem != null && visionSubsystem.isEnabled();
@@ -413,6 +482,20 @@ public class DriveSubsystem extends SubsystemBase {
   // ============================================================
 
   /**
+   * Command factory for binding to initAutonomous
+   */
+  public Command initAutonomousCommand() {
+    return runOnce(this::initAutonomous);
+  }
+
+  /**
+   * Command factory for binding to initTeleop
+   */
+  public Command initTeleopCommand() {
+    return runOnce(this::initTeleop);
+  }
+
+  /**
    * Drive the robot using the raw joystick inputs.
    * This function applies deadband, squaring (default) / cubing (in slow mode) 
    * and slew rate limiting. Joystick inputs are scaled up to speeds in m/s and rad/s.
@@ -556,26 +639,6 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
-   * Reset the swerve module encoders and pose estimator
-   */
-  public Command resetEncodersCommand() {
-    return runOnce(() -> this.resetEncoders());
-  }
-
-  /**
-   * Resets the slew rate limiters.
-   * Good to call when switching from autonomous to teleop 
-   * to prevent a sudden jump in joystick input values.
-   */
-  public Command resetSlewRateLimitersCommand() {
-    return runOnce(() -> {
-      xSpeedLimiter.reset(0);
-      ySpeedLimiter.reset(0);
-      rSpeedLimiter.reset(0);
-    });
-  }
-
-  /**
    * Stop the robot and set the wheels to an X formation
    */
   public Command stopAndLockWheelsCommand() {
@@ -608,20 +671,6 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public Command disableSlowModeCommand() {
     return runOnce(() -> this.slowMode = false);
-  }
-
-  /**
-   * Enable motor brake mode, motors resist motion when no power applied
-   */
-  public Command enableMotorBrakeCommand() {
-    return runOnce(() -> this.setMotorBrake(true));
-  }
-
-  /**
-   * Disable motor brake mode, motors coast when no power applied
-   */
-  public Command disableMotorBrakeCommand() {
-    return runOnce(() -> this.setMotorBrake(false));
   }
 
   /**
