@@ -211,7 +211,7 @@ public class SwerveModule implements Sendable {
   private void configureSteerMotor() {
     SparkMaxConfig steerConfig = new SparkMaxConfig();
 
-    // Basic motor configuration
+    // Basic motor configuration (hardcoded here for safety)
     steerConfig
       .idleMode(IdleMode.kBrake)        // Brake mode for better control
       .inverted(steerMotorInverted)     // Set motor inversion
@@ -219,7 +219,7 @@ public class SwerveModule implements Sendable {
       .secondaryCurrentLimit(35, 20)    // Peak current limit: 35A for 20ms
       .voltageCompensation(12.0);       // Enable voltage compensation at 12V
 
-    // Closed-loop PID configuration
+    // Closed-loop PID configuration (gains are tunable in constants)
     steerConfig.closedLoop
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       .outputRange(-1.0, 1.0)
