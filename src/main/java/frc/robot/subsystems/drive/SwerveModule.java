@@ -298,28 +298,21 @@ public class SwerveModule implements Sendable {
    * @param desiredState The desired SwerveModuleState
    */
   public void setDesiredState(SwerveModuleState desiredState) {
-    // Minimum thresholds for movement
-    final double kMinSpeedMps    = 0.01; // 1.0 cm/s
-    final double kMinAngleRadSec = 0.02; // ~1.0 deg
-
-    // Anti-jitter: ignore tiny velocity commands
-    if (Math.abs(desiredState.speedMetersPerSecond) < kMinSpeedMps) {
-      stop();
-      return;
-    }
-
-    // Optimize the desired state to avoid turning the wheel more than 90 degrees
+    // Optimize the desired state
     desiredState.optimize(getState().angle);
     
-    // Only command the robot to move if there's meaningful 
-    // change in either drive speed or steering angle
-    if (
-      Math.abs(desiredState.speedMetersPerSecond - lastState.speedMetersPerSecond) >= kMinSpeedMps ||
-      Math.abs(desiredState.angle.minus(lastState.angle).getRadians()) >= kMinAngleRadSec
-    ) {
-      setDriveVelocity(desiredState.speedMetersPerSecond);
-      setSteerAngle(desiredState.angle.getRadians());
+    // Without setpoint generator, manually handle anti-jitter
+    if (!DriveConstants.kDriveWithSetpointGenerator) {
+      if (Math.abs(desiredState.speedMetersPerSecond) < 0.01) {
+        stop();
+        lastState = new SwerveModuleState(0, getState().angle);
+        return;
+      }
     }
+    
+    // Command the robot to move
+    setDriveVelocity(desiredState.speedMetersPerSecond);
+    setSteerAngle(desiredState.angle.getRadians());
 
     // Cache desired state for next comparison
     lastState = desiredState;
