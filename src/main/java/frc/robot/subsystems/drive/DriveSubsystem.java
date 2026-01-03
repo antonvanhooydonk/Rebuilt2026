@@ -233,7 +233,7 @@ public class DriveSubsystem extends SubsystemBase {
     // Set motors to brake mode for match
     setMotorBrake(true);
     
-    // Reset field relative to true
+    // Reset to default driving modes
     fieldRelative = true;
     slowMode = false;
 
