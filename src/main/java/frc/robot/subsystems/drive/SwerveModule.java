@@ -301,15 +301,6 @@ public class SwerveModule implements Sendable {
     // Optimize the desired state
     desiredState.optimize(getState().angle);
     
-    // Without setpoint generator, manually handle anti-jitter
-    if (!DriveConstants.kDriveWithSetpointGenerator) {
-      if (Math.abs(desiredState.speedMetersPerSecond) < 0.01) {
-        stop();
-        lastState = new SwerveModuleState(0, getState().angle);
-        return;
-      }
-    }
-    
     // Command the robot to move
     setDriveVelocity(desiredState.speedMetersPerSecond);
     setSteerAngle(desiredState.angle.getRadians());

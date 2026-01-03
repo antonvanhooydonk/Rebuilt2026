@@ -307,12 +307,6 @@ public class DriveSubsystem extends SubsystemBase {
    * @param speeds The desired robot-relative speeds
    */
   private void driveWithChassisSpeeds(ChassisSpeeds speeds) {
-    // Bypass the setpoint generator if necessary
-    if (!DriveConstants.kDriveWithSetpointGenerator) {
-      setModuleStates(kinematics.toSwerveModuleStates(speeds));
-      return;
-    }
-
     // Create a new target setpoint based on the last setpoint & the desired chassis speeds.
     // NOTE: Do NOT discretize speeds, call SwerveDriveKinematics.desaturateWheelSpeeds(), 
     // before or after using the setpoint generator, as it will discretize them for you.
