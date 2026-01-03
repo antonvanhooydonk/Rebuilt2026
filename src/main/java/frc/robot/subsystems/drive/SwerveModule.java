@@ -141,7 +141,8 @@ public class SwerveModule implements Sendable {
   }
 
   /**
-   * Configures the drive motor (we use a Kraken x60)
+   * Configures the drive motor.
+   * We use a Kraken x60.
    */
   private void configureDriveMotor() {
     TalonFXConfiguration driveConfig = new TalonFXConfiguration();
@@ -156,29 +157,29 @@ public class SwerveModule implements Sendable {
         : InvertedValue.CounterClockwise_Positive
       );
     
-    // Current limits
+    // Current limits (hardcoded here for safety)
     driveConfig.CurrentLimits
-      .withSupplyCurrentLimitEnable(true)
-      .withSupplyCurrentLimit(60)
-      .withSupplyCurrentLowerLimit(40)
-      .withSupplyCurrentLowerTime(0.5)
-      .withStatorCurrentLimitEnable(true)
-      .withStatorCurrentLimit(80);
+      .withSupplyCurrentLimitEnable(true)   // Enable supply limits
+      .withSupplyCurrentLimit(60)           // Peak current spike limit in Amps
+      .withSupplyCurrentLowerLimit(40)      // Continuous current limit in Amps
+      .withSupplyCurrentLowerTime(0.5)      // Time until lower current in seconds
+      .withStatorCurrentLimitEnable(true)   // Enable stator limits
+      .withStatorCurrentLimit(80);          // Max stator current in Amps (prevents overheating)
 
     // Voltage compensation
     driveConfig.Voltage
-      .withPeakForwardVoltage(12)
-      .withPeakReverseVoltage(-12)
-      .withSupplyVoltageTimeConstant(0.02);
+      .withPeakForwardVoltage(12)           // Max voltage when running motor forward
+      .withPeakReverseVoltage(-12)          // Max voltage when running motor in reverse
+      .withSupplyVoltageTimeConstant(0.02); // Voltage filter time constant in seconds
 
-    // Velocity PID (runs on onboard motor controller)
+    // Velocity PID (runs on onboard motor controller, tunable in constants)
     driveConfig.Slot0
-      .withKP(DriveConstants.kDriveKP)
-      .withKI(DriveConstants.kDriveKI)
-      .withKD(DriveConstants.kDriveKD)
-      .withKS(DriveConstants.kDriveKS)
-      .withKV(DriveConstants.kDriveKV)
-      .withKA(DriveConstants.kDriveKA);
+      .withKP(DriveConstants.kDriveKP)      // Poportional gain
+      .withKI(DriveConstants.kDriveKI)      // Integral gain
+      .withKD(DriveConstants.kDriveKD)      // Derivative gain
+      .withKS(DriveConstants.kDriveKS)      // Static feedforward
+      .withKV(DriveConstants.kDriveKV)      // Velocity feedforward
+      .withKA(DriveConstants.kDriveKA);     // Acceleration feedforward
     
     // Apply the configuration to the motor
     driveMotor.getConfigurator().apply(driveConfig);
@@ -204,18 +205,19 @@ public class SwerveModule implements Sendable {
   }
 
   /**
-   * Configures the steering motor (we use a Neo with Spark Max controller)
+   * Configures the steering motor.
+   * Wwe use a Neo with Spark Max controller.
    */
   private void configureSteerMotor() {
     SparkMaxConfig steerConfig = new SparkMaxConfig();
 
     // Basic motor configuration
     steerConfig
-      .idleMode(IdleMode.kBrake)
-      .inverted(steerMotorInverted)
-      .smartCurrentLimit(25)
-      .secondaryCurrentLimit(35, 20)
-      .voltageCompensation(12.0);
+      .idleMode(IdleMode.kBrake)        // Brake mode for better control
+      .inverted(steerMotorInverted)     // Set motor inversion
+      .smartCurrentLimit(25)            // Continuous current limit in Amps
+      .secondaryCurrentLimit(35, 20)    // Peak current limit: 35A for 20ms
+      .voltageCompensation(12.0);       // Enable voltage compensation at 12V
 
     // Closed-loop PID configuration
     steerConfig.closedLoop
@@ -223,10 +225,10 @@ public class SwerveModule implements Sendable {
       .outputRange(-1.0, 1.0)
       .positionWrappingEnabled(true)
       .positionWrappingInputRange(-Math.PI, Math.PI)
-      .p(DriveConstants.kSteerKP)
-      .i(DriveConstants.kSteerKI)
-      .d(DriveConstants.kSteerKD)
-      .velocityFF(DriveConstants.kSteerFF);
+      .p(DriveConstants.kSteerKP)             // Proportional gain
+      .i(DriveConstants.kSteerKI)             // Integral gain
+      .d(DriveConstants.kSteerKD)             // Derivative gain
+      .velocityFF(DriveConstants.kSteerFF);   // Feedforward gain
 
     // Set position conversion factor (rotations to radians)
     // Set velocity conversion factor (rotations per minute to radians per second)
