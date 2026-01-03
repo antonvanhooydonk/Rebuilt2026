@@ -213,10 +213,10 @@ public class SwerveModule implements Sendable {
 
     // Basic motor configuration (hardcoded here for safety)
     steerConfig
-      .idleMode(IdleMode.kBrake)        // Brake mode for better control
-      .inverted(steerMotorInverted)     // Set motor inversion
-      .smartCurrentLimit(25)            // Continuous current limit in Amps
-      .secondaryCurrentLimit(35, 20)    // Peak current limit: 35A for 20ms
+      .idleMode(IdleMode.kBrake)                       // Brake mode for better control
+      .inverted(steerMotorInverted)                    // Set motor inversion
+      .smartCurrentLimit(25)                // Continuous current limit in Amps
+      .secondaryCurrentLimit(35, 20)  // Peak current limit: 35A for 20ms
       .voltageCompensation(12.0);       // Enable voltage compensation at 12V
 
     // Closed-loop PID configuration (gains are tunable in constants)
