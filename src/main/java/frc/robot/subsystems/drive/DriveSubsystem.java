@@ -147,6 +147,9 @@ public class DriveSubsystem extends SubsystemBase {
       zeroHeading();
     }
 
+    // Reset the swerve module encoders
+    resetEncoders();
+
     // Add data to dashboard
     SmartDashboard.putData("Drive", this);
     SmartDashboard.putData("Drive/Field", field2d);
@@ -194,7 +197,7 @@ public class DriveSubsystem extends SubsystemBase {
   private void initAutonomous() {
     // Reset gyro if vision is not enabled
     if (!isVisionEnabled()) {
-      zeroHeading();
+      gyro.reset();
     }
     
     // Reset slew rate limiters to prevent jumps
@@ -203,7 +206,9 @@ public class DriveSubsystem extends SubsystemBase {
     rSpeedLimiter.reset(0);
     
     // Reset module encoders
-    resetEncoders();
+    for (var module : modules) {
+      module.resetEncoders();
+    }
 
     // Reset the swerve pose estimator
     // PathPlanner auto will set the correct starting pose
