@@ -298,8 +298,12 @@ public class SwerveModule implements Sendable {
    * @param desiredState The desired SwerveModuleState
    */
   public void setDesiredState(SwerveModuleState desiredState) {
-    // Anti-jitter: ignore tiny velocity commands (could also try 0.001 m/s)
-    if (Math.abs(desiredState.speedMetersPerSecond) < 0.01) {
+    // Minimum thresholds for movement
+    final double kMinSpeedMps    = 0.01; // 1.0 cm/s
+    final double kMinAngleRadSec = 0.02; // ~1.0 deg
+
+    // Anti-jitter: ignore tiny velocity commands
+    if (Math.abs(desiredState.speedMetersPerSecond) < kMinSpeedMps) {
       stop();
       return;
     }
@@ -310,8 +314,8 @@ public class SwerveModule implements Sendable {
     // Only command the robot to move if there's meaningful 
     // change in either drive speed or steering angle
     if (
-      Math.abs(desiredState.speedMetersPerSecond - lastState.speedMetersPerSecond) > 0.01 ||
-      Math.abs(desiredState.angle.minus(lastState.angle).getRadians()) > 0.01
+      Math.abs(desiredState.speedMetersPerSecond - lastState.speedMetersPerSecond) >= kMinSpeedMps ||
+      Math.abs(desiredState.angle.minus(lastState.angle).getRadians()) >= kMinAngleRadSec
     ) {
       setDriveVelocity(desiredState.speedMetersPerSecond);
       setSteerAngle(desiredState.angle.getRadians());

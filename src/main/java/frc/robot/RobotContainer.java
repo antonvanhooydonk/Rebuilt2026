@@ -283,4 +283,11 @@ public class RobotContainer {
   public void enableMotorBrake() {
     driveSubsystem.enableMotorBrakeCommand().schedule();
   }
+
+  /**
+   * Reset the drive slew rate limiters to prevent sudden jumps in speed.
+   */
+  public void resetSlewRateLimiters() {
+    driveSubsystem.resetSlewRateLimitersCommand().schedule();
+  }
 }

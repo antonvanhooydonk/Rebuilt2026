@@ -88,9 +88,9 @@ public class DriveSubsystem extends SubsystemBase {
     this.visionSubsystem = visionSubsystem;
 
     // Initialize the slew rate limiters
-    xSpeedLimiter = new SlewRateLimiter(DriveConstants.kSlewRateLimit);
-    ySpeedLimiter = new SlewRateLimiter(DriveConstants.kSlewRateLimit);
-    rSpeedLimiter = new SlewRateLimiter(DriveConstants.kSlewRateLimit);
+    xSpeedLimiter = new SlewRateLimiter(DriveConstants.kTranslationalSlewRateLimit);
+    ySpeedLimiter = new SlewRateLimiter(DriveConstants.kTranslationalSlewRateLimit);
+    rSpeedLimiter = new SlewRateLimiter(DriveConstants.kRotationalSlewRateLimit);
 
     // Initialize gyro
     gyro = new NavX2Gyro();
@@ -433,25 +433,24 @@ public class DriveSubsystem extends SubsystemBase {
       double ySpeed = ySpeedSupplier.getAsDouble();
       double rSpeed = rSpeedSupplier.getAsDouble();
 
-      // Apply deadband to the raw joystick inputs.
+      // 1. Apply deadband to the raw joystick inputs.
       // This ignores noise from the joystick when it's in the neutral position.
       xSpeed = MathUtil.applyDeadband(xSpeed, DriveConstants.kJoystickDeadband);
       ySpeed = MathUtil.applyDeadband(ySpeed, DriveConstants.kJoystickDeadband);
       rSpeed = MathUtil.applyDeadband(rSpeed, DriveConstants.kJoystickDeadband);
 
-      // Square the inputs (while preserving sign) for finer control at low speeds.
-      // Cubing is used in "slow" mode because it gives even finer control. 
-      // Joystick input is linear by default. May need to remove cubing?
-      xSpeed = Math.copySign(Math.pow(xSpeed, (this.slowMode ? 3 : 2)), xSpeed);
-      ySpeed = Math.copySign(Math.pow(ySpeed, (this.slowMode ? 3 : 2)), ySpeed);
-      rSpeed = Math.copySign(Math.pow(rSpeed, (this.slowMode ? 3 : 2)), rSpeed);
-
-      // Then apply slew rate limiters for a smoother acceleration ramp 
+      // 2. Apply slew rate limiters for a smoother acceleration ramp 
       xSpeed = xSpeedLimiter.calculate(xSpeed);
       ySpeed = ySpeedLimiter.calculate(ySpeed);
       rSpeed = rSpeedLimiter.calculate(rSpeed);
 
-      // Convert joystick's -1..1 to m/s and rad/s velocitys
+      // 3. Square/cube the inputs (while preserving sign) for finer control at low speeds.
+      // Cubing is used in "slow" mode because it gives even finer control.
+      xSpeed = Math.copySign(Math.pow(xSpeed, (this.slowMode ? 3 : 2)), xSpeed);
+      ySpeed = Math.copySign(Math.pow(ySpeed, (this.slowMode ? 3 : 2)), ySpeed);
+      rSpeed = Math.copySign(Math.pow(rSpeed, (this.slowMode ? 3 : 2)), rSpeed);      
+
+      // Finally, convert the joystick's -1..1 to m/s and rad/s
       double xSpeedMPS = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
       double ySpeedMPS = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
       double rSpeedRad = rSpeed * DriveConstants.kMaxAngularSpeedRadsPerSecond;
@@ -462,7 +461,7 @@ public class DriveSubsystem extends SubsystemBase {
         this.fieldRelative = false;
       }
 
-      // Convert input velocitys into robot-relative chassis speeds
+      // Create robot-relative chassis speeds
       ChassisSpeeds chassisSpeeds;
       if (this.fieldRelative) {
         // Invert translation inputs for red alliance so that pushing the joystick
@@ -561,6 +560,19 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public Command resetEncodersCommand() {
     return runOnce(() -> this.resetEncoders());
+  }
+
+  /**
+   * Resets the slew rate limiters.
+   * Good to call when switching from autonomous to teleop 
+   * to prevent a sudden jump in joystick input values.
+   */
+  public Command resetSlewRateLimitersCommand() {
+    return runOnce(() -> {
+      xSpeedLimiter.reset(0);
+      ySpeedLimiter.reset(0);
+      rSpeedLimiter.reset(0);
+    });
   }
 
   /**

@@ -34,8 +34,9 @@ public final class DriveConstants {
   // ------------------------------------------------------------
   // Driver joystick settings
   // ------------------------------------------------------------
-  public static final double kSlewRateLimit = 3.0; // slew rate, start at 3.0, decrease if too twitchy, increase if too sluggish 
-  public static final double kJoystickDeadband = 0.1; // maybe use 0.5?, joystick deadband
+  public static final double kTranslationalSlewRateLimit = 3.0; // m/s per second, start at 3.0, decrease if too twitchy, increase if too sluggish 
+  public static final double kRotationalSlewRateLimit = 5.0;    // rad/s per second
+  public static final double kJoystickDeadband = 0.1;           // joystick deadband, maybe use 0.5? 
 
   // ============================================================
   // BELOW THIS LINE SHOULDN'T BE CHANGED AT COMPETITION
@@ -55,7 +56,7 @@ public final class DriveConstants {
   public static final double kMaxDriveVelocityAt12VoltsMPS = Units.feetToMeters(15.5); // MK4i L2 Kraken non-FOC With 14t pinion (https://www.swervedrivespecialties.com/products/mk4i-swerve-module?variant=47316033798445)
    
   public static final double kGyroXAngleOffsetDegrees = 0.0; // default 0.0 - Rotate the gyro X axis if the gyro was not installed facing forward
-  public static final double kPeriodicTimeSeconds = 0.02; // 0.13; // 20ms (default) + 110ms => 0.02 + 0.11 spark max velocity lag 
+  public static final double kPeriodicTimeSeconds = 0.02; // 20ms (default)
   public static final boolean kDriveWithSetpointGenerator = true;
 
   // Define the module translations from the robot's center

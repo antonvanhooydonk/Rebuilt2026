@@ -105,6 +105,9 @@ public class Robot extends TimedRobot {
 
     // Set motors to brake mode at start of teleop
     m_robotContainer.enableMotorBrake();
+
+    // Reset slew rate limiters
+    m_robotContainer.resetSlewRateLimiters();
   }
 
   /** This function is called periodically during operator control. */
