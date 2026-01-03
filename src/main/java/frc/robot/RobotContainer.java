@@ -134,7 +134,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // -------------------------------------------------------------------
-    // Configure trigger -> command mappings
+    // Configure event triggers
     // -------------------------------------------------------------------
     // Initialization when autonomous is enabled
     new Trigger(RobotState::isAutonomous).onTrue(driveSubsystem.initAutonomousCommand());
