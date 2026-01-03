@@ -242,6 +242,9 @@ public class DriveSubsystem extends SubsystemBase {
    * Should be called from Robot.teleopInit() or a command scheduler binding.
    */
   private void initTeleop() {
+    // DO NOT reset gyro, encoders, or pose estimator.
+    // We want to maintain position from autonomous.
+
     // Reset slew rate limiters for smooth joystick control
     xSpeedLimiter.reset(0);
     ySpeedLimiter.reset(0);
@@ -256,9 +259,6 @@ public class DriveSubsystem extends SubsystemBase {
     // Reset to default driving modes
     fieldRelative = true;
     slowMode = false;
-    
-    // DO NOT reset gyro, encoders, or pose estimator.
-    // We want to maintain position from autonomous.
   
     // Log initialization
     Utils.logInfo("Drive subsystem initialized for teleop");
