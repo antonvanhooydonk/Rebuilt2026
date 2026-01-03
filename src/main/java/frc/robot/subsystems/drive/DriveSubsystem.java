@@ -643,14 +643,14 @@ public class DriveSubsystem extends SubsystemBase {
    * Zeros the gyroscope heading
    */
   public Command zeroHeadingCommand() {
-    return runOnce(() -> this.zeroHeading());
+    return runOnce(this::zeroHeading);
   }
 
   /**
    * Stop the robot and set the wheels to an X formation
    */
   public Command stopAndLockWheelsCommand() {
-    return runOnce(() -> this.stopAndLockWheels());
+    return runOnce(this::stopAndLockWheels);
   }
 
   /**
