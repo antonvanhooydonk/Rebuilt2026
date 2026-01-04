@@ -54,14 +54,12 @@ public class RobotContainer {
    * Contains subsystems, IO devices, and commands. 
    */
   public RobotContainer() {
-    // Initialize the default driving command.
-    // The left stick controls translation of the robot.
-    // Turning/rotatiton is controlled by the X axis of the right stick.
+    // Initialize the default driving command to use during teleop.
     // See: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
     driveSubsystem.setDefaultCommand(driveSubsystem.driveCommand(
-      () -> -driverXbox.getLeftY(),
-      () -> -driverXbox.getLeftX(),
-      () -> -driverXbox.getRightX()
+      () -> -driverXbox.getLeftY(), // left joystick Y axis will drive the robot along the field's X axis
+      () -> -driverXbox.getLeftX(), // left joystick X axis will drive the robot along the field's Y axis
+      () -> -driverXbox.getRightX() // right joystick X axis will rotate the robot CCW & CW 
     ));
   
     // Register named commands to be used in Pathplanner
