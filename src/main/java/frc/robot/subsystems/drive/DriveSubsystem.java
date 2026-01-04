@@ -245,8 +245,8 @@ public class DriveSubsystem extends SubsystemBase {
     // DO NOT reset gyro, encoders, or pose estimator.
     // We want to maintain position from autonomous.
     
-    // DO NOT reset lastSetpoint - let it continue from autonomous
-    // The setpoint generator needs continuity of module states
+    // DO NOT reset lastSetpoint - let it continue from autonomous.
+    // The setpoint generator needs continuity of module states.
     
     // Ensure brake mode is enabled
     setMotorBrake(true);
