@@ -151,26 +151,22 @@ public class SwerveModule implements Sendable {
     driveConfig.MotorOutput
       .withDutyCycleNeutralDeadband(0.001)  // 0.1% deadband (tight control)
       .withNeutralMode(NeutralModeValue.Brake)
-      .withInverted(
-        driveMotorInverted 
-        ? InvertedValue.Clockwise_Positive
-        : InvertedValue.CounterClockwise_Positive
-      );
+      .withInverted(driveMotorInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive);
     
     // Current limits (hardcoded here for safety)
     driveConfig.CurrentLimits
       .withSupplyCurrentLimitEnable(true)   // Enable supply limits
-      .withSupplyCurrentLimit(60)           // Peak current spike limit in Amps
-      .withSupplyCurrentLowerLimit(40)      // Continuous current limit in Amps
-      .withSupplyCurrentLowerTime(0.5)      // Time until lower current in seconds
+      .withSupplyCurrentLimit(60)                 // Peak current spike limit in Amps
+      .withSupplyCurrentLowerLimit(40)       // Continuous current limit in Amps
+      .withSupplyCurrentLowerTime(0.5)        // Time until lower current in seconds
       .withStatorCurrentLimitEnable(true)   // Enable stator limits
-      .withStatorCurrentLimit(80);          // Max stator current in Amps (prevents overheating)
+      .withStatorCurrentLimit(80);                // Max stator current in Amps (prevents overheating)
 
     // Voltage compensation
     driveConfig.Voltage
-      .withPeakForwardVoltage(12)           // Max voltage when running motor forward
-      .withPeakReverseVoltage(-12)          // Max voltage when running motor in reverse
-      .withSupplyVoltageTimeConstant(0.02); // Voltage filter time constant in seconds
+      .withPeakForwardVoltage(12)                   // Max voltage when running motor forward
+      .withPeakReverseVoltage(-12)                                        // Max voltage when running motor in reverse
+      .withSupplyVoltageTimeConstant(0.02);  // Voltage filter time constant in seconds
 
     // Velocity PID (runs on onboard motor controller, tunable in constants)
     driveConfig.Slot0
