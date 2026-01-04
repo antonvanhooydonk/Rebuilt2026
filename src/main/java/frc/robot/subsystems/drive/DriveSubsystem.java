@@ -208,7 +208,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     // Reset the swerve pose estimator. PathPlanner auto will set the correct starting pose.
     resetPose(new Pose2d());
-    
+
     // Reset last setpoint for setpoint generator
     lastSetpoint = new SwerveSetpoint(
       new ChassisSpeeds(), 
