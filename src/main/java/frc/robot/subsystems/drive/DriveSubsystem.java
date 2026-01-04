@@ -196,15 +196,15 @@ public class DriveSubsystem extends SubsystemBase {
    * Should be called from Robot.autonomousInit() or a command scheduler binding.
    */
   private void initAutonomous() {
-    // Reset gyro if vision is not enabled
-    if (!isVisionEnabled()) {
-      gyro.reset();
-    }
-    
     // Reset slew rate limiters to prevent jumps
     xSpeedLimiter.reset(0);
     ySpeedLimiter.reset(0);
     rSpeedLimiter.reset(0);
+
+    // Reset gyro if vision is not enabled
+    if (!isVisionEnabled()) {
+      gyro.reset();
+    }
     
     // Reset module encoders
     for (var module : modules) {
@@ -212,7 +212,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     // Reset the swerve pose estimator. PathPlanner auto will set the correct starting pose.
-    poseEstimator.resetPosition(gyro.getAngle(), getModulePositions(), new Pose2d());
+    resetPose(new Pose2d());
     
     // Reset last setpoint for setpoint generator
     lastSetpoint = new SwerveSetpoint(
@@ -237,13 +237,13 @@ public class DriveSubsystem extends SubsystemBase {
    * Should be called from Robot.teleopInit() or a command scheduler binding.
    */
   private void initTeleop() {
-    // DO NOT reset gyro, encoders, or pose estimator.
-    // We want to maintain position from autonomous.
-
     // Reset slew rate limiters for smooth joystick control
     xSpeedLimiter.reset(0);
     ySpeedLimiter.reset(0);
     rSpeedLimiter.reset(0);
+
+    // DO NOT reset gyro, encoders, or pose estimator.
+    // We want to maintain position from autonomous.
     
     // DO NOT reset lastSetpoint - let it continue from autonomous
     // The setpoint generator needs continuity of module states
