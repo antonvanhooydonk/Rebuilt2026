@@ -196,11 +196,6 @@ public class DriveSubsystem extends SubsystemBase {
    * Should be called from Robot.autonomousInit() or a command scheduler binding.
    */
   private void initAutonomous() {
-    // Reset slew rate limiters to prevent jumps
-    xSpeedLimiter.reset(0);
-    ySpeedLimiter.reset(0);
-    rSpeedLimiter.reset(0);
-
     // Reset gyro if vision is not enabled
     if (!isVisionEnabled()) {
       gyro.reset();
@@ -220,6 +215,11 @@ public class DriveSubsystem extends SubsystemBase {
       getModuleStates(), 
       DriveFeedforwards.zeros(4)
     );
+
+    // Reset slew rate limiters to prevent jumps
+    xSpeedLimiter.reset(0);
+    ySpeedLimiter.reset(0);
+    rSpeedLimiter.reset(0);
     
     // Set motors to brake mode for match
     setMotorBrake(true);
@@ -237,16 +237,16 @@ public class DriveSubsystem extends SubsystemBase {
    * Should be called from Robot.teleopInit() or a command scheduler binding.
    */
   private void initTeleop() {
-    // Reset slew rate limiters for smooth joystick control
-    xSpeedLimiter.reset(0);
-    ySpeedLimiter.reset(0);
-    rSpeedLimiter.reset(0);
-
     // DO NOT reset gyro, encoders, or pose estimator.
     // We want to maintain position from autonomous.
     
     // DO NOT reset lastSetpoint - let it continue from autonomous.
     // The setpoint generator needs continuity of module states.
+
+    // Reset slew rate limiters for smooth joystick control
+    xSpeedLimiter.reset(0);
+    ySpeedLimiter.reset(0);
+    rSpeedLimiter.reset(0);
     
     // Ensure brake mode is enabled
     setMotorBrake(true);
