@@ -136,10 +136,10 @@ public class RobotContainer {
     // -------------------------------------------------------------------
     // Configure event triggers
     // -------------------------------------------------------------------
-    // Initialization when autonomous is enabled
+    // Initialize drive subsystem at start of autonomous
     new Trigger(RobotState::isAutonomous).onTrue(driveSubsystem.initAutonomousCommand());
 
-    // Initialization when teleop is enabled
+    // Initialize for teleop at start of teleop period
     new Trigger(RobotState::isTeleop).onTrue(driveSubsystem.initTeleopCommand());
 
     // Feedback when game piece acquired

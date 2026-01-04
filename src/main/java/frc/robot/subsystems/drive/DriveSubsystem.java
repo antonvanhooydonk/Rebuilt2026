@@ -63,7 +63,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   // Kinematics and odometry
   private final SwerveDriveKinematics kinematics;
-  private SwerveDrivePoseEstimator poseEstimator;
+  private final SwerveDrivePoseEstimator poseEstimator;
 
   // Setpoint generator
   private final SwerveSetpointGenerator setpointGenerator;
@@ -151,9 +151,6 @@ public class DriveSubsystem extends SubsystemBase {
       zeroHeading();
     }
 
-    // Reset the swerve module encoders
-    resetEncoders();
-
     // Add data to dashboard
     SmartDashboard.putData("Drive", this);
     SmartDashboard.putData("Drive/Field", field2d);
@@ -214,14 +211,8 @@ public class DriveSubsystem extends SubsystemBase {
       module.resetEncoders();
     }
 
-    // Reset the swerve pose estimator
-    // PathPlanner auto will set the correct starting pose
-    poseEstimator = new SwerveDrivePoseEstimator(
-      kinematics,           // The kinematics object
-      gyro.getAngle(),      // The current gyro angle
-      getModulePositions(), // The current module positions
-      new Pose2d()          // Will be updated by auto and vision
-    );
+    // Reset the swerve pose estimator. PathPlanner auto will set the correct starting pose.
+    poseEstimator.resetPosition(gyro.getAngle(), getModulePositions(), new Pose2d());
     
     // Reset last setpoint for setpoint generator
     lastSetpoint = new SwerveSetpoint(
@@ -330,7 +321,7 @@ public class DriveSubsystem extends SubsystemBase {
    * Sets the desired state for each swerve module. Do not call this from driveWithChassisSpeeds.
    * @param desiredStates Array of desired SwerveModuleStates
    */
-  private void setModuleStates(SwerveModuleState[] desiredStates) {    
+  private void setModuleStates(SwerveModuleState[] desiredStates) {
     // Normalize wheel speeds 
     SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.kMaxSpeedMetersPerSecond);
     
@@ -378,6 +369,18 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
+   * Zeros the gyroscope heading and resets the pose estimator.
+   * NOTE: Should never need to call this if vision is working properly.
+   */
+  private void zeroHeading() {
+    // Reset gyro
+    gyro.reset();
+
+    // Reset pose estimator to origin with 0° heading
+    resetPose(new Pose2d());
+  }
+
+  /**
    * Resets all the swerve module encoders and resets the pose estimator.
    * NOTE: Should never need to call this if vision is working properly.
    */
@@ -388,18 +391,6 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     // reset pose estimator
-    resetPose(poseEstimator.getEstimatedPosition());
-  }
-
-  /**
-   * Zeros the gyroscope heading and resets the pose estimator.
-   * NOTE: Should never need to call this if vision is working properly.
-   */
-  private void zeroHeading() {
-    // Reset gyro
-    gyro.reset();
-
-    // Reset pose estimator
     resetPose(poseEstimator.getEstimatedPosition());
   }
 
@@ -534,12 +525,12 @@ public class DriveSubsystem extends SubsystemBase {
       rSpeed = rSpeedLimiter.calculate(rSpeed);
 
       // 3. Square/cube the inputs (while preserving sign) for finer control at low speeds.
-      // Cubing is used in "slow" mode because it gives even finer control.
+      //    Cubing is used in "slow" mode because it gives even finer control.
       xSpeed = Math.copySign(Math.pow(xSpeed, (this.slowMode ? 3 : 2)), xSpeed);
       ySpeed = Math.copySign(Math.pow(ySpeed, (this.slowMode ? 3 : 2)), ySpeed);
       rSpeed = Math.copySign(Math.pow(rSpeed, (this.slowMode ? 3 : 2)), rSpeed);      
 
-      // Finally, convert the joystick's -1..1 to m/s and rad/s
+      // 4. Convert the joystick's -1..1 to m/s and rad/s
       double xSpeedMPS = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
       double ySpeedMPS = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
       double rSpeedRad = rSpeed * DriveConstants.kMaxAngularSpeedRadsPerSecond;
@@ -642,6 +633,13 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public Command zeroHeadingCommand() {
     return runOnce(this::zeroHeading);
+  }
+
+  /**
+   * Resets all swerve module encoders and the pose estimator
+   */
+  public Command resetEncodersCommand() {
+    return runOnce(this::resetEncoders);
   }
 
   /**
