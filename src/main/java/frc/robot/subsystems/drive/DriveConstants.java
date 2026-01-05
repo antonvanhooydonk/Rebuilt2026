@@ -26,17 +26,17 @@ public final class DriveConstants {
   // ------------------------------------------------------------
   // Maximum drive & turning speeds - adjust as necessary
   // ------------------------------------------------------------
-  public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(14); // ensure <= kMaxDriveVelocityAt12VoltsMPS (15.5), set 7 in loft, 10 - 14 at competition
-  public static final double kMaxAccelMetersPerSecondSq = Units.feetToMeters(12); // max acceleration in meters per second squared (must be <= max speed)
-  public static final double kMaxAngularSpeedRadsPerSecond = Units.rotationsToRadians(1.75); // target 8-10 rad/s (2.5π - 3π)
-  public static final double kMaxAngularAccelRadsPerSecondSq = kMaxAngularSpeedRadsPerSecond * 1.0; // set to 0.75 (conservative) to 1.5 (aggressive) times kMaxAngularSpeedRadsPerSecond
+  public static final double kMaxSpeedMetersPerSecond = Units.feetToMeters(14); // max translational speed, ensure <= kMaxDriveVelocityAt12VoltsMPS (15.5), set 7 in loft, 10 - 14 at competition
+  public static final double kMaxAccelMetersPerSecondSq = Units.feetToMeters(12); // max translational acceleration
+  public static final double kMaxAngularSpeedRadsPerSecond = Units.rotationsToRadians(1.75); // max rotational speed, conservative: 1.0 - 1.5, competitive: 1.5 - 2.0, aggressive: 2.0 - 2.5
+  public static final double kMaxAngularAccelRadsPerSecondSq = kMaxAngularSpeedRadsPerSecond * 1.0; // max rotational acceleration, 0.75 (conservative) to 1.5 (aggressive) times kMaxAngularSpeedRadsPerSecond
 
   // ------------------------------------------------------------
   // Driver joystick settings
   // ------------------------------------------------------------
   public static final double kTranslationalSlewRateLimit = 3.0; // m/s per second, start at 3.0, decrease if too twitchy, increase if too sluggish 
-  public static final double kRotationalSlewRateLimit = 5.0;    // rad/s per second
-  public static final double kJoystickDeadband = 0.1;           // joystick deadband, maybe use 0.5? 
+  public static final double kRotationalSlewRateLimit = kMaxAngularAccelRadsPerSecondSq * 1.0; // rad/s per second, 0.6 - 1.0 times kMaxAngularAccelRadsPerSecondSq
+  public static final double kJoystickDeadband = 0.1; // joystick deadband, maybe use 0.5? 
 
   // ============================================================
   // BELOW THIS LINE SHOULDN'T BE CHANGED AT COMPETITION

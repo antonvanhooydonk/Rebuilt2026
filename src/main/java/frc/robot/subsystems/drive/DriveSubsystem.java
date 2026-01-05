@@ -168,7 +168,7 @@ public class DriveSubsystem extends SubsystemBase {
     });
 
     // Output initialization progress
-    Utils.logInfo("Drive subsystem intialized");
+    Utils.logInfo("Drive subsystem initialized");
   }
 
   @Override
@@ -375,23 +375,14 @@ public class DriveSubsystem extends SubsystemBase {
   private void zeroHeading() {
     // Reset gyro
     gyro.reset();
-
-    // Reset pose estimator to origin with 0° heading
-    resetPose(new Pose2d());
-  }
-
-  /**
-   * Resets all the swerve module encoders and resets the pose estimator.
-   * NOTE: Should never need to call this if vision is working properly.
-   */
-  private void resetEncoders() {
-    // reset each swerve module's encoders
+    
+    // Reset module encoders
     for (var module : modules) {
       module.resetEncoders();
     }
 
-    // reset pose estimator
-    resetPose(poseEstimator.getEstimatedPosition());
+    // Reset pose estimator to origin with 0° heading
+    resetPose(new Pose2d());
   }
 
   /**
@@ -633,13 +624,6 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public Command zeroHeadingCommand() {
     return runOnce(this::zeroHeading);
-  }
-
-  /**
-   * Resets all swerve module encoders and the pose estimator
-   */
-  public Command resetEncodersCommand() {
-    return runOnce(this::resetEncoders);
   }
 
   /**
