@@ -294,6 +294,11 @@ public class SwerveModule implements Sendable {
    * @param desiredState The desired SwerveModuleState
    */
   public void setDesiredState(SwerveModuleState desiredState) {
+    // Ensure desired state is not null
+    if (desiredState == null) {
+      return;
+    }
+  
     // Optimize the desired state
     desiredState.optimize(getState().angle);
     
