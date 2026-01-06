@@ -167,6 +167,15 @@ public class VisionSubsystem extends SubsystemBase {
             stdDevs
           );
           
+          // Ensure vision measurement is valid
+          if (
+            measurement.getPose() == null || 
+            measurement.getStandardDeviations() == null ||
+            measurement.getStandardDeviations().length != 3
+          ) {
+            continue;
+          }
+
           // Add to latest measurements
           // These measurements will be read by the drive subsystem and
           // added to the pose estimator in the next cycle.

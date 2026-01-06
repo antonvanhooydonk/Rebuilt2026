@@ -309,6 +309,13 @@ public class DriveSubsystem extends SubsystemBase {
 
     // Set each swerve module state directly from the next calculated setpoint
     SwerveModuleState[] desiredStates = nextSetpoint.moduleStates();
+
+    // Ensure we have desired states match # of swerve modules
+    if (desiredStates.length != modules.length) {
+      return;
+    }
+
+    // Set each module state
     for (int i = 0; i < 4; i++) {
       modules[i].setDesiredState(desiredStates[i]);
     }
