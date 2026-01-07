@@ -201,7 +201,7 @@ public class SwerveModule implements Sendable {
 
   /**
    * Configures the steering motor.
-   * Wwe use a Neo with Spark Max controller.
+   * We use a Neo with Spark Max controller.
    */
   private void configureSteerMotor() {
     SparkMaxConfig steerConfig = new SparkMaxConfig();
