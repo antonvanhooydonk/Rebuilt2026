@@ -257,6 +257,6 @@ public class ThriftyBotEncoder implements Sendable {
     builder.addDoubleProperty("Supply Voltage", RobotController::getVoltage5V, null);
     builder.addBooleanProperty("Valid", this::isValid, null);
     builder.addBooleanProperty("Inverted", this::isInverted, null);
-    builder.addDoubleProperty("Noise Count", this::getNoiseCount, null);
+    builder.addIntegerProperty("Noise Count", this::getNoiseCount, null);
   }
 }
