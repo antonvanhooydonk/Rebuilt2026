@@ -27,7 +27,6 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import frc.robot.sensors.ThriftyBotEncoder;
 import frc.robot.util.Utils;
 
 /**

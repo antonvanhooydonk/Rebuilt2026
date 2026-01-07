@@ -1,4 +1,4 @@
-package frc.robot.sensors;
+package frc.robot.subsystems.vision;
 
 import java.util.ArrayList;
 import java.util.List;
