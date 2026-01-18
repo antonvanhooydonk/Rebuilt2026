@@ -8,7 +8,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
@@ -39,13 +39,15 @@ public class SwerveModule implements Sendable {
   private final TalonFX driveMotor;
   private final SparkMax steerMotor;
   private final ThriftyBotEncoder absoluteEncoder;
+  private final TalonFXConfiguration driveConfig;
+  private final SparkMaxConfig steerConfig;
 
   // Controllers
   private final SparkClosedLoopController steerPIDController;
   private final RelativeEncoder steerEncoder;
 
   // Control requests
-  private final VelocityDutyCycle driveVelocityRequest;
+  private final VelocityVoltage driveVelocityRequest;
 
   // Module identification
   private final int driveMotorID;
@@ -71,7 +73,7 @@ public class SwerveModule implements Sendable {
    * @param steerMotorID CAN ID of the steering motor
    * @param driveMotorInverted Indicates that the drive motor is inverted
    * @param steerMotorInverted Indicates that the steer motor is inverted
-   * @param absoluteEncoderPort Analog port of the absolute encoder
+   * @param absoluteEncoderID Analog ID of the absolute encoder
    * @param absoluteEncoderOffsetRadians Offset angle in radians for the absolute encoder
    * @param absoluteEncoderInverted Indicates that the absolute encoder is inverted
    */
@@ -97,9 +99,11 @@ public class SwerveModule implements Sendable {
 
     // Initialize the drive motor
     driveMotor = new TalonFX(this.driveMotorID);
+    driveConfig = new TalonFXConfiguration();
 
     // Initialize the steering motor
     steerMotor = new SparkMax(this.steerMotorID, MotorType.kBrushless);
+    steerConfig = new SparkMaxConfig();
 
     // Initialize the absolute encoder
     absoluteEncoder = new ThriftyBotEncoder(
@@ -110,7 +114,7 @@ public class SwerveModule implements Sendable {
     );
 
     // Initialize the drive velocity request
-    driveVelocityRequest = new VelocityDutyCycle(0).withSlot(0);
+    driveVelocityRequest = new VelocityVoltage(0).withSlot(0);
 
     // Configure drive motor
     configureDriveMotor();
@@ -161,8 +165,6 @@ public class SwerveModule implements Sendable {
    * We use a Kraken x60.
    */
   private void configureDriveMotor() {
-    TalonFXConfiguration driveConfig = new TalonFXConfiguration();
-
     // Motor outputs
     driveConfig.MotorOutput
       .withDutyCycleNeutralDeadband(0.001)  // 0.1% deadband (tight control)
@@ -221,8 +223,6 @@ public class SwerveModule implements Sendable {
    * We use a Neo with Spark Max controller.
    */
   private void configureSteerMotor() {
-    SparkMaxConfig steerConfig = new SparkMaxConfig();
-
     // Basic motor configuration (hardcoded here for safety)
     steerConfig
       .idleMode(IdleMode.kBrake)                       // Brake mode for better control
@@ -260,7 +260,7 @@ public class SwerveModule implements Sendable {
 
     // Apply the configuration to the motor
     steerMotor.configure(
-      steerConfig, 
+      this.steerConfig, 
       ResetMode.kResetSafeParameters, 
       PersistMode.kPersistParameters
     );
@@ -355,8 +355,9 @@ public class SwerveModule implements Sendable {
     driveMotor.setNeutralMode(brake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
     
     // Set steering motor neutral/idle mode
+    steerConfig.idleMode(brake ? IdleMode.kBrake : IdleMode.kCoast);
     steerMotor.configure(
-      new SparkMaxConfig().idleMode(brake ? IdleMode.kBrake : IdleMode.kCoast), 
+      steerConfig, 
       ResetMode.kNoResetSafeParameters, 
       PersistMode.kNoPersistParameters
     );
