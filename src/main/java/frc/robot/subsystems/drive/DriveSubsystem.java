@@ -171,15 +171,15 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {    
-    // Call each swerve module's periodic first, 
-    // since they cache state
+  public void periodic() {
+    // Run the gyro's periodic method
+    gyro.periodic();
+
+    // Call each swerve module's periodic before 
+    // pose estimatore since they cache state.
     for (var module : modules) {
       module.periodic();
     }
-
-    // Run the gyro's periodic method
-    gyro.periodic();
 
     // Update odometry
     poseEstimator.updateWithTime(Timer.getFPGATimestamp(), gyro.getAngle(), getModulePositions());
