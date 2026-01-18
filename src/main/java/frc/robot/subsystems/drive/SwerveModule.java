@@ -313,8 +313,9 @@ public class SwerveModule implements Sendable {
       return;
     }
   
-    // Optimize the desired state (already by setpoint generator)
-    // Uncomment the line below if NOT using the SwerveSetpointGenerator
+    // The desired state is already by setpoint generator so no need to optimize here.
+    // Uncomment the line below only if NOT using the SwerveSetpointGenerator.
+    // This line is left here so future maintainers are aware of the option.
     // desiredState.optimize(getState().angle);
     
     // Command the robot to move
@@ -334,7 +335,8 @@ public class SwerveModule implements Sendable {
    */
   private void setDriveVelocity(double velocityMPS) {
     double velocityRPS = (velocityMPS / DriveConstants.kWheelCircumference) * DriveConstants.kDriveGearRatio;
-    driveMotor.setControl(driveVelocityRequest.withVelocity(velocityRPS));
+    driveVelocityRequest.Velocity = velocityRPS;
+    driveMotor.setControl(driveVelocityRequest);
   }
 
   /**
