@@ -16,7 +16,7 @@ import edu.wpi.first.math.util.Units;
  * constants. This class should not be used for any other purpose. All constants should be declared
  * globally (i.e. public static). Do not put anything functional in this class.
  *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
+ * It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
  */
 public final class VisionConstants {
@@ -38,7 +38,11 @@ public final class VisionConstants {
         Units.inchesToMeters(24), // 24 inches high
         Rotation3d.kZero
       ).getTranslation(), 
-      null
+      new Rotation3d(
+        0,     // Roll (tilt left/right)
+        0,    // Pitch (tilt up/down) - negative = tilted down
+        0       // Yaw (rotate left/right)
+      )
     ));
 
     // return the camera map
@@ -51,6 +55,12 @@ public final class VisionConstants {
   public static final double kTargetLogTimeSeconds = 0.1;
   public static final double kFieldBorderMargin = 0.5; // meters
   public static final double kZMargin = 0.75; // meters
+
+  // Stand 5-6 meters from a tag
+  // Check tag area in PhotonVision UI
+  // Set threshold to 80% of that value
+  // Example: If tag shows 1200 pixels² at 5m:
+  public static final double kMinTagAreaPixels = 1000.0; // Adjust based on testing
   
   // Standard deviation calculation constants
   public static final double kSingleTagBaseXYstdDev = 0.7; // meters

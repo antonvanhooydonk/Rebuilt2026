@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.common.hardware.VisionLEDMode;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -28,24 +29,18 @@ public class Camera {
    * @param config The camera configuration
    */
   public Camera(String cameraName, Transform3d robotToCamera) {
-    // Initialize PhotonCamera
-    PhotonCamera camera = new PhotonCamera(cameraName);
-
-    // Initialize PhotonPoseEstimator
-    PhotonPoseEstimator poseEstimator = new PhotonPoseEstimator(
+    // Assign to fields
+    this.name = cameraName;
+    this.robotToCamera = robotToCamera;
+    this.camera = new PhotonCamera(cameraName);
+    this.poseEstimator = new PhotonPoseEstimator(
       FieldConstants.kFieldLayout,
       PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
       robotToCamera
     );
 
     // Set fallback strategy for multi-tag ambiguity
-    poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
-
-    // Assign to fields
-    this.name = cameraName;
-    this.robotToCamera = robotToCamera;
-    this.camera = camera;
-    this.poseEstimator = poseEstimator;
+    poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);    
   }
       
   /**
@@ -128,6 +123,50 @@ public class Camera {
    * @return
    */
   public List<PhotonPipelineResult> getCachedResults() {
-    return cachedResults;
+    return new ArrayList<>(cachedResults);
+  }
+  
+  /**
+   * Checks if camera is connected
+   * @return True if camera is connected
+   */
+  public boolean isConnected() {
+    return camera.isConnected();
+  }
+
+  /**
+   * Gets the total number of results in cache
+   */
+  public int getCachedResultCount() {
+    return cachedResults.size();
+  }
+
+  /**
+  * Gets the timestamp of the most recent result
+  */
+  public double getLatestTimestamp() {
+    PhotonPipelineResult latest = getLatestResult();
+    return latest.getTimestampSeconds();
+  }
+
+  /**
+   * Sets the active pipeline index (if multiple pipelines are configured)
+   */
+  public void setPipelineIndex(int index) {
+    camera.setPipelineIndex(index);
+  }
+
+  /**
+  * Gets the current pipeline index (if multiple pipelines are configured)
+  */
+  public int getPipelineIndex() {
+    return camera.getPipelineIndex();
+  }
+
+  /**
+   * Sets camera LED mode
+   */
+  public void setLED(boolean enabled) {
+    camera.setLED(enabled ? VisionLEDMode.kOn : VisionLEDMode.kOff);
   }
 }

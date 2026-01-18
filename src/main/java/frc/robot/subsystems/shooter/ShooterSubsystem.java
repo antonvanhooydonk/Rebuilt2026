@@ -2,7 +2,9 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.roller;
+package frc.robot.subsystems.shooter;
+
+import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -19,30 +21,32 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PWMConstants;
 import frc.robot.util.Utils;
 
-public class RollerSubsystem extends SubsystemBase {
+public class ShooterSubsystem extends SubsystemBase {
   // Hardware
-  private final TalonFX rollerMotor;
+  private final TalonFX deflectorMotor;
+  private final TalonFX shooterMotor;
   
   // Control requests (reusable objects)
   private final VoltageOut voltageRequest = new VoltageOut(0);
   
-  /** Creates a new RollerSubsystem. */
-  public RollerSubsystem() {
+  /** Creates a new ShooterSubsystem. */
+  public ShooterSubsystem() {
     // Initialize hardware
-    rollerMotor = new TalonFX(PWMConstants.RollerID);
+    deflectorMotor = new TalonFX(PWMConstants.ShooterID);
+    shooterMotor = new TalonFX(PWMConstants.ShooterID);
     
     // Configure motor
     configureMotor();    
         
     // Initialize dashboard
-    SmartDashboard.putData("Roller", this);
+    SmartDashboard.putData("Shooter", this);
     
     // Output initialization progress
-    Utils.logInfo("Roller subsystem initialized");
+    Utils.logInfo("Shooter subsystem initialized");
   }
   
   /**
-   * Configure the roller motor with all settings
+   * Configure the shooter motor with all settings
    */
   private void configureMotor() {
     TalonFXConfiguration config = new TalonFXConfiguration();
@@ -65,69 +69,94 @@ public class RollerSubsystem extends SubsystemBase {
       .withPeakReverseVoltage(-12.0);
     
     // Apply configuration
-    rollerMotor.getConfigurator().apply(config);
+    shooterMotor.getConfigurator().apply(config);
 
     // Set update frequencies based on what we need
-    rollerMotor.getVelocity().setUpdateFrequency(50);      // 50 Hz for monitoring
-    rollerMotor.getSupplyCurrent().setUpdateFrequency(10); // 10 Hz for current monitoring
-    rollerMotor.getMotorVoltage().setUpdateFrequency(10);  // 10 Hz
-    rollerMotor.getDeviceTemp().setUpdateFrequency(4);     // 4 Hz - temperature changes slowly
+    shooterMotor.getVelocity().setUpdateFrequency(50);      // 50 Hz for monitoring
+    shooterMotor.getSupplyCurrent().setUpdateFrequency(10); // 10 Hz for current monitoring
+    shooterMotor.getMotorVoltage().setUpdateFrequency(10);  // 10 Hz
+    shooterMotor.getDeviceTemp().setUpdateFrequency(4);     // 4 Hz - temperature changes slowly
     
     // Optimize CAN bus utilization
-    rollerMotor.optimizeBusUtilization();
+    shooterMotor.optimizeBusUtilization();
   }
 
   @Override
   public void periodic() {}
-  
-  // ==================== Sensor Methods ====================
-
-  
+    
   // ==================== Control Methods ====================
   
   /**
-   * Set roller motor to a specific voltage
+   * Set shooter deflector to a specific angle (in degrees)
+   * @param angleDegrees Angle to set deflector to (in degrees)
+   */
+  private void setDeflectorAngle(double angleDegrees) {
+    double clampedAngle = MathUtil.clamp(angleDegrees, 0, 45);
+    deflectorMotor.setControl(voltageRequest.withOutput(clampedAngle));
+  }
+
+  /**
+   * Set shooter motor to a specific voltage
    * @param voltage Voltage to apply (-12.0 to 12.0)
    */
   private void setVoltage(double voltage) {
     double clampedVoltage = MathUtil.clamp(voltage, -12, 12);
-    rollerMotor.setControl(voltageRequest.withOutput(clampedVoltage));
+    shooterMotor.setControl(voltageRequest.withOutput(clampedVoltage));
   }
   
   /**
-   * Stop the roller motor
+   * Stop the shooter motor
    */
   private void stop() {
     setVoltage(0);
   }
-  
-  // ==================== Command Factories ====================
-  
-  /**
-   * Command to intake coral
-   * @return Command that runs roller at intake speed for coral
-   */
-  public Command intakeFuelCommand() {
-    return run(() -> setVoltage(RollerConstants.IntakeFuelVoltage))
-      .withName("IntakeFuel");
-  }
 
   /**
-   * Command to output coral
-   * @return Command that runs roller at output speed for coral
+   * Convert a percentage (0.0 to 1.0) to a voltage (0V to 12V)
+   * @param percent Percentage to convert, expressed as a decimal - 0.0 to 1.0
+   * @return Voltage equivalent (0.0V to 12.0V)
    */
-  public Command outputFuelCommand() {
-    return run(() -> setVoltage(RollerConstants.OutputFuelVoltage))
-      .withName("OutputFuell");
+  private double percentToVoltage(double percent) {
+    return MathUtil.clamp(percent, 0, 1) * 12.0;
+  } 
+  
+  // ==================== Command Factories ====================
+
+  /**
+   * Command to output/shoot fuel into the hub.
+   * @return Command that runs shooter
+   */
+  public Command outputFuelCommand(DoubleSupplier distanceToHubMeters) {
+    return run(() -> {
+      double distance = distanceToHubMeters.getAsDouble();
+      double requiredAngleDegrees = 0;
+      double requiredVoltage = 0;
+
+      // Determine required voltage & deflector angle based on distance
+      if (distance > 0 && distance <= 1) {
+        requiredVoltage = percentToVoltage(0.25);
+        requiredAngleDegrees = 0.0;
+      } else if (distance > 1 && distance <= 2) {
+        requiredVoltage = percentToVoltage(0.30);
+        requiredAngleDegrees = 0.0;
+      } else if (distance > 2 && distance <= 3) {
+        requiredVoltage = percentToVoltage(0.35);
+        requiredAngleDegrees = 0.0;
+      }
+
+      // Configure shooter state based on distance
+      setDeflectorAngle(requiredAngleDegrees);
+      setVoltage(requiredVoltage);
+    }).withName("OutputFuel");
   }
   
   /**
-   * Command to stop the roller
-   * @return Command that stops the roller motor
+   * Command to stop the shooter
+   * @return Command that stops the shooter motor
    */
   public Command stopCommand() {
     return runOnce(this::stop)
-      .withName("StopRoller");
+      .withName("StopShooter");
   }
   
   // ==================== Telemetry Methods ====================
@@ -137,7 +166,7 @@ public class RollerSubsystem extends SubsystemBase {
    * @return velocity in RPS
    */
   private double getVelocityRPS() {
-    return rollerMotor.getVelocity().getValueAsDouble();
+    return shooterMotor.getVelocity().getValueAsDouble();
   }
   
   /**
@@ -145,7 +174,7 @@ public class RollerSubsystem extends SubsystemBase {
    * @return current in amps
    */
   private double getCurrent() {
-    return rollerMotor.getSupplyCurrent().getValueAsDouble();
+    return shooterMotor.getSupplyCurrent().getValueAsDouble();
   }
   
   /**
@@ -153,7 +182,7 @@ public class RollerSubsystem extends SubsystemBase {
    * @return voltage in volts
    */
   private double getVoltage() {
-    return rollerMotor.getMotorVoltage().getValueAsDouble();
+    return shooterMotor.getMotorVoltage().getValueAsDouble();
   }
   
   /**
@@ -161,7 +190,7 @@ public class RollerSubsystem extends SubsystemBase {
    * @return temperature in Celsius
    */
   private double getTemperature() {
-    return rollerMotor.getDeviceTemp().getValueAsDouble();
+    return shooterMotor.getDeviceTemp().getValueAsDouble();
   }
 
   /**
@@ -169,7 +198,7 @@ public class RollerSubsystem extends SubsystemBase {
    */
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.setSmartDashboardType("RollerSubsystem");
+    builder.setSmartDashboardType("ShooterSubsystem");
     builder.addDoubleProperty("Velocity (RPS)", this::getVelocityRPS, null);
     builder.addDoubleProperty("Voltage (V)", this::getVoltage, null);
     builder.addDoubleProperty("Current (A)", this::getCurrent, null);

@@ -148,10 +148,8 @@ public final class Constants {
    * PWM Constants
    */
   public static class PWMConstants {
-    public static final int LEDStripID        = 0;
-    public static final int RightElevatorID   = 1;
-    public static final int LeftElevatorID    = 2;
-    public static final int ArmID             = 3;
-    public static final int RollerID          = 4;
+    public static final int LEDStripID  = 0;
+    public static final int RollerID    = 1;
+    public static final int ShooterID   = 2;
   }
 }

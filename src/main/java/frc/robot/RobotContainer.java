@@ -17,10 +17,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import frc.robot.Constants.ControllerConstants;
-import frc.robot.subsystems.arm.ArmSubsystem;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.feedback.FeedbackSubsystem;
 import frc.robot.subsystems.roller.RollerSubsystem;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.Utils;
 
@@ -34,10 +34,9 @@ public class RobotContainer {
   // Initialize our controllers
   private final CommandXboxController driverXbox = new CommandXboxController(0);
   private final CommandGenericHID opController1 = new CommandGenericHID(1);
-  private final CommandGenericHID opController2 = new CommandGenericHID(2);
 
   // The robot's subsystems and commands are defined here...
-  private final ArmSubsystem armSubsystem = new ArmSubsystem();
+  private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
   private final FeedbackSubsystem feedbackSubsystem = new FeedbackSubsystem(driverXbox);
   private final RollerSubsystem rollerSubsystem = new RollerSubsystem();
   private final VisionSubsystem visionSubsystem = new VisionSubsystem();
@@ -138,9 +137,6 @@ public class RobotContainer {
     // Initialize for teleop at start of teleop period
     new Trigger(RobotState::isTeleop).onTrue(driveSubsystem.initTeleopCommand());
 
-    // Feedback when game piece acquired
-    new Trigger(rollerSubsystem::hasGamePiece).onTrue(feedbackSubsystem.gamePieceAcquiredCommand());
-    
     // -------------------------------------------------------------------
     // Configure button triggers
     // -------------------------------------------------------------------
@@ -151,13 +147,13 @@ public class RobotContainer {
     driverXbox.back().onTrue(driveSubsystem.toggleFieldRelativeModeCommand().ignoringDisable(true));
 
     // Set the arm to the home position
-    driverXbox.a().onTrue(armSubsystem.moveToHomeCommand());
+    driverXbox.a().onTrue(shooterSubsystem.outputFuelCommand(() -> 1.0));
     
     // Stop and lock wheels
     driverXbox.x().onTrue(driveSubsystem.stopAndLockWheelsCommand());
 
     // Set the arm to the coral move position
-    driverXbox.b().onTrue(armSubsystem.moveToCoralMoveCommand());
+    driverXbox.b().onTrue(Commands.none());
     
     // Manually toggle "slow" mode
     driverXbox.y().onTrue(driveSubsystem.toggleSlowModeCommand().ignoringDisable(true));
@@ -176,16 +172,16 @@ public class RobotContainer {
  
     // Configure operator controller 1 - blue buttons
     opController1.button(ControllerConstants.Operator1.ButtonBlue1).onTrue(
-      armSubsystem.moveToAlgaeMoveCommand()
+      Commands.none()
       .andThen(Commands.parallel(
-        armSubsystem.moveToAlgaeProcessorCommand(),
-        driveSubsystem.disableSlowModeCommand()
+        Commands.none(),
+        Commands.none()
       ))
     );
 
     // Configure operator controller 1 - other buttons
     opController1.button(ControllerConstants.Operator1.ButtonYellow)
-      .whileTrue(rollerSubsystem.intakeCoralUntilDetectedCommand());
+      .whileTrue(rollerSubsystem.intakeFuelCommand());
   }
 
   /**

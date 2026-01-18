@@ -207,6 +207,11 @@ public class VisionSubsystem extends SubsystemBase {
       if (target == null || target.getPoseAmbiguity() > VisionConstants.kPoseAmbiguityThreshold) {
         return false;
       }
+
+      // Area check (tags too small = far away = unreliable)
+      if (target.getArea() < VisionConstants.kMinTagAreaPixels) {
+        return false;
+      }
     }
     
     // Get the 2D pose for boundary checks
@@ -243,7 +248,10 @@ public class VisionSubsystem extends SubsystemBase {
     
     // Calculate average distance to targets
     double avgDistance = result.getTargets().stream()
-      .mapToDouble(target -> target.getBestCameraToTarget().getTranslation().getNorm())
+      .mapToDouble(target -> {
+        var transform = target.getBestCameraToTarget();
+        return transform != null ? transform.getTranslation().getNorm() : VisionConstants.kMaxDistanceMeters;
+      })
       .average()
       .orElse(VisionConstants.kMaxDistanceMeters);
         
