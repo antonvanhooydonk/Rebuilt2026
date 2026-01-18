@@ -150,13 +150,13 @@ public class SwerveModule implements Sendable {
     // Update cached state
     this.cachedState = new SwerveModuleState(
       (driveMotor.getVelocity().getValueAsDouble() / DriveConstants.kDriveGearRatio) * DriveConstants.kWheelCircumference,
-      new Rotation2d(steerEncoder.getPosition())
+      new Rotation2d(MathUtil.inputModulus(steerEncoder.getPosition(), 0, 2 * Math.PI))
     );
 
     // Update cached position
     this.cachedPosition = new SwerveModulePosition(
       (driveMotor.getPosition().getValueAsDouble() / DriveConstants.kDriveGearRatio) * DriveConstants.kWheelCircumference,
-      new Rotation2d(steerEncoder.getPosition())
+      new Rotation2d(MathUtil.inputModulus(steerEncoder.getPosition(), 0, 2 * Math.PI))
     );
   }
 
