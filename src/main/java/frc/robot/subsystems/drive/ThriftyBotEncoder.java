@@ -75,8 +75,8 @@ public class ThriftyBotEncoder implements Sendable {
       angle = -angle;
     }
 
-    // Return the angle normalized to [-π, π]
-    return MathUtil.angleModulus(angle);
+    // Return the angle normalized to [0, 2π]
+    return MathUtil.inputModulus(angle, 0, 2 * Math.PI);
   }
   
   /**
@@ -89,7 +89,7 @@ public class ThriftyBotEncoder implements Sendable {
   
   /**
    * Gets the current angle in degrees
-   * @return Angle in degrees (-180 to 180)
+   * @return Angle in degrees (0 to 360) 
    */
   public double getAngleDegrees() {
     return Units.radiansToDegrees(getAngleRadians());
