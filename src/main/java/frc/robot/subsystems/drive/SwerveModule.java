@@ -126,8 +126,10 @@ public class SwerveModule implements Sendable {
     // Reset encoders (do this after getting the encoder)
     resetEncoders();
 
-    // Initialize target state
-    lastState = getState();
+    // Initialize cached state & position
+    cachedState = new SwerveModuleState(0.0, new Rotation2d());
+    cachedPosition = new SwerveModulePosition(0.0, new Rotation2d());
+    lastState = cachedState;
 
     // Initialize dashboard values
     SmartDashboard.putData("Drive/Modules/" + this.moduleName, this);
@@ -310,8 +312,9 @@ public class SwerveModule implements Sendable {
       return;
     }
   
-    // Optimize the desired state
-    desiredState.optimize(getState().angle);
+    // Optimize the desired state (already by setpoint generator)
+    // Uncomment the line below if NOT using the SwerveSetpointGenerator
+    // desiredState.optimize(getState().angle);
     
     // Command the robot to move
     setDriveVelocity(desiredState.speedMetersPerSecond);

@@ -171,7 +171,13 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {
+  public void periodic() {    
+    // Call each swerve module's periodic first, 
+    // since they cache state
+    for (var module : modules) {
+      module.periodic();
+    }
+
     // Run the gyro's periodic method
     gyro.periodic();
 
@@ -183,11 +189,6 @@ public class DriveSubsystem extends SubsystemBase {
     
     // Update field visualization
     field2d.setRobotPose(getPose());
-    
-    // Call each swerve module's periodic
-    for (var module : modules) {
-      module.periodic();
-    }
   }
 
   /**
