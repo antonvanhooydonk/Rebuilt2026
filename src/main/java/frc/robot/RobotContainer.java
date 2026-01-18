@@ -140,8 +140,8 @@ public class RobotContainer {
     // -------------------------------------------------------------------
     // Configure button triggers
     // -------------------------------------------------------------------
-    // Zero gyro yaw when start button is pushed
-    driverXbox.start().onTrue(driveSubsystem.zeroHeadingCommand().ignoringDisable(true));
+    // Reset odometry when start button is pushed
+    driverXbox.start().onTrue(driveSubsystem.resetOdometryCommand().ignoringDisable(true));
 
     // Toggle field-relative driving when back button is pressed
     driverXbox.back().onTrue(driveSubsystem.toggleFieldRelativeModeCommand().ignoringDisable(true));

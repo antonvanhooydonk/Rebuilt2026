@@ -26,6 +26,7 @@ public class NavX2Gyro implements Sendable {
   // Instance fields
   private boolean connected = true;
   private int disconnectCount = 0;
+  private double offsetDegrees = 0.0;
   
   /**
    * Creates a new NavX2 gyro object.
@@ -128,9 +129,7 @@ public class NavX2Gyro implements Sendable {
 
     // Return the gyro angle with the offset applied.
     // NavX reports CW positive so we negate for CCW positive.
-    return Rotation2d.fromDegrees(-gyro.getAngle());
-    // return Rotation2d.fromDegrees(Math.IEEEremainder(-gyro.getAngle(), 360));
-    // return Rotation2d.fromDegrees(-gyro.getYaw()); 
+    return Rotation2d.fromDegrees(-(gyro.getAngle() - offsetDegrees));
   }
 
   /**
@@ -158,11 +157,23 @@ public class NavX2Gyro implements Sendable {
   }
 
   /**
-   * Resets the gyro to zero.
+   * Resets the gyro to zero and clears internal offset.
    */
   public void reset() {
     gyro.reset(); 
     gyro.zeroYaw();
+    offsetDegrees = 0.0;
+  }
+
+  /**
+   * Resets the gyro to a given angle by setting an offset.
+   * This calculates what offset is needed to make the current
+   * gyro reading appear as the desired angle.
+   */
+  public void resetToAngle(Rotation2d angle) {
+    // Calculate the offset needed to make current reading equal target angle
+    // offsetDegrees = current raw angle - desired angle
+    offsetDegrees = gyro.getAngle() - (-angle.getDegrees());
   }
 
   /**

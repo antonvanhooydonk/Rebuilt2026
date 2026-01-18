@@ -145,10 +145,8 @@ public class DriveSubsystem extends SubsystemBase {
     // IF USING CUSTOM PATHFINDER ADD THEM HERE
     PathfindingCommand.warmupCommand().schedule();
 
-    // Zero the gyro if vision is not enabled
-    if (!isVisionEnabled()) {
-      zeroHeading();
-    }
+    // Reset odometry to origin on boot
+    resetOdometry();
 
     // Add data to dashboard
     SmartDashboard.putData("Drive", this);
@@ -196,18 +194,10 @@ public class DriveSubsystem extends SubsystemBase {
    * Should be called from Robot.autonomousInit() or a command scheduler binding.
    */
   private void initAutonomous() {
-    // Reset gyro if vision is not enabled
-    if (!isVisionEnabled()) {
-      gyro.reset();
-    }
-    
-    // Reset module encoders
-    for (var module : modules) {
-      module.resetEncoders();
-    }
-
-    // Reset the swerve pose estimator. PathPlanner auto will set the correct starting pose.
-    resetPose(new Pose2d());
+    // Reset odometry to origin as a safety default.
+    // PathPlanner will immediately override this with 
+    // the proper starting pose when auto starts.
+    resetOdometry();
 
     // Reset last setpoint for setpoint generator
     lastSetpoint = new SwerveSetpoint(
@@ -376,12 +366,15 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
-   * Zeros the gyroscope heading and resets the pose estimator.
+   * Resets odometry by zeroing the gyroscope heading, 
+   * resetting encoders, and resetting the pose estimator.
    * NOTE: Should never need to call this if vision is working properly.
    */
-  private void zeroHeading() {
+  private void resetOdometry() {
     // Reset gyro
-    gyro.reset();
+    if (!isVisionEnabled()) {
+      gyro.reset();
+    }
     
     // Reset module encoders
     for (var module : modules) {
@@ -390,6 +383,25 @@ public class DriveSubsystem extends SubsystemBase {
 
     // Reset pose estimator to origin with 0° heading
     resetPose(new Pose2d());
+  }
+
+  /**
+   * Resets odometry to a specific pose and resets module encoders.
+   * NOTE: Should never need to call this if vision is working properly.
+   */
+  private void resetOdometryToPose(Pose2d pose) {
+    // Reset gyro
+    if (!isVisionEnabled()) {
+      gyro.resetToAngle(pose.getRotation());
+    }
+    
+    // Reset module encoders
+    for (var module : modules) {
+      module.resetEncoders();
+    }
+
+    // Reset pose estimator to origin with 0° heading
+    resetPose(pose);
   }
 
   /**
@@ -417,7 +429,7 @@ public class DriveSubsystem extends SubsystemBase {
   private void resetPose(Pose2d pose) {
     poseEstimator.resetPosition(gyro.getAngle(), getModulePositions(), pose);
   }
-
+  
   /**
    * Gets the current chassis speeds
    * @return Current ChassisSpeeds
@@ -629,8 +641,15 @@ public class DriveSubsystem extends SubsystemBase {
   /**
    * Zeros the gyroscope heading
    */
-  public Command zeroHeadingCommand() {
-    return runOnce(this::zeroHeading);
+  public Command resetOdometryCommand() {
+    return runOnce(this::resetOdometry);
+  }
+
+  /**
+   * Zeros the gyroscope heading
+   */
+  public Command resetOdometryToPoseCommand(Pose2d pose) {
+    return runOnce(() -> resetOdometryToPose(pose));
   }
 
   /**
