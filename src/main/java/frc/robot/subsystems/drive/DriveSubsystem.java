@@ -263,6 +263,9 @@ public class DriveSubsystem extends SubsystemBase {
   private void addVisionMeasurements() {
     // Exit early if vision subsystem is not available or is disabled
     if (!isVisionEnabled()) return;
+
+    // Get current time
+    double now = Timer.getFPGATimestamp();
     
     // Get all latest vision measurements
     List<VisionMeasurement> measurements = visionSubsystem.getLatestMeasurements();
@@ -270,7 +273,52 @@ public class DriveSubsystem extends SubsystemBase {
     // Process each vision measurement
     for (VisionMeasurement measurement : measurements) {
       try {
-        // Add vision measurement to pose estimator
+        Pose2d visionPose = measurement.getPose();
+        double timestamp = measurement.getTimestampSeconds();
+
+        // Reject timestamps older than 0.3 seconds
+        if ((now - timestamp) > 0.3) {
+          continue;
+        }
+
+        // Reject timestamps from the future
+        if (timestamp > now) {
+          continue;
+        }
+
+        // Get current pose
+        Pose2d currentPose = getPose();
+
+        // Reject large translation jumps. 
+        // Typical thresholds: 
+        //    Auto:   0.5m – 0.75m
+        //    Teleop: 1.0m – 1.50m
+        if (currentPose.getTranslation().getDistance(visionPose.getTranslation()) > 1.0) {
+          continue;
+        }
+
+        // Reject rotations > 30 degrees
+        if (Math.abs(currentPose.getRotation().minus(visionPose.getRotation()).getDegrees()) > 30.0) {
+          continue;
+        }
+
+        // Reject if the robot is rotating very fast (> 3 rad/s)
+        if (Math.abs(getChassisSpeeds().omegaRadiansPerSecond) > 3.0) {
+          continue;
+        }
+
+        // Reject if the robot is moving very fast (> 3 m/s)
+        ChassisSpeeds speeds = getChassisSpeeds();
+        if (Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond) > 3.0) {
+          continue;
+        }
+
+        // Reject poses outside the field boundaries
+        if (!visionSubsystem.isPoseOnField(measurement.getPose())) {
+          continue;
+        }
+
+        // If we make it here => add vision measurement to pose estimator
         double[] stdDevs = measurement.getStandardDeviations();
         poseEstimator.addVisionMeasurement(
           measurement.getPose(),
@@ -366,23 +414,11 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
-   * Resets odometry by zeroing the gyroscope heading, 
-   * resetting encoders, and resetting the pose estimator.
+   * Resets odometry by zeroing the gyroscope heading and resetting the pose estimator.
    * NOTE: Should never need to call this if vision is working properly.
    */
   private void resetOdometry() {
-    // Reset gyro
-    if (!isVisionEnabled()) {
-      gyro.reset();
-    }
-    
-    // Reset module encoders
-    for (var module : modules) {
-      module.resetEncoders();
-    }
-
-    // Reset pose estimator to origin with 0° heading
-    resetPose(new Pose2d());
+    resetOdometry(new Pose2d());
   }
 
   /**
@@ -398,11 +434,6 @@ public class DriveSubsystem extends SubsystemBase {
     // Reset gyro
     if (!isVisionEnabled()) {
       gyro.resetToAngle(pose.getRotation());
-    }
-    
-    // Reset module encoders
-    for (var module : modules) {
-      module.resetEncoders();
     }
 
     // Reset pose estimator to origin with 0° heading

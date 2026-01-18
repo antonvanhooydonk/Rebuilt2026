@@ -218,12 +218,7 @@ public class VisionSubsystem extends SubsystemBase {
     Pose2d pose2d = estimatedPose.estimatedPose.toPose2d();
     
     // Check if pose is within field boundaries
-    if (
-      pose2d.getX() < -VisionConstants.kFieldBorderMargin || 
-      pose2d.getX() > FieldConstants.kFieldLengthMeters + VisionConstants.kFieldBorderMargin ||
-      pose2d.getY() < -VisionConstants.kFieldBorderMargin || 
-      pose2d.getY() > FieldConstants.kFieldWidthMeters + VisionConstants.kFieldBorderMargin
-    ) {
+    if (!isPoseOnField(pose2d)) {
       return false;
     }
     
@@ -317,6 +312,23 @@ public class VisionSubsystem extends SubsystemBase {
       Utils.logInfo(cameraName + " detected " + result.getTargets().size() + " targets: " + ids);
       lastTargetLogTimestamp = currentTime;
     }
+  }
+
+  /**
+   * Check if a given pose is within the field boundaries
+   * @param pose The pose to check
+   * @return True if the pose is on the field
+   */
+  public boolean isPoseOnField(Pose2d pose) {
+    if (
+      pose.getX() < -VisionConstants.kFieldBorderMargin || 
+      pose.getX() > FieldConstants.kFieldLengthMeters + VisionConstants.kFieldBorderMargin ||
+      pose.getY() < -VisionConstants.kFieldBorderMargin || 
+      pose.getY() > FieldConstants.kFieldWidthMeters + VisionConstants.kFieldBorderMargin
+    ) {
+      return false;
+    }
+    return true;
   }
 
   /**
