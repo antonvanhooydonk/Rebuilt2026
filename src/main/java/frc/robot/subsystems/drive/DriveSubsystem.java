@@ -389,7 +389,12 @@ public class DriveSubsystem extends SubsystemBase {
    * Resets odometry to a specific pose and resets module encoders.
    * NOTE: Should never need to call this if vision is working properly.
    */
-  private void resetOdometryToPose(Pose2d pose) {
+  private void resetOdometry(Pose2d pose) {
+    // Handle null pose
+    if (pose == null) {
+      pose = new Pose2d();
+    }
+
     // Reset gyro
     if (!isVisionEnabled()) {
       gyro.resetToAngle(pose.getRotation());
@@ -639,17 +644,17 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
-   * Zeros the gyroscope heading
+   * Reset the odometry
    */
   public Command resetOdometryCommand() {
     return runOnce(this::resetOdometry);
   }
 
   /**
-   * Zeros the gyroscope heading
+   * Reset the odometry to a known pose
    */
   public Command resetOdometryToPoseCommand(Pose2d pose) {
-    return runOnce(() -> resetOdometryToPose(pose));
+    return runOnce(() -> resetOdometry(pose));
   }
 
   /**
