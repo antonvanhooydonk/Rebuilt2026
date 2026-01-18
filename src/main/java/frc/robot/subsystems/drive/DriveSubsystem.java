@@ -338,7 +338,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
-   * Set each swerver module to brake/coast mode
+   * Set each swerve module to brake/coast mode
    * @param brake True to enable motor brake, false for coast
    */
   private void setMotorBrake(boolean brake) {
