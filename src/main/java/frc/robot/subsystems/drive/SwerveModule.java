@@ -59,6 +59,10 @@ public class SwerveModule implements Sendable {
   // Previous target/desired state
   private SwerveModuleState lastState;
 
+  // Cached state/position for optimization
+  private SwerveModuleState cachedState;
+  private SwerveModulePosition cachedPosition;
+
   /**
    * Construct a SwerveModule with the given parameters
    * @param moduleName Name of the module for debugging
@@ -136,7 +140,17 @@ public class SwerveModule implements Sendable {
    * Called periodically by the drive subsystem
    */
   public void periodic() {
-    // Nothing needed here for now
+    // Update cached state
+    this.cachedState = new SwerveModuleState(
+      (driveMotor.getVelocity().getValueAsDouble() / DriveConstants.kDriveGearRatio) * DriveConstants.kWheelCircumference,
+      new Rotation2d(steerEncoder.getPosition())
+    );
+
+    // Update cached position
+    this.cachedPosition = new SwerveModulePosition(
+      (driveMotor.getPosition().getValueAsDouble() / DriveConstants.kDriveGearRatio) * DriveConstants.kWheelCircumference,
+      new Rotation2d(steerEncoder.getPosition())
+    );
   }
 
   /**
@@ -269,23 +283,21 @@ public class SwerveModule implements Sendable {
   }
 
   /**
-   * Gets the current state of the swerve module
-   * @return Current SwerveModuleState
+   * Gets the most recent cached state of the swerve module
+   * Updated in periodic() to help with optimization
+   * @return Cached SwerveModuleState
    */
   public SwerveModuleState getState() {
-    double velocity = (driveMotor.getVelocity().getValueAsDouble() / DriveConstants.kDriveGearRatio) * DriveConstants.kWheelCircumference;
-    Rotation2d angle = new Rotation2d(steerEncoder.getPosition());
-    return new SwerveModuleState(velocity, angle);
+    return cachedState;
   }
 
   /**
-   * Gets the current position of the swerve module
-   * @return Current SwerveModulePosition
+   * Gets the most recent cached position of the swerve module
+   * Updated in periodic() to help with optimization
+   * @return Cached SwerveModulePosition
    */
   public SwerveModulePosition getPosition() {
-    double distance = (driveMotor.getPosition().getValueAsDouble() / DriveConstants.kDriveGearRatio) * DriveConstants.kWheelCircumference;
-    Rotation2d angle = new Rotation2d(steerEncoder.getPosition());
-    return new SwerveModulePosition(distance, angle);
+    return cachedPosition;
   }
 
   /**
