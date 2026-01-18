@@ -194,9 +194,9 @@ public class DriveSubsystem extends SubsystemBase {
    * Should be called from Robot.autonomousInit() or a command scheduler binding.
    */
   private void initAutonomous() {
-    // Reset odometry to origin as a safety default.
-    // PathPlanner will immediately override this with 
-    // the proper starting pose when auto starts.
+    // Reset odometry to origin as a safety default if no auto path is selected.
+    // PathPlanner will immediately override this with the proper starting 
+    // pose when auto starts.
     resetOdometry();
 
     // Reset last setpoint for setpoint generator
