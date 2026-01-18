@@ -20,6 +20,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkClosedLoopController;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -234,8 +235,8 @@ public class SwerveModule implements Sendable {
     steerConfig.closedLoop
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       .outputRange(-1.0, 1.0)
-      .positionWrappingEnabled(true)
-      .positionWrappingInputRange(-Math.PI, Math.PI)
+      .positionWrappingEnabled(true)      
+      .positionWrappingInputRange(0.0, 2 * Math.PI) // .positionWrappingInputRange(-Math.PI, Math.PI)
       .p(DriveConstants.kSteerKP)             // Proportional gain
       .i(DriveConstants.kSteerKI)             // Integral gain
       .d(DriveConstants.kSteerKD)             // Derivative gain
@@ -321,7 +322,10 @@ public class SwerveModule implements Sendable {
     setSteerAngle(desiredState.angle.getRadians());
 
     // Cache desired state for next comparison
-    lastState = desiredState;
+    lastState = new SwerveModuleState(
+      desiredState.speedMetersPerSecond,
+      desiredState.angle
+    );
   }
 
   /**
@@ -338,7 +342,8 @@ public class SwerveModule implements Sendable {
    * @param angleRadians Desired angle in radians
    */
   private void setSteerAngle(double angleRadians) {
-    steerPIDController.setReference(angleRadians, SparkMax.ControlType.kPosition);
+    double angle = MathUtil.inputModulus(angleRadians, 0, 2 * Math.PI);
+    steerPIDController.setReference(angle, SparkMax.ControlType.kPosition);
   }
 
   /**
