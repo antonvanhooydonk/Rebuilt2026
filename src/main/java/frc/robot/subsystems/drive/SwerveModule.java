@@ -150,13 +150,13 @@ public class SwerveModule implements Sendable {
     // Update cached state
     this.cachedState = new SwerveModuleState(
       (driveMotor.getVelocity().getValueAsDouble() / DriveConstants.kDriveGearRatio) * DriveConstants.kWheelCircumference,
-      new Rotation2d(MathUtil.inputModulus(steerEncoder.getPosition(), 0, 2 * Math.PI))
+      new Rotation2d(normalizeAngle(steerEncoder.getPosition()))
     );
 
     // Update cached position
     this.cachedPosition = new SwerveModulePosition(
       (driveMotor.getPosition().getValueAsDouble() / DriveConstants.kDriveGearRatio) * DriveConstants.kWheelCircumference,
-      new Rotation2d(MathUtil.inputModulus(steerEncoder.getPosition(), 0, 2 * Math.PI))
+      new Rotation2d(normalizeAngle(steerEncoder.getPosition()))
     );
   }
 
@@ -344,8 +344,17 @@ public class SwerveModule implements Sendable {
    * @param angleRadians Desired angle in radians
    */
   private void setSteerAngle(double angleRadians) {
-    double angle = MathUtil.inputModulus(angleRadians, 0, 2 * Math.PI);
+    double angle = normalizeAngle(angleRadians);
     steerPIDController.setReference(angle, SparkMax.ControlType.kPosition);
+  }
+
+  /**
+   * Normalizes an angle to the range [0, 2PI)
+   * @param angleRadians Angle in radians
+   * @return Normalized angle in radians
+   */
+  private double normalizeAngle(double angleRadians) {
+    return MathUtil.inputModulus(angleRadians, 0, 2 * Math.PI);
   }
 
   /**
