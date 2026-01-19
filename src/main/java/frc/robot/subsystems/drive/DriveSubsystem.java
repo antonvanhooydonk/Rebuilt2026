@@ -173,8 +173,9 @@ public class DriveSubsystem extends SubsystemBase {
     // Run the gyro's periodic method
     gyro.periodic();
 
-    // Call each swerve module's periodic before 
-    // pose estimatore since they cache state.
+    // Call each swerve module's periodic before updating the pose estimate since 
+    // they calculate and cache their state/positions in their periodics and the 
+    // pose estimatore uses the cached postions in its update.
     for (var module : modules) {
       module.periodic();
     }
