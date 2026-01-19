@@ -275,6 +275,7 @@ public class DriveSubsystem extends SubsystemBase {
       try {
         Pose2d visionPose = measurement.getPose();
         double timestamp = measurement.getTimestampSeconds();
+        double[] stdDevs = measurement.getStandardDeviations();
 
         // Reject timestamps older than 0.3 seconds
         if ((now - timestamp) > 0.3) {
@@ -314,15 +315,14 @@ public class DriveSubsystem extends SubsystemBase {
         }
 
         // Reject poses outside the field boundaries
-        if (!visionSubsystem.isPoseOnField(measurement.getPose())) {
+        if (!visionSubsystem.isPoseOnField(visionPose)) {
           continue;
         }
 
         // If we make it here => add vision measurement to pose estimator
-        double[] stdDevs = measurement.getStandardDeviations();
         poseEstimator.addVisionMeasurement(
-          measurement.getPose(),
-          measurement.getTimestampSeconds(),
+          visionPose,
+          timestamp,
           VecBuilder.fill(stdDevs[0], stdDevs[1], stdDevs[2])
         );          
       } catch (Exception e) {
