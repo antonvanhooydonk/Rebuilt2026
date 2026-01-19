@@ -287,19 +287,19 @@ public class DriveSubsystem extends SubsystemBase {
           continue;
         }
 
-        // Get current pose
-        Pose2d currentPose = getPose();
+        // Get the robot's current pose
+        Pose2d robotPose = getPose();
 
         // Reject large translation jumps. 
         // Typical thresholds: 
         //    Auto:   0.5m – 0.75m
         //    Teleop: 1.0m – 1.50m
-        if (currentPose.getTranslation().getDistance(visionPose.getTranslation()) > 1.0) {
+        if (robotPose.getTranslation().getDistance(visionPose.getTranslation()) > 1.0) {
           continue;
         }
 
         // Reject rotations > 30 degrees
-        if (Math.abs(currentPose.getRotation().minus(visionPose.getRotation()).getDegrees()) > 30.0) {
+        if (Math.abs(robotPose.getRotation().minus(visionPose.getRotation()).getDegrees()) > 30.0) {
           continue;
         }
 
