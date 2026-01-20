@@ -59,7 +59,7 @@ public class SwerveModule implements Sendable {
   private final boolean absoluteEncoderInverted;
   private final String moduleName;
 
-  // Previous target/desired state
+  // Previous target/desired state (used for telemetry only)
   private SwerveModuleState lastState;
 
   // Cached state/position for optimization
@@ -147,17 +147,13 @@ public class SwerveModule implements Sendable {
    * Called periodically by the drive subsystem
    */
   public void periodic() {
-    // Update cached state
-    this.cachedState = new SwerveModuleState(
-      (driveMotor.getVelocity().getValueAsDouble() / DriveConstants.kDriveGearRatio) * DriveConstants.kWheelCircumference,
-      new Rotation2d(normalizeAngle(steerEncoder.getPosition()))
-    );
+    // Update cached state (avoids newing SwerveModuleState each time)
+    this.cachedState.speedMetersPerSecond = (driveMotor.getVelocity().getValueAsDouble() / DriveConstants.kDriveGearRatio) * DriveConstants.kWheelCircumference;
+    this.cachedState.angle = new Rotation2d(normalizeAngle(steerEncoder.getPosition()));
 
-    // Update cached position
-    this.cachedPosition = new SwerveModulePosition(
-      (driveMotor.getPosition().getValueAsDouble() / DriveConstants.kDriveGearRatio) * DriveConstants.kWheelCircumference,
-      new Rotation2d(normalizeAngle(steerEncoder.getPosition()))
-    );
+    // Update cached position (avoids newing SwerveModulePosition each time)
+    this.cachedPosition.distanceMeters = (driveMotor.getPosition().getValueAsDouble() / DriveConstants.kDriveGearRatio) * DriveConstants.kWheelCircumference;
+    this.cachedPosition.angle = new Rotation2d(normalizeAngle(steerEncoder.getPosition()));
   }
 
   /**
@@ -288,19 +284,19 @@ public class SwerveModule implements Sendable {
   /**
    * Gets the most recent cached state of the swerve module
    * Updated in periodic() to help with optimization
-   * @return Cached SwerveModuleState
+   * @return Defensive copy of cached SwerveModuleState
    */
   public SwerveModuleState getState() {
-    return cachedState;
+    return new SwerveModuleState(cachedState.speedMetersPerSecond, cachedState.angle);
   }
 
   /**
    * Gets the most recent cached position of the swerve module
    * Updated in periodic() to help with optimization
-   * @return Cached SwerveModulePosition
+   * @return Defensive copy of cached SwerveModulePosition
    */
   public SwerveModulePosition getPosition() {
-    return cachedPosition;
+    return new SwerveModulePosition(cachedPosition.distanceMeters, cachedPosition.angle);
   }
 
   /**
