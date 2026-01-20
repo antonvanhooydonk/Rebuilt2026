@@ -59,12 +59,12 @@ public class SwerveModule implements Sendable {
   private final boolean absoluteEncoderInverted;
   private final String moduleName;
 
-  // Target state (used for telemetry only)
-  private SwerveModuleState targetState;
-
-  // Cached state/position for optimization
+  // Cached state & position for optimization
   private SwerveModuleState cachedState;
   private SwerveModulePosition cachedPosition;
+
+  // Target state (used for telemetry only)
+  private SwerveModuleState targetState;
 
   /**
    * Construct a SwerveModule with the given parameters
