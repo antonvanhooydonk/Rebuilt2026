@@ -172,8 +172,9 @@ public class NavX2Gyro implements Sendable {
    */
   public void resetToAngle(Rotation2d angle) {
     // Calculate the offset needed to make current reading equal target 
-    // angle offsetDegrees = current raw angle - desired angle
-    offsetDegrees = gyro.getAngle() - (-angle.getDegrees());
+    // angle offsetDegrees = currentRawAngle - (-desiredAngle)
+    // => offsetDegrees = currentRawAngle + desiredAngle
+    offsetDegrees = gyro.getAngle() + angle.getDegrees();
   }
 
   /**
