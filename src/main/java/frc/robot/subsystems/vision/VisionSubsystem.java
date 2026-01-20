@@ -147,7 +147,7 @@ public class VisionSubsystem extends SubsystemBase {
           // Get pose estimate from multi-tag estimator
           Optional<EstimatedRobotPose> poseResult = camera.getPoseEstimator().estimateCoprocMultiTagPose(result);
           
-          // Fallback to lowest ambiguity estimator if multi-tag failed
+          // Fallback to lowest ambiguity estimate if multi-tag failed
           if (poseResult.isEmpty()) {            
             poseResult = camera.getPoseEstimator().estimateLowestAmbiguityPose(result);
           };
