@@ -59,8 +59,8 @@ public class SwerveModule implements Sendable {
   private final boolean absoluteEncoderInverted;
   private final String moduleName;
 
-  // Previous target/desired state (used for telemetry only)
-  private SwerveModuleState lastState;
+  // Previous target state (used for telemetry only)
+  private SwerveModuleState targetState;
 
   // Cached state/position for optimization
   private SwerveModuleState cachedState;
@@ -134,7 +134,7 @@ public class SwerveModule implements Sendable {
     // Initialize cached state & position
     cachedState = new SwerveModuleState(0.0, new Rotation2d());
     cachedPosition = new SwerveModulePosition(0.0, new Rotation2d());
-    lastState = cachedState;
+    targetState = cachedState;
 
     // Initialize dashboard values
     SmartDashboard.putData("Drive/Modules/" + this.moduleName, this);
@@ -277,8 +277,8 @@ public class SwerveModule implements Sendable {
    * Gets the target state of the swerve module
    * @return
    */
-  public SwerveModuleState getLastState() {
-    return new SwerveModuleState(lastState.speedMetersPerSecond, lastState.angle);
+  public SwerveModuleState getTargetState() {
+    return new SwerveModuleState(targetState.speedMetersPerSecond, targetState.angle);
   }
 
   /**
@@ -318,9 +318,9 @@ public class SwerveModule implements Sendable {
     setDriveVelocity(desiredState.speedMetersPerSecond);
     setSteerAngle(desiredState.angle.getRadians());
 
-    // Update last state with current desired state for telemetry
-    lastState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
-    lastState.angle = desiredState.angle;
+    // Update target state with current desired state for telemetry
+    targetState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
+    targetState.angle = desiredState.angle;
   }
 
   /**
@@ -381,8 +381,8 @@ public class SwerveModule implements Sendable {
    */
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addDoubleProperty("Last Target Speed (mps)", () -> lastState.speedMetersPerSecond, null);
-    builder.addDoubleProperty("Last Target Angle (deg)", () -> lastState.angle.getDegrees(), null);
+    builder.addDoubleProperty("Target Speed (mps)", () -> targetState.speedMetersPerSecond, null);
+    builder.addDoubleProperty("Target Angle (deg)", () -> targetState.angle.getDegrees(), null);
     builder.addDoubleProperty("Current Speed (mps)", () -> getState().speedMetersPerSecond, null);
     builder.addDoubleProperty("Current Angle (deg)", () -> getState().angle.getDegrees(), null);
     builder.addDoubleProperty("Absolute Encoder (deg)", () -> absoluteEncoder.getAngleDegrees(), null);
