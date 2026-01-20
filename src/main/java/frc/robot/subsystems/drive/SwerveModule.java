@@ -10,13 +10,13 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 
+import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkClosedLoopController;
 
@@ -134,7 +134,7 @@ public class SwerveModule implements Sendable {
     // Initialize cached state & position
     cachedState = new SwerveModuleState(0.0, new Rotation2d());
     cachedPosition = new SwerveModulePosition(0.0, new Rotation2d());
-    targetState = cachedState;
+    targetState = new SwerveModuleState(0.0, new Rotation2d());
 
     // Initialize dashboard values
     SmartDashboard.putData("Drive/Modules/" + this.moduleName, this);
@@ -232,11 +232,11 @@ public class SwerveModule implements Sendable {
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       .outputRange(-1.0, 1.0)
       .positionWrappingEnabled(true)      
-      .positionWrappingInputRange(0.0, 2 * Math.PI) // .positionWrappingInputRange(-Math.PI, Math.PI)
-      .p(DriveConstants.kSteerKP)             // Proportional gain
-      .i(DriveConstants.kSteerKI)             // Integral gain
-      .d(DriveConstants.kSteerKD)             // Derivative gain
-      .velocityFF(DriveConstants.kSteerFF);   // Feedforward gain
+      .positionWrappingInputRange(0.0, 2 * Math.PI) 
+      .p(DriveConstants.kSteerKP)                 // Proportional gain
+      .i(DriveConstants.kSteerKI)                 // Integral gain
+      .d(DriveConstants.kSteerKD)                 // Derivative gain
+      .feedForward.kS(DriveConstants.kSteerKS);   // Static feedforward gain
 
     // Set position conversion factor (rotations to radians)
     // Set velocity conversion factor (rotations per minute to radians per second)
@@ -339,7 +339,7 @@ public class SwerveModule implements Sendable {
    */
   private void setSteerAngle(double angleRadians) {
     double angle = normalizeAngle(angleRadians);
-    steerPIDController.setReference(angle, SparkMax.ControlType.kPosition);
+    steerPIDController.setSetpoint(angle, SparkMax.ControlType.kPosition);
   }
 
   /**

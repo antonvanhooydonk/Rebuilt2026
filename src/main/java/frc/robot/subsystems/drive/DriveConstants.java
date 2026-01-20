@@ -111,7 +111,7 @@ public final class DriveConstants {
   public static final double kSteerKP = 1.5;  // 0.01
   public static final double kSteerKI = 0.0;
   public static final double kSteerKD = 0.0;  // 0.32
-  public static final double kSteerFF = 0.0;  // 0.0 to 0.2, FF for static friction. Rev recommends 0
+  public static final double kSteerKS = 0.0;  // 0.0 to 0.2, FF for static friction. Rev recommends 0
 
   // ------------------------------------------------------------
   // Define the swerve module constants
