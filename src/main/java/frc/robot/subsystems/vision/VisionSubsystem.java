@@ -156,18 +156,18 @@ public class VisionSubsystem extends SubsystemBase {
           if (poseResult.isEmpty()) continue;
           
           // Get estimated pose
-          EstimatedRobotPose estimatedPose = poseResult.get();
+          EstimatedRobotPose estimate = poseResult.get();
           
           // Skip further processing if the pose estimate is not valid
-          if (!isValidPose(result, estimatedPose)) continue;
+          if (!isValidPose(result, estimate)) continue;
           
           // Calculate standard deviations
           double[] stdDevs = calculateStandardDeviations(result);
           
           // Create measurement
           VisionMeasurement measurement = new VisionMeasurement(
-            estimatedPose.estimatedPose.toPose2d(),
-            estimatedPose.timestampSeconds,
+            estimate.estimatedPose.toPose2d(),
+            estimate.timestampSeconds,
             stdDevs
           );
           
