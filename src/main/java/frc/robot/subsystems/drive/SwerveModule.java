@@ -278,7 +278,7 @@ public class SwerveModule implements Sendable {
    * @return
    */
   public SwerveModuleState getLastState() {
-    return lastState;
+    return new SwerveModuleState(lastState.speedMetersPerSecond, lastState.angle);
   }
 
   /**
@@ -318,11 +318,9 @@ public class SwerveModule implements Sendable {
     setDriveVelocity(desiredState.speedMetersPerSecond);
     setSteerAngle(desiredState.angle.getRadians());
 
-    // Cache desired state for next comparison
-    lastState = new SwerveModuleState(
-      desiredState.speedMetersPerSecond,
-      desiredState.angle
-    );
+    // Update last state with current desired state for telemetry
+    lastState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
+    lastState.angle = desiredState.angle;
   }
 
   /**
