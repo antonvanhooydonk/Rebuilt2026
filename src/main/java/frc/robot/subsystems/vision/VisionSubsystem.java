@@ -145,7 +145,7 @@ public class VisionSubsystem extends SubsystemBase {
           if (!result.hasTargets()) continue;
           
           // Get pose estimate
-          Optional<EstimatedRobotPose> poseResult = camera.getPoseEstimator().update(result);
+          Optional<EstimatedRobotPose> poseResult = camera.getPoseEstimator().estimateCoprocMultiTagPose(result);
           
           // Skip further processing if no pose result was returned
           if (poseResult.isEmpty()) continue;

@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.common.hardware.VisionLEDMode;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -33,14 +32,7 @@ public class Camera {
     this.name = cameraName;
     this.robotToCamera = robotToCamera;
     this.camera = new PhotonCamera(cameraName);
-    this.poseEstimator = new PhotonPoseEstimator(
-      FieldConstants.kFieldLayout,
-      PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-      robotToCamera
-    );
-
-    // Set fallback strategy for multi-tag ambiguity
-    poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);    
+    this.poseEstimator = new PhotonPoseEstimator(FieldConstants.kFieldLayout, robotToCamera);
   }
       
   /**
