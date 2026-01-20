@@ -154,6 +154,9 @@ public class SwerveModule implements Sendable {
     // Update cached position (avoids newing SwerveModulePosition each time)
     this.cachedPosition.distanceMeters = (driveMotor.getPosition().getValueAsDouble() / DriveConstants.kDriveGearRatio) * DriveConstants.kWheelCircumference;
     this.cachedPosition.angle = new Rotation2d(normalizeAngle(steerEncoder.getPosition()));
+
+    // Update the absolute encoder (for diagnostics)
+    this.absoluteEncoder.periodic();
   }
 
   /**

@@ -29,8 +29,6 @@ public class ThriftyBotEncoder implements Sendable {
   private boolean inverted = false;
   
   // Voltage thresholds for diagnostics
-  private static final double MIN_VALID_VOLTAGE = 0.1;
-  private static final double MAX_VALID_VOLTAGE = 4.9;
   private static final double VOLTAGE_NOISE_THRESHOLD = 0.1;
   
   // Previous reading for noise detection
@@ -56,6 +54,24 @@ public class ThriftyBotEncoder implements Sendable {
     SmartDashboard.putData("Absolute Encoder/" + name, this);
   }
   
+  /**
+   * Periodic method to be called regularly for diagnostics
+   */
+  public void periodic() {
+    // Read current voltage
+    double currentVoltage = getRawVoltage();
+    
+    // Check for noise
+    if (Math.abs(currentVoltage - previousVoltage) > VOLTAGE_NOISE_THRESHOLD) {
+      noiseCount++;
+    } else {
+      // Decay noise count over time
+      noiseCount = Math.max(0, noiseCount - 1);
+    }
+    
+    // Update previous voltage for next cycle
+    previousVoltage = currentVoltage;
+  }
   /**
    * Gets the current angle in radians using AnalogEncoder
    * @return Angle in radians (-π to π)
@@ -113,9 +129,9 @@ public class ThriftyBotEncoder implements Sendable {
     double supplyVoltage = RobotController.getVoltage5V();
     double angle = (voltage / supplyVoltage) * 2.0 * Math.PI;    
     if (inverted) {
-      angle = 2.0 * Math.PI - angle;
+      angle = -angle;
     }
-    return angle; // 0 to 2π
+    return MathUtil.inputModulus(angle, 0, 2 * Math.PI); 
   }
   
   /**
@@ -153,14 +169,6 @@ public class ThriftyBotEncoder implements Sendable {
   }
   
   /**
-   * Sets a new offset for the encoder (updates internal offset)
-   * @param offsetRadians New offset in radians
-   */
-  public void setOffset(double offsetRadians) {
-    this.offsetRadians = offsetRadians;
-  }
-  
-  /**
    * Gets the current offset
    * @return Current offset in radians
    */
@@ -177,7 +185,13 @@ public class ThriftyBotEncoder implements Sendable {
     // Get current raw position
     double currentPosition = analogEncoder.get(); // 0.0 to 1.0
     double currentAngleRad = currentPosition * 2.0 * Math.PI; // 0 to 2π
-    
+
+    // Apply inversion if needed
+    if (inverted) currentAngleRad = -currentAngleRad;
+
+    // Normalize angle to [0, 2π]
+    currentAngleRad = MathUtil.inputModulus(currentAngleRad, 0, 2 * Math.PI);
+
     // Update the offset to make current position read as zero
     this.offsetRadians = currentAngleRad;
   }
@@ -187,26 +201,6 @@ public class ThriftyBotEncoder implements Sendable {
    * @return True if readings appear valid
    */
   public boolean isValid() {
-    double voltage = getRawVoltage();
-    
-    // Check voltage range
-    if (voltage < MIN_VALID_VOLTAGE || voltage > MAX_VALID_VOLTAGE) {
-      return false;
-    }
-    
-    // Skip noise check on first reading
-    if (previousVoltage != 0.0) {
-      double voltageDelta = Math.abs(voltage - previousVoltage);
-      if (voltageDelta > VOLTAGE_NOISE_THRESHOLD) {
-        noiseCount++;
-      } else {
-        noiseCount = Math.max(0, noiseCount - 1);
-      }
-    }
-    
-    // Update previous voltage
-    previousVoltage = voltage;
-    
     // Consider valid if noise count is below threshold
     return noiseCount < 10;
   }
