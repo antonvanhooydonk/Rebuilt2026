@@ -167,8 +167,8 @@ public class NavX2Gyro implements Sendable {
 
   /**
    * Resets the gyro to a given angle by setting an offset.
-   * This calculates what offset is needed to make the current
-   * gyro reading appear as the desired angle.
+   * This calculates what offset is needed to make the 
+   * current gyro reading appear as the desired angle.
    */
   public void resetToAngle(Rotation2d angle) {
     // Calculate the offset needed to make current reading equal target 
