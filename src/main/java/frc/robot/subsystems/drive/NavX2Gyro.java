@@ -76,7 +76,7 @@ public class NavX2Gyro implements Sendable {
 
     // Print calibration complete message
     if (timeout) {
-      Utils.logError("Gyro calibration completed with timeout.");
+      Utils.logError("Gyro calibration timeed out!");
     }
     else if (!gyro.isMagnetometerCalibrated()) {
       Utils.logError("Gyro calibration complete. Magnetometer not calibrated!");
