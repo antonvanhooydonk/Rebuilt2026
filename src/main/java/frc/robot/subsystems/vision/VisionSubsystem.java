@@ -144,9 +144,14 @@ public class VisionSubsystem extends SubsystemBase {
           // Skip further processing if result has no targets
           if (!result.hasTargets()) continue;
           
-          // Get pose estimate
+          // Get pose estimate from multi-tag estimator
           Optional<EstimatedRobotPose> poseResult = camera.getPoseEstimator().estimateCoprocMultiTagPose(result);
           
+          // Fallback to lowest ambiguity estimator if multi-tag failed
+          if (poseResult.isEmpty()) {            
+            poseResult = camera.getPoseEstimator().estimateLowestAmbiguityPose(result);
+          };
+
           // Skip further processing if no pose result was returned
           if (poseResult.isEmpty()) continue;
           
