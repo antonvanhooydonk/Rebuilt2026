@@ -6,12 +6,9 @@ package frc.robot.util;
 
 import java.text.DecimalFormat;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
-import frc.robot.Constants.FieldConstants;
-import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.util.Elastic.Notification;
 import frc.robot.util.Elastic.NotificationLevel;
 
@@ -43,32 +40,10 @@ public final class Utils {
   /**
    * Format a double value to 4 decimal places.
    * @param value The double value to format.
-   * @return String representation of the double value formatted to 4 decimal places.
+   * @return The double value formatted to a standard number of decimal places.
    */
   public static double fmtDouble(double value) {
     DecimalFormat df = new DecimalFormat("0.0000");
     return Double.valueOf(df.format(value));
-  }
-
-  /**
-   * Return the left side scoring pose for a specified camera.
-   * @return Pose2d where the robot can score from.
-   */
-  public static Pose2d getLeftScoringPose(VisionSubsystem vs, String camera) {
-    if (vs.getBestTarget(camera).isPresent()) {
-      return FieldConstants.kLeftScoringPoses.get(vs.getBestTarget(camera).get().getFiducialId());
-    }
-    return null;
-  }
-
-  /**
-   * Return the right side scoring pose for a specified camera.
-   * @return Pose2d where the robot can score from.
-   */
-  public static Pose2d getRightScoringPose(VisionSubsystem vs, String camera) {
-    if (vs.getBestTarget(camera).isPresent()) {
-      return FieldConstants.kRightScoringPoses.get(vs.getBestTarget(camera).get().getFiducialId());
-    }
-    return null;
   }
 }
