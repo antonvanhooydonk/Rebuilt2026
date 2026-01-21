@@ -206,9 +206,12 @@ public class VisionSubsystem extends SubsystemBase {
    * @return True if the pose is valid
    */
   private boolean isValidPose(PhotonPipelineResult result, EstimatedRobotPose estimatedPose) {
-    // Check pose ambiguity for single tag estimates
+    // Check for single tag estimates
     if (result.getTargets().size() == 1) {
+      // Get the target
       PhotonTrackedTarget target = result.getBestTarget();
+
+      // Ambiguity check
       if (target == null || target.getPoseAmbiguity() > VisionConstants.kPoseAmbiguityThreshold) {
         return false;
       }
