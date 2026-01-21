@@ -171,8 +171,6 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    boolean allModulesHealthy = true;
-
     // Run the gyro's periodic method
     gyro.periodic();
 
@@ -180,17 +178,8 @@ public class DriveSubsystem extends SubsystemBase {
     // they calculate and cache their state/positions in their periodics and the 
     // pose estimatore uses the cached postions in its update.
     for (var module : modules) {
-      // Run module periodic
       module.periodic();
-
-      // check if all modules are healthy
-      if (!module.isAbsoluteEncoderHealthy()) {
-        allModulesHealthy = false;
-      }
     }
-
-    // Disable/Eenable field-relative based on module health
-    fieldRelative = allModulesHealthy;
 
     // Update odometry
     poseEstimator.updateWithTime(Timer.getFPGATimestamp(), gyro.getAngle(), getModulePositions());
@@ -516,17 +505,6 @@ public class DriveSubsystem extends SubsystemBase {
   // ============================================================
   // State Query Methods
   // ============================================================
-
-  /**
-   * Checks if all swerve modules have healthy absolute encoders
-   * @return True if all modules are healthy, false otherwise
-   */
-  public boolean areAllModulesHealthy() {
-    for (var module : modules) {
-      if (!module.isAbsoluteEncoderHealthy()) return false;
-    }
-    return true;
-  }
 
   /**
    * Gets whether field-relative driving is enabled

@@ -36,7 +36,7 @@ public final class DriveConstants {
   // ------------------------------------------------------------
   public static final double kTranslationalSlewRateLimit = 3.0; // m/s per second, start at 3.0, decrease if too twitchy, increase if too sluggish 
   public static final double kRotationalSlewRateLimit = kMaxAngularAccelRadsPerSecondSq * 1.0; // rad/s per second, 0.6 - 1.0 times kMaxAngularAccelRadsPerSecondSq
-  public static final double kJoystickDeadband = 0.1; // joystick deadband, maybe use 0.5? 
+  public static final double kJoystickDeadband = 0.1; // typically 0.05 to 0.15
 
   // ============================================================
   // BELOW THIS LINE SHOULDN'T BE CHANGED AT COMPETITION

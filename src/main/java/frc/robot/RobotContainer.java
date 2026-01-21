@@ -176,13 +176,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // If any swerve module absolute encoder is unhealthy, skip auto to prevent damage
-    // (the feedback subsystem will display an error)
-    if (!driveSubsystem.areAllModulesHealthy()) {
-      return feedbackSubsystem.errorCommand();
-    }
-
-    // Return the selected auto command, preceded by the selected delay
     return Commands.sequence(
       delayCommandChooser.getSelected(), // run the selected delay command
       autoCommandChooser.getSelected()   // then run the selected auto command

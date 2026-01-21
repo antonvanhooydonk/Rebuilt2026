@@ -66,9 +66,6 @@ public class SwerveModule implements Sendable {
   // Target state (used for telemetry only)
   private SwerveModuleState targetState;
 
-  // Absolute encoder health flag
-  private boolean absHealthy = false;
-
   /**
    * Construct a SwerveModule with the given parameters
    * @param moduleName Name of the module for debugging
@@ -160,17 +157,6 @@ public class SwerveModule implements Sendable {
 
     // Update the absolute encoder (for diagnostics)
     this.absoluteEncoder.periodic();
-
-    // Check absolute encoder health and attempt recovery if needed
-    if (!absHealthy && absoluteEncoder.isValid()) {
-      steerEncoder.setPosition(absoluteEncoder.getAngleRadians());
-      absHealthy = true;
-      Utils.logInfo(moduleName + " abs encoder recovered");
-    }
-    if (absHealthy && !absoluteEncoder.isValid()) {
-      absHealthy = false;
-      Utils.logError(moduleName + " abs encoder became unhealthy!");
-    }
   }
 
   /**
@@ -291,13 +277,7 @@ public class SwerveModule implements Sendable {
     driveMotor.setPosition(0);
     
     // Set the relative encoder to match the absolute encoder
-    if (absoluteEncoder.isValid()) {
-      steerEncoder.setPosition(absoluteEncoder.getAngleRadians());
-      absHealthy = true;
-    } else {
-      Utils.logError(moduleName + " abs encoder invalid at boot!");
-      absHealthy = false;
-    }
+    steerEncoder.setPosition(absoluteEncoder.getAngleRadians());
   }
 
   /**
@@ -402,21 +382,12 @@ public class SwerveModule implements Sendable {
     driveMotor.stopMotor();
     steerMotor.stopMotor();
   }
-
-  /**
-   * Checks if the absolute encoder is healthy
-   * @return True if the absolute encoder is healthy
-   */
-  public boolean isAbsoluteEncoderHealthy() {
-    return absHealthy;
-  }
   
   /**
    * Initialize the data sent to SmartDashboard
    */
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addBooleanProperty("Abs Healthy", this::isAbsoluteEncoderHealthy, null);
     builder.addDoubleProperty("Target Speed (mps)", () -> Utils.showDouble(targetState.speedMetersPerSecond), null);
     builder.addDoubleProperty("Target Angle (deg)", () -> Utils.showDouble(targetState.angle.getDegrees()), null);
     builder.addDoubleProperty("Current Speed (mps)", () -> Utils.showDouble(getState().speedMetersPerSecond), null);
