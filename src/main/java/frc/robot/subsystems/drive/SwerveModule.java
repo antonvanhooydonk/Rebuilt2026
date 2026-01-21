@@ -66,6 +66,9 @@ public class SwerveModule implements Sendable {
   // Target state (used for telemetry only)
   private SwerveModuleState targetState;
 
+  // Absolute encoder health flag
+  private boolean absHealthy = false;
+
   /**
    * Construct a SwerveModule with the given parameters
    * @param moduleName Name of the module for debugging
@@ -157,6 +160,13 @@ public class SwerveModule implements Sendable {
 
     // Update the absolute encoder (for diagnostics)
     this.absoluteEncoder.periodic();
+
+    // Check absolute encoder health and attempt recovery if needed
+    if (!absHealthy && absoluteEncoder.isValid()) {
+      steerEncoder.setPosition(absoluteEncoder.getAngleRadians());
+      absHealthy = true;
+      Utils.logInfo(moduleName + " abs encoder recovered");
+    }
   }
 
   /**
@@ -277,7 +287,13 @@ public class SwerveModule implements Sendable {
     driveMotor.setPosition(0);
     
     // Set the relative encoder to match the absolute encoder
-    steerEncoder.setPosition(absoluteEncoder.getAngleRadians());
+    if (absoluteEncoder.isValid()) {
+      steerEncoder.setPosition(absoluteEncoder.getAngleRadians());
+      absHealthy = true;
+    } else {
+      Utils.logError(moduleName + " abs encoder invalid at boot!");
+      absHealthy = false;
+    }
   }
 
   /**
@@ -381,6 +397,14 @@ public class SwerveModule implements Sendable {
   public void stop() {
     driveMotor.stopMotor();
     steerMotor.stopMotor();
+  }
+
+  /**
+   * Checks if the absolute encoder is healthy
+   * @return True if the absolute encoder is healthy
+   */
+  public boolean isAbsoluteEncoderHealthy() {
+    return absHealthy;
   }
   
   /**
