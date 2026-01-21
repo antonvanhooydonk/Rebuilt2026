@@ -236,10 +236,12 @@ public class SwerveModule implements Sendable {
       .outputRange(-1.0, 1.0)
       .positionWrappingEnabled(true)      
       .positionWrappingInputRange(0.0, 2 * Math.PI) 
-      .p(DriveConstants.kSteerKP)                 // Proportional gain
-      .i(DriveConstants.kSteerKI)                 // Integral gain
-      .d(DriveConstants.kSteerKD)                 // Derivative gain
-      .feedForward.kS(DriveConstants.kSteerKS);   // Static feedforward gain
+      .p(DriveConstants.kSteerKP)   // Proportional gain
+      .i(DriveConstants.kSteerKI)   // Integral gain
+      .d(DriveConstants.kSteerKD);  // Derivative gain
+
+    // Feedforward configuration
+    steerConfig.closedLoop.feedForward.kS(DriveConstants.kSteerKS); // Static gain
 
     // Set position conversion factor (rotations to radians)
     // Set velocity conversion factor (rotations per minute to radians per second)
