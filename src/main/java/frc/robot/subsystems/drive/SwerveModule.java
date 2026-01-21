@@ -187,7 +187,7 @@ public class SwerveModule implements Sendable {
 
     // Velocity PID (runs on onboard motor controller, tunable in constants)
     driveConfig.Slot0
-      .withKP(DriveConstants.kDriveKP)      // Poportional gain
+      .withKP(DriveConstants.kDriveKP)      // Proportional gain
       .withKI(DriveConstants.kDriveKI)      // Integral gain
       .withKD(DriveConstants.kDriveKD)      // Derivative gain
       .withKS(DriveConstants.kDriveKS)      // Static feedforward
@@ -241,6 +241,8 @@ public class SwerveModule implements Sendable {
       .d(DriveConstants.kSteerKD);  // Derivative gain
 
     // Feedforward configuration
+    // kS (static friction) is typically 0.0 for NEOs with good PID tuning.
+    // Increase to 0.1 - 0.2 if experiencing steady-state position errors.
     steerConfig.closedLoop.feedForward.kS(DriveConstants.kSteerKS); // Static gain
 
     // Set position conversion factor (rotations to radians)
