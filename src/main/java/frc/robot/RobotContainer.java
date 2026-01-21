@@ -22,7 +22,6 @@ import frc.robot.subsystems.feedback.FeedbackSubsystem;
 import frc.robot.subsystems.roller.RollerSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
-import frc.robot.util.Utils;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -152,23 +151,11 @@ public class RobotContainer {
     // Stop and lock wheels
     driverXbox.x().onTrue(driveSubsystem.stopAndLockWheelsCommand());
 
-    // Set the arm to the coral move position
-    driverXbox.b().onTrue(Commands.none());
+    // Set team colors on feedback subsystem
+    driverXbox.b().onTrue(feedbackSubsystem.teamColorsCommand());
     
     // Manually toggle "slow" mode
     driverXbox.y().onTrue(driveSubsystem.toggleSlowModeCommand().ignoringDisable(true));
-    
-    // Drive to left scoring pose of the current camera target
-    driverXbox.leftBumper().whileTrue(
-      driveSubsystem.driveToPoseCommand(Utils.getLeftScoringPose(visionSubsystem, "FRONT_CAMERA"))
-      .andThen(feedbackSubsystem.doubleRumbleCommand())
-    );
-    
-    // Drive to right scoring pose of the current camera target
-    driverXbox.rightBumper().whileTrue(
-      driveSubsystem.driveToPoseCommand(Utils.getRightScoringPose(visionSubsystem, "FRONT_CAMERA"))
-      .andThen(feedbackSubsystem.doubleRumbleCommand())
-    );
  
     // Configure operator controller 1 - blue buttons
     opController1.button(ControllerConstants.Operator1.ButtonBlue1).onTrue(

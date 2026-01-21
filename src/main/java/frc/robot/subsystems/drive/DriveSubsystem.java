@@ -154,15 +154,15 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putData("Drive/Field", field2d);
     SmartDashboard.putData("Drive/Swerve", builder -> {
       builder.setSmartDashboardType("SwerveDrive");
-      builder.addDoubleProperty("Front Left Angle", () -> modules[0].getState().angle.getRadians(), null);
-      builder.addDoubleProperty("Front Left Velocity", () -> modules[0].getState().speedMetersPerSecond, null);
-      builder.addDoubleProperty("Front Right Angle", () -> modules[1].getState().angle.getRadians(), null);
-      builder.addDoubleProperty("Front Right Velocity", () -> modules[1].getState().speedMetersPerSecond, null);
-      builder.addDoubleProperty("Back Left Angle", () -> modules[2].getState().angle.getRadians(), null);
-      builder.addDoubleProperty("Back Left Velocity", () -> modules[2].getState().speedMetersPerSecond, null);
-      builder.addDoubleProperty("Back Right Angle", () -> modules[3].getState().angle.getRadians(), null);
-      builder.addDoubleProperty("Back Right Velocity", () -> modules[3].getState().speedMetersPerSecond, null);
-      builder.addDoubleProperty("Robot Angle", () -> getHeading().getRadians(), null);
+      builder.addDoubleProperty("Front Left Angle", () -> Utils.showDouble(modules[0].getState().angle.getRadians()), null);
+      builder.addDoubleProperty("Front Left Velocity", () -> Utils.showDouble(modules[0].getState().speedMetersPerSecond), null);
+      builder.addDoubleProperty("Front Right Angle", () -> Utils.showDouble(modules[1].getState().angle.getRadians()), null);
+      builder.addDoubleProperty("Front Right Velocity", () -> Utils.showDouble(modules[1].getState().speedMetersPerSecond), null);
+      builder.addDoubleProperty("Back Left Angle", () -> Utils.showDouble(modules[2].getState().angle.getRadians()), null);
+      builder.addDoubleProperty("Back Left Velocity", () -> Utils.showDouble(modules[2].getState().speedMetersPerSecond), null);
+      builder.addDoubleProperty("Back Right Angle", () -> Utils.showDouble(modules[3].getState().angle.getRadians()), null);
+      builder.addDoubleProperty("Back Right Velocity", () -> Utils.showDouble(modules[3].getState().speedMetersPerSecond), null);
+      builder.addDoubleProperty("Robot Angle", () -> Utils.showDouble(getHeading().getRadians()), null);
     });
 
     // Output initialization progress
@@ -732,15 +732,13 @@ public class DriveSubsystem extends SubsystemBase {
   public void initSendable(SendableBuilder builder) {
     // Robot telemetry
     builder.addStringProperty("Robot Pose", () -> getPose().toString(), null);
-    builder.addDoubleProperty("Robot Heading", () -> getHeading().getDegrees(), null);
-    builder.addDoubleProperty("Robot Pitch", () -> gyro.getPitch(), null);
-    builder.addDoubleProperty("Robot Roll", () -> gyro.getRoll(), null);
+    builder.addDoubleProperty("Robot Heading", () -> Utils.showDouble(getHeading().getDegrees()), null);
+    builder.addDoubleProperty("Robot Pitch", () -> Utils.showDouble(gyro.getPitch()), null);
+    builder.addDoubleProperty("Robot Roll", () -> Utils.showDouble(gyro.getRoll()), null);
+    builder.addDoubleProperty("Chassis vX", () -> Utils.showDouble(getChassisSpeeds().vxMetersPerSecond), null);
+    builder.addDoubleProperty("Chassis vY", () -> Utils.showDouble(getChassisSpeeds().vyMetersPerSecond), null);
+    builder.addDoubleProperty("Chassis omega", () -> Utils.showDouble(Units.radiansToDegrees(getChassisSpeeds().omegaRadiansPerSecond)), null);
     builder.addBooleanProperty("Field Relative", this::isFieldRelative, null);
     builder.addBooleanProperty("Slow Mode", this::isSlowMode, null);
-    
-    // Chassis speeds
-    builder.addDoubleProperty("Chassis vX", () -> getChassisSpeeds().vxMetersPerSecond, null);
-    builder.addDoubleProperty("Chassis vY", () -> getChassisSpeeds().vyMetersPerSecond, null);
-    builder.addDoubleProperty("Chassis omega", () -> Units.radiansToDegrees(getChassisSpeeds().omegaRadiansPerSecond), null);
   }
 }

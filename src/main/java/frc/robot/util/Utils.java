@@ -4,8 +4,6 @@
 
 package frc.robot.util;
 
-import java.text.DecimalFormat;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
@@ -38,12 +36,12 @@ public final class Utils {
   }
 
   /**
-   * Format a double value to 4 decimal places.
+   * Rounds a double value to 4 decimal places for display in telemetry dashboards.
+   * Do not use for precise calculations internally!
    * @param value The double value to format.
-   * @return The double value formatted to a standard number of decimal places.
+   * @return The double value formatted to 4 decimal places.
    */
-  public static double fmtDouble(double value) {
-    DecimalFormat df = new DecimalFormat("0.0000");
-    return Double.valueOf(df.format(value));
+  public static double showDouble(double value) {
+    return Math.round(value * 10000.0) / 10000.0;
   }
 }

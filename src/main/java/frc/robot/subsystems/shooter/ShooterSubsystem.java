@@ -199,9 +199,9 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void initSendable(SendableBuilder builder) {
     builder.setSmartDashboardType("ShooterSubsystem");
-    builder.addDoubleProperty("Velocity (RPS)", this::getVelocityRPS, null);
-    builder.addDoubleProperty("Voltage (V)", this::getVoltage, null);
-    builder.addDoubleProperty("Current (A)", this::getCurrent, null);
-    builder.addDoubleProperty("Temperature (C)", this::getTemperature, null);
+    builder.addDoubleProperty("Velocity (RPS)", () -> Utils.showDouble(getVelocityRPS()), null);
+    builder.addDoubleProperty("Voltage (V)", () -> Utils.showDouble(getVoltage()), null);
+    builder.addDoubleProperty("Current (A)", () -> Utils.showDouble(getCurrent()), null);
+    builder.addDoubleProperty("Temperature (C)", () -> Utils.showDouble(getTemperature()), null);
   }
 }

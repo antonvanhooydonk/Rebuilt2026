@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import frc.robot.util.Utils;
+
 /**
  * Wrapper class for Thrifty Bot absolute encoder attached to swerve steer motor.
  * Provides both raw AnalogInput access and processed AnalogEncoder functionality.
@@ -242,13 +244,13 @@ public class ThriftyBotEncoder implements Sendable {
    */
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addDoubleProperty("Absolute Position", this::getAbsolutePosition, null);
-    builder.addDoubleProperty("Angle (deg)", this::getAngleDegrees, null);
-    builder.addDoubleProperty("Angle (rad)", this::getAngleRadians, null);
-    builder.addDoubleProperty("Raw Angle (deg)", this::getRawAngleDegrees, null);
-    builder.addDoubleProperty("Raw Angle (rad)", this::getRawAngleRadians, null);
-    builder.addDoubleProperty("Raw Voltage", this::getRawVoltage, null);
-    builder.addDoubleProperty("Supply Voltage", RobotController::getVoltage5V, null);
+    builder.addDoubleProperty("Absolute Position", () -> Utils.showDouble(getAbsolutePosition()), null);
+    builder.addDoubleProperty("Angle (deg)", () -> Utils.showDouble(getAngleDegrees()), null);
+    builder.addDoubleProperty("Angle (rad)", () -> Utils.showDouble(getAngleRadians()), null);
+    builder.addDoubleProperty("Raw Angle (deg)", () -> Utils.showDouble(getRawAngleDegrees()), null);
+    builder.addDoubleProperty("Raw Angle (rad)", () -> Utils.showDouble(getRawAngleRadians()), null);
+    builder.addDoubleProperty("Raw Voltage", () -> Utils.showDouble(getRawVoltage()), null);
+    builder.addDoubleProperty("Supply Voltage", () -> Utils.showDouble(RobotController.getVoltage5V()), null);
     builder.addBooleanProperty("Valid", this::isValid, null);
     builder.addBooleanProperty("Inverted", this::isInverted, null);
     builder.addIntegerProperty("Noise Count", this::getNoiseCount, null);

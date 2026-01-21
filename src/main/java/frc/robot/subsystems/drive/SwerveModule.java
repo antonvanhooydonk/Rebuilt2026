@@ -388,16 +388,16 @@ public class SwerveModule implements Sendable {
    */
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addDoubleProperty("Target Speed (mps)", () -> targetState.speedMetersPerSecond, null);
-    builder.addDoubleProperty("Target Angle (deg)", () -> targetState.angle.getDegrees(), null);
-    builder.addDoubleProperty("Current Speed (mps)", () -> getState().speedMetersPerSecond, null);
-    builder.addDoubleProperty("Current Angle (deg)", () -> getState().angle.getDegrees(), null);
-    builder.addDoubleProperty("Absolute Encoder (deg)", () -> absoluteEncoder.getAngleDegrees(), null);
-    builder.addDoubleProperty("Drive Voltage (V)", () -> driveMotor.getSupplyVoltage().getValueAsDouble(), null);
-    builder.addDoubleProperty("Drive Current (A)", () -> driveMotor.getSupplyCurrent().getValueAsDouble(), null);
-    builder.addDoubleProperty("Drive Temp (deg C)", () -> driveMotor.getDeviceTemp().getValueAsDouble(), null);
-    builder.addDoubleProperty("Steer Voltage (V)", () -> steerMotor.getAppliedOutput(), null);
-    builder.addDoubleProperty("Steer Current (A)", () -> steerMotor.getOutputCurrent(), null);
-    builder.addDoubleProperty("Steer Temp (deg C)", () -> steerMotor.getMotorTemperature(), null);
+    builder.addDoubleProperty("Target Speed (mps)", () -> Utils.showDouble(targetState.speedMetersPerSecond), null);
+    builder.addDoubleProperty("Target Angle (deg)", () -> Utils.showDouble(targetState.angle.getDegrees()), null);
+    builder.addDoubleProperty("Current Speed (mps)", () -> Utils.showDouble(getState().speedMetersPerSecond), null);
+    builder.addDoubleProperty("Current Angle (deg)", () -> Utils.showDouble(getState().angle.getDegrees()), null);
+    builder.addDoubleProperty("Absolute Encoder (deg)", () -> Utils.showDouble(absoluteEncoder.getAngleDegrees()), null);
+    builder.addDoubleProperty("Drive Voltage (V)", () -> Utils.showDouble(driveMotor.getSupplyVoltage().getValueAsDouble()), null);
+    builder.addDoubleProperty("Drive Current (A)", () -> Utils.showDouble(driveMotor.getSupplyCurrent().getValueAsDouble()), null);
+    builder.addDoubleProperty("Drive Temp (deg C)", () -> Utils.showDouble(driveMotor.getDeviceTemp().getValueAsDouble()), null);
+    builder.addDoubleProperty("Steer Voltage (V)", () -> Utils.showDouble(steerMotor.getAppliedOutput()), null);
+    builder.addDoubleProperty("Steer Current (A)", () -> Utils.showDouble(steerMotor.getOutputCurrent()), null);
+    builder.addDoubleProperty("Steer Temp (deg C)", () -> Utils.showDouble(steerMotor.getMotorTemperature()), null);
   }
 }
