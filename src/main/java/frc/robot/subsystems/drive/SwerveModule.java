@@ -43,8 +43,6 @@ public class SwerveModule implements Sendable {
   // Controllers
   private final SparkClosedLoopController steerPIDController;
   private final RelativeEncoder steerEncoder;
-
-  // Control requests
   private final VelocityVoltage driveVelocityRequest;
 
   // Cached configurations
