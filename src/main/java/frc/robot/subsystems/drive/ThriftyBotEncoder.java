@@ -179,26 +179,6 @@ public class ThriftyBotEncoder implements Sendable {
   }
   
   /**
-   * Calibrates the encoder by calculating offset from current position.
-   * Can be called manually after aligning the modules with a straight
-   * bar and pointing in the desired zero direction.
-   */
-  public void calibrate() {
-    // Get current raw position
-    double currentPosition = analogEncoder.get(); // 0.0 to 1.0
-    double currentAngleRad = currentPosition * 2.0 * Math.PI; // 0 to 2π
-
-    // Apply inversion if needed
-    if (inverted) currentAngleRad = -currentAngleRad;
-
-    // Normalize angle to [0, 2π]
-    currentAngleRad = MathUtil.inputModulus(currentAngleRad, 0, 2 * Math.PI);
-
-    // Update the offset to make current position read as zero
-    this.offsetRadians = currentAngleRad;
-  }
-  
-  /**
    * Checks if the encoder readings are valid
    * @return True if readings appear valid
    */
