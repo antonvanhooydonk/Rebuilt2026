@@ -167,6 +167,10 @@ public class SwerveModule implements Sendable {
       absHealthy = true;
       Utils.logInfo(moduleName + " abs encoder recovered");
     }
+    if (absHealthy && !absoluteEncoder.isValid()) {
+      absHealthy = false;
+      Utils.logError(moduleName + " abs encoder became unhealthy!");
+    }
   }
 
   /**

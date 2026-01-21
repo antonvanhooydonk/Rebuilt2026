@@ -193,7 +193,8 @@
               "show_trajectories": true,
               "field_rotation": 0.0,
               "robot_color": 4294198070,
-              "trajectory_color": 4294967295
+              "trajectory_color": 4294967295,
+              "show_robot_outside_widget": true
             }
           },
           {
@@ -603,6 +604,23 @@
             },
             "children": [
               {
+                "title": "Abs Healthy",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/FL/Abs Healthy",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
                 "title": "Absolute Encoder (deg)",
                 "x": 0.0,
                 "y": 0.0,
@@ -687,34 +705,6 @@
                 }
               },
               {
-                "title": "Last Target Angle (deg)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/FL/Last Target Angle (deg)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Last Target Speed (mps)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/FL/Last Target Speed (mps)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
                 "title": "Steer Current (A)",
                 "x": 0.0,
                 "y": 0.0,
@@ -755,6 +745,34 @@
                   "data_type": "double",
                   "show_submit_button": false
                 }
+              },
+              {
+                "title": "Target Angle (deg)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/FL/Target Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Target Speed (mps)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/FL/Target Speed (mps)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
               }
             ]
           },
@@ -769,6 +787,23 @@
               "label_position": "TOP"
             },
             "children": [
+              {
+                "title": "Abs Healthy",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/FR/Abs Healthy",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
               {
                 "title": "Absolute Encoder (deg)",
                 "x": 0.0,
@@ -854,34 +889,6 @@
                 }
               },
               {
-                "title": "Last Target Angle (deg)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/FR/Last Target Angle (deg)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Last Target Speed (mps)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/FR/Last Target Speed (mps)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
                 "title": "Steer Current (A)",
                 "x": 0.0,
                 "y": 0.0,
@@ -922,6 +929,34 @@
                   "data_type": "double",
                   "show_submit_button": false
                 }
+              },
+              {
+                "title": "Target Angle (deg)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/FR/Target Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Target Speed (mps)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/FR/Target Speed (mps)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
               }
             ]
           },
@@ -936,6 +971,23 @@
               "label_position": "TOP"
             },
             "children": [
+              {
+                "title": "Abs Healthy",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/BL/Abs Healthy",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
               {
                 "title": "Absolute Encoder (deg)",
                 "x": 0.0,
@@ -1021,34 +1073,6 @@
                 }
               },
               {
-                "title": "Last Target Angle (deg)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/BL/Last Target Angle (deg)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Last Target Speed (mps)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/BL/Last Target Speed (mps)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
                 "title": "Steer Current (A)",
                 "x": 0.0,
                 "y": 0.0,
@@ -1089,6 +1113,34 @@
                   "data_type": "double",
                   "show_submit_button": false
                 }
+              },
+              {
+                "title": "Target Angle (deg)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/BL/Target Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Target Speed (mps)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/BL/Target Speed (mps)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
               }
             ]
           },
@@ -1103,6 +1155,23 @@
               "label_position": "TOP"
             },
             "children": [
+              {
+                "title": "Abs Healthy",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/BR/Abs Healthy",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
               {
                 "title": "Absolute Encoder (deg)",
                 "x": 0.0,
@@ -1188,34 +1257,6 @@
                 }
               },
               {
-                "title": "Last Target Angle (deg)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/BR/Last Target Angle (deg)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Last Target Speed (mps)",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 150.0,
-                "height": 150.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Drive/Modules/BR/Last Target Speed (mps)",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
                 "title": "Steer Current (A)",
                 "x": 0.0,
                 "y": 0.0,
@@ -1252,6 +1293,34 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "/SmartDashboard/Drive/Modules/BR/Steer Voltage (V)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Target Angle (deg)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/BR/Target Angle (deg)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Target Speed (mps)",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 150.0,
+                "height": 150.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Drive/Modules/BR/Target Speed (mps)",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -1297,7 +1366,7 @@
         "layouts": [
           {
             "title": "FL",
-            "x": 200.0,
+            "x": 175.0,
             "y": 0.0,
             "width": 250.0,
             "height": 625.0,
@@ -1354,11 +1423,15 @@
                 "y": 0.0,
                 "width": 150.0,
                 "height": 150.0,
-                "type": "Toggle Switch",
+                "type": "Boolean Box",
                 "properties": {
                   "topic": "/SmartDashboard/Absolute Encoder/FL/Inverted",
                   "period": 0.06,
-                  "data_type": "boolean"
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
                 }
               },
               {
@@ -1371,7 +1444,7 @@
                 "properties": {
                   "topic": "/SmartDashboard/Absolute Encoder/FL/Noise Count",
                   "period": 0.06,
-                  "data_type": "double",
+                  "data_type": "int",
                   "show_submit_button": false
                 }
               },
@@ -1452,7 +1525,7 @@
           },
           {
             "title": "FR",
-            "x": 450.0,
+            "x": 425.0,
             "y": 0.0,
             "width": 250.0,
             "height": 625.0,
@@ -1509,11 +1582,15 @@
                 "y": 0.0,
                 "width": 150.0,
                 "height": 150.0,
-                "type": "Toggle Switch",
+                "type": "Boolean Box",
                 "properties": {
                   "topic": "/SmartDashboard/Absolute Encoder/FR/Inverted",
                   "period": 0.06,
-                  "data_type": "boolean"
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
                 }
               },
               {
@@ -1526,7 +1603,7 @@
                 "properties": {
                   "topic": "/SmartDashboard/Absolute Encoder/FR/Noise Count",
                   "period": 0.06,
-                  "data_type": "double",
+                  "data_type": "int",
                   "show_submit_button": false
                 }
               },
@@ -1607,7 +1684,7 @@
           },
           {
             "title": "BL",
-            "x": 700.0,
+            "x": 675.0,
             "y": 0.0,
             "width": 250.0,
             "height": 625.0,
@@ -1664,11 +1741,15 @@
                 "y": 0.0,
                 "width": 150.0,
                 "height": 150.0,
-                "type": "Toggle Switch",
+                "type": "Boolean Box",
                 "properties": {
                   "topic": "/SmartDashboard/Absolute Encoder/BL/Inverted",
                   "period": 0.06,
-                  "data_type": "boolean"
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
                 }
               },
               {
@@ -1681,7 +1762,7 @@
                 "properties": {
                   "topic": "/SmartDashboard/Absolute Encoder/BL/Noise Count",
                   "period": 0.06,
-                  "data_type": "double",
+                  "data_type": "int",
                   "show_submit_button": false
                 }
               },
@@ -1762,7 +1843,7 @@
           },
           {
             "title": "BR",
-            "x": 950.0,
+            "x": 925.0,
             "y": 0.0,
             "width": 250.0,
             "height": 625.0,
@@ -1819,11 +1900,15 @@
                 "y": 0.0,
                 "width": 150.0,
                 "height": 150.0,
-                "type": "Toggle Switch",
+                "type": "Boolean Box",
                 "properties": {
                   "topic": "/SmartDashboard/Absolute Encoder/BR/Inverted",
                   "period": 0.06,
-                  "data_type": "boolean"
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
                 }
               },
               {
@@ -1836,7 +1921,7 @@
                 "properties": {
                   "topic": "/SmartDashboard/Absolute Encoder/BR/Noise Count",
                   "period": 0.06,
-                  "data_type": "double",
+                  "data_type": "int",
                   "show_submit_button": false
                 }
               },
