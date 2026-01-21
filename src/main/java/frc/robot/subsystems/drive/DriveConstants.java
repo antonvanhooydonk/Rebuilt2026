@@ -57,7 +57,6 @@ public final class DriveConstants {
    
   public static final double kGyroXAngleOffsetDegrees = 0.0; // default 0.0 - Rotate the gyro X axis if the gyro was not installed facing forward
   public static final double kPeriodicTimeSeconds = 0.02; // 20ms (default)
-  public static final boolean kDriveWithSetpointGenerator = true;
 
   // Define the module translations from the robot's center
   // See: https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html#coordinate-system
