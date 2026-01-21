@@ -122,9 +122,9 @@ public class ThriftyBotEncoder implements Sendable {
   }
   
   /**
-   * Gets the current angle (0 to 2π) from the analog input.
-   * This method does not apply the internal offset.
-   * @return Raw angle in radians
+   * Gets the current raw angle in radians from the analog input.
+   * Use this value directly for setting the module offsets in DriveConstants.
+   * @return Raw angle in radians (0 to 2π) 
    */
   public double getRawAngleRadians() {
     double voltage = getRawVoltage();
@@ -137,8 +137,9 @@ public class ThriftyBotEncoder implements Sendable {
   }
   
   /**
-   * Gets the current angle in degrees from the analog input.
-   * This method does not apply the internal offset.
+   * Gets the current raw angle (no offset) in degrees from the analog input.
+   * Use this value with Units.degreesToRadians(value) for setting the
+   * module offsets in DriveConstants.
    * @return Raw angle in degrees
    */
   public double getRawAngleDegrees() {
