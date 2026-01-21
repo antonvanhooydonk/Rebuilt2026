@@ -39,8 +39,6 @@ public class SwerveModule implements Sendable {
   private final TalonFX driveMotor;
   private final SparkMax steerMotor;
   private final ThriftyBotEncoder absoluteEncoder;
-  private final TalonFXConfiguration driveConfig;
-  private final SparkMaxConfig steerConfig;
 
   // Controllers
   private final SparkClosedLoopController steerPIDController;
@@ -48,6 +46,10 @@ public class SwerveModule implements Sendable {
 
   // Control requests
   private final VelocityVoltage driveVelocityRequest;
+
+  // Cached configurations
+  private final TalonFXConfiguration driveConfig;
+  private final SparkMaxConfig steerConfig;
 
   // Module identification
   private final int driveMotorID;
