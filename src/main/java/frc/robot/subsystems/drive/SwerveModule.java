@@ -270,7 +270,10 @@ public class SwerveModule implements Sendable {
   }
 
   /**
-   * Resets the drive and steering encoders
+   * Resets the drive and steering encoders.
+   * Drive encoder is zeroed to prevent overflow.
+   * Steer encoder is synchronized to the absolute encoder 
+   * (offset and inversion already applied by ThriftyBotEncoder).
    */
   public void resetEncoders() {
     // Reset drive motor encoder position
