@@ -576,7 +576,7 @@ public class DriveSubsystem extends SubsystemBase {
       //    Cubing is used in "slow" mode because it gives even finer control.
       xSpeed = Math.copySign(Math.pow(xSpeed, (this.slowMode ? 3 : 2)), xSpeed);
       ySpeed = Math.copySign(Math.pow(ySpeed, (this.slowMode ? 3 : 2)), ySpeed);
-      rSpeed = Math.copySign(Math.pow(rSpeed, (this.slowMode ? 3 : 2)), rSpeed);      
+      rSpeed = Math.copySign(Math.pow(rSpeed, (this.slowMode ? 3 : 2)), rSpeed);
 
       // 4. Convert the joystick's -1..1 to m/s and rad/s
       double xSpeedMPS = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
