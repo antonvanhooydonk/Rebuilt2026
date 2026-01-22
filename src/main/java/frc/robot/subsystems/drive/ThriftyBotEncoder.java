@@ -75,7 +75,8 @@ public class ThriftyBotEncoder implements Sendable {
     previousVoltage = currentVoltage;
   }
   /**
-   * Gets the current angle in radians using AnalogEncoder
+   * Gets the current angle in radians using AnalogEncoder.
+   * The current offset and inversion are applied if configured.
    * @return Angle in radians (0 to 2π)
    */
   public double getAngleRadians() {
@@ -98,7 +99,8 @@ public class ThriftyBotEncoder implements Sendable {
   }
   
   /**
-   * Gets the current angle as a Rotation2d
+   * Gets the current angle as a Rotation2d.
+   * The current offset and inversion are applied if configured.
    * @return Rotation2d object
    */
   public Rotation2d getRotation2d() {
@@ -106,7 +108,8 @@ public class ThriftyBotEncoder implements Sendable {
   }
   
   /**
-   * Gets the current angle in degrees
+   * Gets the current angle in degrees.
+   * The current offset and inversion are applied if configured.
    * @return Angle in degrees (0 to 360) 
    */
   public double getAngleDegrees() {
