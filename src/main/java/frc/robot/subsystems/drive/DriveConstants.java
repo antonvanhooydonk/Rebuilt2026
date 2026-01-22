@@ -34,7 +34,7 @@ public final class DriveConstants {
   // ------------------------------------------------------------
   // Driver joystick settings
   // ------------------------------------------------------------
-  public static final double kTranslationalSlewRateLimit = 3.0; // m/s per second, start at 3.0, decrease if too twitchy, increase if too sluggish 
+  public static final double kTranslationalSlewRateLimit = 4.0; // m/s per second, start at 3.0, decrease if too twitchy, increase if too sluggish 
   public static final double kRotationalSlewRateLimit = kMaxAngularAccelRadsPerSecondSq * 1.0; // rad/s per second, 0.6 - 1.0 times kMaxAngularAccelRadsPerSecondSq
   public static final double kJoystickDeadband = 0.1; // typically 0.05 to 0.15
 
