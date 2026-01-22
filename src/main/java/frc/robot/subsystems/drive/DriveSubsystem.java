@@ -120,7 +120,7 @@ public class DriveSubsystem extends SubsystemBase {
       DriveConstants.kMaxAngularSpeedRadsPerSecond // The max rotation velocity of a swerve module in radians per second.
     );
     
-    // Initialize the "last" setpoint
+    // Initialize the drive setpoint
     driveSetpoint = new SwerveSetpoint(
       new ChassisSpeeds(), 
       getModuleStates(), 
@@ -201,7 +201,7 @@ public class DriveSubsystem extends SubsystemBase {
     // pose when auto starts.
     resetOdometry();
 
-    // Reset last setpoint for setpoint generator
+    // Reset drive setpoint for setpoint generator
     driveSetpoint = new SwerveSetpoint(
       new ChassisSpeeds(), 
       getModuleStates(), 
