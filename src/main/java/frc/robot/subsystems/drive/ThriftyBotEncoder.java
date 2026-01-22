@@ -76,7 +76,7 @@ public class ThriftyBotEncoder implements Sendable {
   }
   /**
    * Gets the current angle in radians using AnalogEncoder
-   * @return Angle in radians (-π to π)
+   * @return Angle in radians (0 to 2π)
    */
   public double getAngleRadians() {
     // Get position from AnalogEncoder (0.0 to 1.0 rotations)
