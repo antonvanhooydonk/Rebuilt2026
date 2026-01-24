@@ -147,13 +147,11 @@ public class SwerveModule implements Sendable {
    * Called periodically by the drive subsystem
    */
   public void periodic() {
-    // Update cached state (avoids newing SwerveModuleState each time)
+    // Update cached state & position (avoids newing SwerveModuleState each time)
     this.cachedState.speedMetersPerSecond = (driveMotor.getVelocity().getValueAsDouble() / DriveConstants.kDriveGearRatio) * DriveConstants.kWheelCircumference;
     this.cachedState.angle = new Rotation2d(normalizeAngle(steerEncoder.getPosition()));
-
-    // Update cached position (avoids newing SwerveModulePosition each time)
     this.cachedPosition.distanceMeters = (driveMotor.getPosition().getValueAsDouble() / DriveConstants.kDriveGearRatio) * DriveConstants.kWheelCircumference;
-    this.cachedPosition.angle = new Rotation2d(normalizeAngle(steerEncoder.getPosition()));
+    this.cachedPosition.angle = this.cachedState.angle; // same as cachedState angle
 
     // Update the absolute encoder (for diagnostics)
     this.absoluteEncoder.periodic();
