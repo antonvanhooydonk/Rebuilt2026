@@ -246,7 +246,7 @@ public class SwerveModule implements Sendable {
     // Feedforward configuration
     // kS (static friction) is typically 0.0 for NEOs with good PID tuning.
     // Increase to 0.1 - 0.2 if experiencing steady-state position errors.
-    steerConfig.closedLoop.feedForward.kS(DriveConstants.kSteerKS); // Static gain
+    // steerConfig.closedLoop.feedForward.kS(DriveConstants.kSteerKS); // Static gain
 
     // Set position conversion factor (rotations to radians)
     // Set velocity conversion factor (rotations per minute to radians per second)

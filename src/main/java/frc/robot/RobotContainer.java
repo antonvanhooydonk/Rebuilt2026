@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.feedback.FeedbackSubsystem;
-import frc.robot.subsystems.roller.RollerSubsystem;
+import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 
@@ -37,7 +37,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
   private final FeedbackSubsystem feedbackSubsystem = new FeedbackSubsystem(driverXbox);
-  private final RollerSubsystem rollerSubsystem = new RollerSubsystem();
+  private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   private final VisionSubsystem visionSubsystem = new VisionSubsystem();
   private final DriveSubsystem driveSubsystem = new DriveSubsystem(visionSubsystem);
 
@@ -82,7 +82,7 @@ public class RobotContainer {
     //   driveSubsystem,
     //   elevatorSubsystem,
     //   armSubsystem,
-    //   rollerSubsystem
+    //   intakeSubsystem
     // ));
   }
 
@@ -168,7 +168,7 @@ public class RobotContainer {
 
     // Configure operator controller 1 - other buttons
     opController1.button(ControllerConstants.Operator1.ButtonYellow)
-      .whileTrue(rollerSubsystem.intakeFuelCommand());
+      .whileTrue(intakeSubsystem.intakeFuelCommand());
   }
 
   /**

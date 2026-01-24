@@ -27,6 +27,9 @@ public class NavX2Gyro implements Sendable {
   private boolean connected = true;
   private int disconnectCount = 0;
   private double offsetDegrees = 0.0;
+
+  // Cache last known good angle for graceful degradation
+  private Rotation2d lastKnownAngle = new Rotation2d();
   
   /**
    * Creates a new NavX2 gyro object.
@@ -122,14 +125,19 @@ public class NavX2Gyro implements Sendable {
    * @return The current gyro angle as a Rotation2d, CCW positive
    */
   public Rotation2d getAngle() {
-    // Return zero if gyro is disconnected - effectively forces robot-relative driving
+    // If disconnected, return last known angle
     if (!connected) {
-      return new Rotation2d();
+      return lastKnownAngle;
     }
 
-    // Return the gyro angle with the offset applied.
-    // NavX reports CW positive so we negate for CCW positive.
-    return Rotation2d.fromDegrees(-(gyro.getAngle() - offsetDegrees));
+    // Calculate current angle with offset (NavX is CW+, negate b/c we want CCW+)
+    Rotation2d currentAngle = Rotation2d.fromDegrees(-(gyro.getAngle() - offsetDegrees));
+
+    // Cache for use if gyro disconnects
+    lastKnownAngle = currentAngle;
+
+    // Return the current angle
+    return currentAngle;
   }
 
   /**
@@ -163,6 +171,7 @@ public class NavX2Gyro implements Sendable {
     gyro.reset(); 
     gyro.zeroYaw();
     offsetDegrees = 0.0;
+    lastKnownAngle = new Rotation2d();
   }
 
   /**
@@ -175,6 +184,9 @@ public class NavX2Gyro implements Sendable {
     // angle offsetDegrees = currentRawAngle - (-desiredAngle)
     // => offsetDegrees = currentRawAngle + desiredAngle
     offsetDegrees = gyro.getAngle() + angle.getDegrees();
+
+    // Update last known angle
+    lastKnownAngle = angle;
   }
 
   /**
