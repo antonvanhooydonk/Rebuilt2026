@@ -321,7 +321,7 @@ public class SwerveModule implements Sendable {
   
     // The desired state and has already been optimized by setpoint generator.
     // Uncomment the line below only if NOT using the setpoint generator.
-    // This line is left here so future maintainers are aware.
+    // This line is left here so future maintainers are aware:
     // desiredState.optimize(getState().angle);
     
     // Command the robot to move
