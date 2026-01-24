@@ -144,7 +144,7 @@ public class SwerveModule implements Sendable {
   }
 
   /**
-   * Called periodically by the drive subsystem
+   * Called by the drive subsystem's periodic() method
    */
   public void periodic() {
     // Update cached state (avoids newing SwerveModuleState each time)
