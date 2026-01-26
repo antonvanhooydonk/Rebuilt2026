@@ -95,16 +95,30 @@ public class NavX2Gyro implements Sendable {
    * checks (10 * 20ms = 200ms delay) to be considered disconnected.
    */
   private void checkConnection() {
-    if (gyro.isConnected()) {
+    boolean currentlyConnected = gyro.isConnected();
+  
+    if (currentlyConnected == connected) {
+      // Current state matches our belief -> reset debounce counter
       disconnectCount = 0;
-      connected = true;
-    } else {
+    } 
+    else {
+      // Current state differs from our belief -> increment counter
       disconnectCount++;
+      
+      // Require 10 consecutive mismatches before changing state
       if (disconnectCount > 10) {
-        if (connected) {
-          Utils.logError("Gyro disconnected! (checkConnection)"); // first time
+        if (currentlyConnected) {
+          // Gyro has reconnected
+          connected = true;
+          Utils.logInfo("Gyro RECONNECTED after " + disconnectCount + " checks");
+        } else {
+          // Gyro has disconnected
+          connected = false;
+          Utils.logError("Gyro DISCONNECTED after " + disconnectCount + " checks");
         }
-        connected = false;
+        
+        // Reset counter after state change
+        disconnectCount = 0;
       }
     }
   }
