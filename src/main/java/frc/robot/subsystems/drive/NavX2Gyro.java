@@ -100,8 +100,7 @@ public class NavX2Gyro implements Sendable {
     if (currentlyConnected == connected) {
       // Current state matches our belief -> reset debounce counter
       disconnectCount = 0;
-    } 
-    else {
+    } else {
       // Current state differs from our belief -> increment counter
       disconnectCount++;
       
