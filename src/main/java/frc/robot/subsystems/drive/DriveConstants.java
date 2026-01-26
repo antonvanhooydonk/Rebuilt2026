@@ -92,25 +92,25 @@ public final class DriveConstants {
   // 2. Start with feedforward only (kP = 0)
   // 3. Add minimal P gain if needed (usually 0.05 - 0.2)
   // 4. Avoid I and D unless absolutely necessary
-  public static final double kDriveKP = 0.075;  // 0.0020645;
+  public static final double kDriveKP = 0.075;  // 0.05 usually 0.05 - 0.2
   public static final double kDriveKI = 0.0;
   public static final double kDriveKD = 0.0;
-  public static final double kDriveKS = 0.1;  // Static friction
-  public static final double kDriveKV = 0.12; // Velocity feedforward, usually 0.11 to 0.13
-  public static final double kDriveKA = 0.0;  // Acceleration feedforward, usually 0.0 to 0.15, adjust in 0.05 increments
+  public static final double kDriveKS = 0.06;   // Static friction usually 0.05 to 0.10
+  public static final double kDriveKV = 0.12;   // Velocity feedforward, usually 0.11 to 0.13
+  public static final double kDriveKA = 0.0;    // Acceleration feedforward, usually 0.0 to 0.15, adjust in 0.05 increments
 
   // ------------------------------------------------------------
   // Steering PID Constants (tune these each year for the robot)
   // ------------------------------------------------------------
   // Tuning Process:
   // 1. Start with P only (I=0, D=0)
-  // 2. Increase P until fast response without overshoot (typically 1.0 - 3.0)
+  // 2. Increase P until fast response without overshoot (typically 1.0 - 2.5)
   // 3. Add small D if oscillating (typically 0.01 - 0.1)
   // 4. Avoid I unless steady-state error (very rare in steering)
-  public static final double kSteerKP = 1.5;  // 0.01
-  public static final double kSteerKI = 0.0;
-  public static final double kSteerKD = 0.0;  // 0.32
-  public static final double kSteerKS = 0.0;  // 0.0 to 0.2, FF for static friction. Rev recommends 0
+  public static final double kSteerKP = 1.5;    // usually 1.0 - 2.5
+  public static final double kSteerKI = 0.0;    // usually 0.0
+  public static final double kSteerKD = 0.0;    // usually 0.0 - 0.10
+  public static final double kSteerKS = 0.0;    // usually 0.0 - 0.10, Rev recommends 0
 
   // ------------------------------------------------------------
   // Define the swerve module constants
