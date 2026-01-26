@@ -90,9 +90,9 @@ public class NavX2Gyro implements Sendable {
   }
 
   /**
-   * Simple debounced gryo disconnect detection.
-   * The gyro must be disconnected for 10 consecutive 
-   * checks (10 * 20ms = 200ms delay) to be considered disconnected.
+   * Simple debounced gryo disconnect/reconnection detection.
+   * The gyro must be disconnected for 10 consecutive checks
+   * (10 * 20ms = 200ms delay) to be considered disconnected.
    */
   private void checkConnection() {
     boolean currentlyConnected = gyro.isConnected();
