@@ -107,7 +107,7 @@ public final class DriveConstants {
   // 2. Increase P until fast response without overshoot (typically 1.0 - 2.5)
   // 3. Add small D if oscillating (typically 0.01 - 0.1)
   // 4. Avoid I unless steady-state error (very rare in steering)
-  public static final double kSteerKP = 1.5;    // usually 1.0 - 2.5, increase up to 4 if mushy, Gemini recommends 3.5
+  public static final double kSteerKP = 1.5;    // usually 1.0 - 2.5, increase up to 5 if mushy, Gemini recommends 3.5
   public static final double kSteerKI = 0.0;    // usually 0.0
   public static final double kSteerKD = 0.0;    // usually 0.0 - 0.10
   public static final double kSteerKS = 0.0;    // usually 0.0 - 0.10, Rev recommends 0
