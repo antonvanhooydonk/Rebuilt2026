@@ -31,7 +31,7 @@ public final class VisionConstants {
     HashMap<String, Transform3d> cameras = new HashMap<>();
 
     // define the robot's cameras here
-    cameras.put("FRONT_CAMERA", new Transform3d(
+    cameras.put("VISION_FRONT", new Transform3d(
       new Pose3d(
         Units.inchesToMeters(12), // Forward 12 inches
         Units.inchesToMeters(0),  // Centered left/right  
