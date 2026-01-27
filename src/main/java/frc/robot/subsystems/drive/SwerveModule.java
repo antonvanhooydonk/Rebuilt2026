@@ -24,6 +24,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -397,6 +398,11 @@ public class SwerveModule implements Sendable {
     builder.addDoubleProperty("Target Angle (deg)", () -> Utils.showDouble(targetState.angle.getDegrees()), null);
     builder.addDoubleProperty("Current Speed (mps)", () -> Utils.showDouble(getState().speedMetersPerSecond), null);
     builder.addDoubleProperty("Current Angle (deg)", () -> Utils.showDouble(getState().angle.getDegrees()), null);
+    builder.addDoubleProperty("Angle Error (deg)", () -> {
+      double targetAngle = normalizeAngle(targetState.angle.getRadians());
+      double currentAngle = normalizeAngle(cachedState.angle.getRadians());
+      return Utils.showDouble(Units.radiansToDegrees(Math.abs(targetAngle - currentAngle)));
+    }, null);
     builder.addDoubleProperty("Absolute Encoder (deg)", () -> Utils.showDouble(absoluteEncoder.getAngleDegrees()), null);
     builder.addDoubleProperty("Drive Voltage (V)", () -> Utils.showDouble(driveMotor.getSupplyVoltage().getValueAsDouble()), null);
     builder.addDoubleProperty("Drive Current (A)", () -> Utils.showDouble(driveMotor.getSupplyCurrent().getValueAsDouble()), null);
