@@ -38,7 +38,7 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
 
     // Start the camera server for streaming to the dashboard
-    CameraServer.startAutomaticCapture("DRIVE_VIEW", 0);
+    CameraServer.startAutomaticCapture("DRIVE_FRONT", 0);
   }
 
   /**
