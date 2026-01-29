@@ -356,7 +356,7 @@ public class SwerveModule implements Sendable {
   }
 
   /**
-   * Normalizes an angle to the range [0, 2PI)
+   * Normalizes an angle to the range (0, 2π)
    * @param angleRadians Angle in radians
    * @return Normalized angle in radians
    */
