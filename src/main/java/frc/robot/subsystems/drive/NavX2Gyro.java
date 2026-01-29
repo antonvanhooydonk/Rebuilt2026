@@ -25,7 +25,7 @@ public class NavX2Gyro implements Sendable {
   
   // Instance fields
   private boolean connected = true;
-  private int disconnectCount = 0;
+  private int retryCount = 0;
   private double offsetDegrees = 0.0;
 
   // Cache last known good angle for graceful degradation
@@ -99,27 +99,27 @@ public class NavX2Gyro implements Sendable {
   
     if (currentlyConnected == connected) {
       // Current state matches our belief -> reset debounce counter
-      disconnectCount = 0;
+      retryCount = 0;
     } 
     else {
       // Current state differs from our belief -> increment counter
-      disconnectCount++;
+      retryCount++;
       
       // Require 10 consecutive mismatches before changing state
-      if (disconnectCount > 10) {
+      if (retryCount > 10) {
         if (currentlyConnected) {
           // Gyro has reconnected
           connected = true;
-          Utils.logInfo("Gyro RECONNECTED after " + disconnectCount + " checks");
+          Utils.logInfo("Gyro RECONNECTED after " + retryCount + " checks");
         } 
         else {
           // Gyro has disconnected
           connected = false;
-          Utils.logError("Gyro DISCONNECTED after " + disconnectCount + " checks");
+          Utils.logError("Gyro DISCONNECTED after " + retryCount + " checks");
         }
         
         // Reset counter after state change
-        disconnectCount = 0;
+        retryCount = 0;
       }
     }
   }
