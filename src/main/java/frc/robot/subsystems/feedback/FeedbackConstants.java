@@ -21,18 +21,6 @@ public final class FeedbackConstants {
   /** Color when robot is idle/ready (soft blue) */
   public static final Color IdleColor = new Color(0.0, 0.3, 1.0);
   
-  /** Color when robot has game piece (green) */
-  public static final Color HasGamePieceColor = Color.kGreen;
-  
-  /** Color when intaking (yellow) */
-  public static final Color IntakingColor = Color.kYellow;
-  
-  /** Color when shooting (orange) */
-  public static final Color ShootingColor = Color.kOrange;
-  
-  /** Color during auto-alignment (purple) */
-  public static final Color AutoAlignColor = Color.kPurple;
-  
   /** Color for warnings (orange) */
   public static final Color WarningColor = new Color(1.0, 0.5, 0.0);
   
@@ -59,18 +47,6 @@ public final class FeedbackConstants {
     /** Robot idle/ready state */
     IDLE,
     
-    /** Robot has game piece */
-    HAS_GAME_PIECE,
-    
-    /** Intaking game piece */
-    INTAKING,
-    
-    /** Shooting/scoring */
-    SHOOTING,
-    
-    /** Auto-aligning to target */
-    AUTO_ALIGN,
-    
     /** Warning state */
     WARNING,
     
@@ -79,7 +55,7 @@ public final class FeedbackConstants {
     
     /** Team colors gradient chase */
     TEAM_COLORS,
-    
+
     /** Scoring shift indication */
     SCORING_SHIFT
   }

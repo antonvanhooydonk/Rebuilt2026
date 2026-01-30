@@ -83,23 +83,7 @@ public class FeedbackSubsystem extends SubsystemBase {
         break;
         
       case IDLE:
-        setAllLEDs(FeedbackConstants.IdleColor);
-        break;
-        
-      case HAS_GAME_PIECE:
-        blinkPattern(FeedbackConstants.HasGamePieceColor, 0.5);
-        break;
-        
-      case INTAKING:
-        pulsePattern(FeedbackConstants.IntakingColor, 0.5);
-        break;
-        
-      case SHOOTING:
-        pulsePattern(FeedbackConstants.ShootingColor, 0.3);
-        break;
-        
-      case AUTO_ALIGN:
-        chasePattern(FeedbackConstants.AutoAlignColor, 0.1);
+        chasePattern(FeedbackConstants.IdleColor, 0.50);
         break;
         
       case WARNING:
@@ -236,7 +220,7 @@ public class FeedbackSubsystem extends SubsystemBase {
       }
       else if (time <= 5 && time > 0) {
         // autonomous - last 5 seconds (both alliances can score)
-        blinkPattern(allianceColor, 0.35);
+        pulsePattern(allianceColor, 0.35);
       }
       else {
         // default to off
@@ -259,7 +243,7 @@ public class FeedbackSubsystem extends SubsystemBase {
       }
       else if (time <= 135 && time > 130) {
         // transition shift - last 5 seconds (both alliances can score)
-        blinkPattern(allianceColor, 0.35);
+        pulsePattern(allianceColor, 0.35);
       }
       else if (time <= 130 && time > 110) {
         // shift 1
@@ -267,7 +251,7 @@ public class FeedbackSubsystem extends SubsystemBase {
       }
       else if (time <= 110 && time > 105) {
         // shift 1 - last 5 seconds
-        blinkPattern(isInactiveFirst ? Color.kBlack : allianceColor, 0.35);
+        pulsePattern(isInactiveFirst ? Color.kBlack : allianceColor, 0.35);
       }
       else if (time <= 105 && time > 85) {
         // shift 2
@@ -275,7 +259,7 @@ public class FeedbackSubsystem extends SubsystemBase {
       }
       else if (time <= 85 && time > 80) {
         // shift 2 - last 5 seconds
-        blinkPattern(isInactiveFirst ? allianceColor : Color.kBlack, 0.35);
+        pulsePattern(isInactiveFirst ? allianceColor : Color.kBlack, 0.35);
       }
       else if (time <= 80 && time > 60) {
         // shift 3
@@ -283,7 +267,7 @@ public class FeedbackSubsystem extends SubsystemBase {
       }
       else if (time <= 60 && time > 55) {
         // shift 3 - last 5 seconds
-        blinkPattern(isInactiveFirst ? Color.kBlack : allianceColor, 0.35);
+        pulsePattern(isInactiveFirst ? Color.kBlack : allianceColor, 0.35);
       }
       else if (time <= 55 && time > 35) {
         // shift 4
@@ -291,7 +275,7 @@ public class FeedbackSubsystem extends SubsystemBase {
       }
       else if (time <= 35 && time > 30) {
         // shift 4 - last 5 seconds
-        blinkPattern(isInactiveFirst ? allianceColor : Color.kBlack, 0.35);
+        pulsePattern(isInactiveFirst ? allianceColor : Color.kBlack, 0.35);
       }
       else if (time <= 30 && time > 5) {
         // end game (both alliances can score)
@@ -299,7 +283,7 @@ public class FeedbackSubsystem extends SubsystemBase {
       }
       else if (time <= 5 && time > 0) {
         // end game - last 5 seconds (both alliances can score)
-        blinkPattern(allianceColor, 0.35);
+        pulsePattern(allianceColor, 0.35);
       }
       else {
         // default to off
@@ -376,28 +360,6 @@ public class FeedbackSubsystem extends SubsystemBase {
     return rumbleCommand(0.7, 0.15)
       .andThen(Commands.waitSeconds(0.1))
       .andThen(rumbleCommand(0.7, 0.15));
-  }
-  
-  /**
-   * Command to indicate game piece acquired
-   * @return Command with LED and rumble feedback
-   */
-  public Command gamePieceAcquiredCommand() {
-    return setDisplayCommand(DisplayMode.HAS_GAME_PIECE)
-      .andThen(quickRumbleCommand())
-      .withName("GamePieceAcquired");
-  }
-  
-  /**
-   * Command to indicate auto-alignment complete
-   * @return Command with LED and rumble feedback
-   */
-  public Command autoAlignCompleteCommand() {
-    return setDisplayCommand(DisplayMode.AUTO_ALIGN)
-      .andThen(Commands.waitSeconds(0.3))
-      .andThen(setDisplayCommand(DisplayMode.IDLE))
-      .andThen(rumbleCommand(0.3, 0.2))
-      .withName("AutoAlignComplete");
   }
   
   /**
