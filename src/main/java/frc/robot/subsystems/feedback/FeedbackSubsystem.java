@@ -8,6 +8,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -30,6 +31,7 @@ public class FeedbackSubsystem extends SubsystemBase {
   private DisplayMode currentMode = DisplayMode.OFF;
   private double animationTimer = 0;
   private int animationOffset = 0;
+  private char inactiveAlliance = '?';
   
   /** Creates a new FeedbackSubsystem. */
   public FeedbackSubsystem(CommandXboxController controller) {
@@ -45,7 +47,7 @@ public class FeedbackSubsystem extends SubsystemBase {
     ledStrip.start();
 
     // Set default command to display
-    setDefaultCommand(teamColorsCommand());
+    setDefaultCommand(scoringShiftCommand('?'));
     
     // Output initialization progress
     Utils.logInfo("Feedback subsystem initialized");
@@ -110,6 +112,10 @@ public class FeedbackSubsystem extends SubsystemBase {
         
       case TEAM_COLORS:
         teamColorsPattern();
+        break;
+
+      case SCORING_SHIFT:
+        scoringShiftPattern();
         break;
     }
   }
@@ -208,6 +214,89 @@ public class FeedbackSubsystem extends SubsystemBase {
     return new Color(r, g, b);
   }
   
+  /**
+   * Scoring shift pattern that indicates which alliance is allowed to score.
+   * Sets all LEDs to our alliance colour when our scoring shift is activate.
+   * Blinks our alliance colour for the last 5 seconds of active hub.
+   * Turns off the LEDs when it is not our turn to score.
+   */
+  private void scoringShiftPattern() {
+    // current remaining match time
+    double time = Timer.getMatchTime();
+
+    // set our alliance color
+    Color allianceColor = Utils.isRedAlliance() ? Color.kRed : Color.kBlue;
+
+    // autonomous period 20 seconds (both alliances can score)
+    // set to 'A' in Robot.autonomousInit()
+    if (inactiveAlliance == 'A') {
+      blinkPattern(allianceColor, 20);
+    }
+
+    // Check that we have valid game data
+    if (inactiveAlliance == 'R' || inactiveAlliance == 'B') {
+      // check if our alliance is inactive for the 1st shift
+      boolean isInactiveFirst = 
+        (inactiveAlliance == 'R' && Utils.isRedAlliance()) ||
+        (inactiveAlliance == 'B' && !Utils.isRedAlliance());
+
+      // Shift data from 2026 FRC Game Manual
+      // https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf
+      if (time <= 140 && time > 135) {
+        // transition shift (both alliances can score)
+        setAllLEDs(allianceColor);
+      }
+      else if (time <= 135 && time > 130) {
+        // transition shift - last 5 seconds (both alliances can score)
+        blinkPattern(allianceColor, 5);
+      }
+      else if (time <= 130 && time > 110) {
+        // shift 1
+        setAllLEDs(isInactiveFirst ? Color.kBlack : allianceColor);
+      }
+      else if (time <= 110 && time > 105) {
+        // shift 1 - last 5 seconds
+        blinkPattern(isInactiveFirst ? Color.kBlack : allianceColor, 5);
+      }
+      else if (time <= 105 && time > 85) {
+        // shift 2
+        setAllLEDs(isInactiveFirst ? allianceColor : Color.kBlack);
+      }
+      else if (time <= 85 && time > 80) {
+        // shift 2 - last 5 seconds
+        blinkPattern(isInactiveFirst ? allianceColor : Color.kBlack, 5);
+      }
+      else if (time <= 80 && time > 60) {
+        // shift 3
+        setAllLEDs(isInactiveFirst ? Color.kBlack : allianceColor);
+      }
+      else if (time <= 60 && time > 55) {
+        // shift 3 - last 5 seconds
+        blinkPattern(isInactiveFirst ? Color.kBlack : allianceColor, 5);
+      }
+      else if (time <= 55 && time > 35) {
+        // shift 4
+        setAllLEDs(isInactiveFirst ? allianceColor : Color.kBlack);
+      }
+      else if (time <= 35 && time > 30) {
+        // shift 4 - last 5 seconds
+        blinkPattern(isInactiveFirst ? allianceColor : Color.kBlack, 5);
+      }
+      else if (time <= 30 && time > 5) {
+        // end game (both alliances can score)
+        setAllLEDs(allianceColor);
+      }
+      else if (time <= 5 && time > 0) {
+        // end game - last 5 seconds (both alliances can score)
+        blinkPattern(allianceColor, 5);
+      }
+      else {
+        // default to alliance colour
+        setAllLEDs(Color.kBlack);
+      }
+    }
+  }
+
   // ==================== Rumble Control Methods ====================
   
   /**
@@ -334,5 +423,15 @@ public class FeedbackSubsystem extends SubsystemBase {
    */
   public Command teamColorsCommand() {
     return setDisplayCommand(DisplayMode.TEAM_COLORS);
+  }
+  
+  /**
+   * Function to schedule scoring shift feedback
+   */
+  public Command scoringShiftCommand(char inactiveAlliance) {
+    return runOnce(() -> {
+      this.inactiveAlliance = inactiveAlliance;
+      setDisplayMode(DisplayMode.SCORING_SHIFT);
+    });
   }
 }

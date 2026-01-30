@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -180,5 +181,14 @@ public class RobotContainer {
       delayCommandChooser.getSelected(), // run the selected delay command
       autoCommandChooser.getSelected()   // then run the selected auto command
     );
+  }
+
+  /**
+   * Use this to schedule scoring shift feedback based
+   * on the game data passed from the DriverStation.
+   * @param gameData the game-specific message from the DriverStation
+   */
+  public void scheduleScoringShiftCommand(char inactiveAlliance) {
+    CommandScheduler.getInstance().schedule(feedbackSubsystem.scoringShiftCommand(inactiveAlliance));
   }
 }

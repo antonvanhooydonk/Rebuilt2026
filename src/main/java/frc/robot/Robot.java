@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot {
   private final RobotContainer m_robotContainer;
   private Command m_autonomousCommand;
+  private boolean hasGameData;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -77,6 +78,12 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
     }
+
+    // reset game data flag every match
+    hasGameData = false;
+
+    // both teams can score at the start of autonomous
+    m_robotContainer.scheduleScoringShiftCommand('A');
   }
 
   /** This function is called periodically during autonomous. */
@@ -96,7 +103,20 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    // Poll for the game data and pass it to the feedback subsystem.
+    // Only do this once when valid game data becomes available.
+    if (!hasGameData) {
+      String gameData = DriverStation.getGameSpecificMessage();
+      if (gameData.length() > 0) {
+        char inactiveAlliance = gameData.charAt(0);
+        if (inactiveAlliance == 'R' || inactiveAlliance == 'B') {
+          hasGameData = true;
+          m_robotContainer.scheduleScoringShiftCommand(inactiveAlliance);
+        }
+      }
+    }
+  }
 
   @Override
   public void testInit() {

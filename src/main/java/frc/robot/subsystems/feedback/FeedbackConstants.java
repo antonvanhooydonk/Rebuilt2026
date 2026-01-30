@@ -78,6 +78,9 @@ public final class FeedbackConstants {
     ERROR,
     
     /** Team colors gradient chase */
-    TEAM_COLORS
+    TEAM_COLORS,
+    
+    /** Scoring shift indication */
+    SCORING_SHIFT
   }
 }
