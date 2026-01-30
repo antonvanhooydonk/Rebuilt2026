@@ -230,7 +230,18 @@ public class FeedbackSubsystem extends SubsystemBase {
     // autonomous period 20 seconds (both alliances can score)
     // set to 'A' in Robot.autonomousInit()
     if (inactiveAlliance == 'A') {
-      blinkPattern(allianceColor, 20);
+      if (time <= 20 && time > 5) {
+        // autonomous (both alliances can score)
+        setAllLEDs(allianceColor);
+      }
+      else if (time <= 5 && time > 0) {
+        // autonomous - last 5 seconds (both alliances can score)
+        blinkPattern(allianceColor, 0.35);
+      }
+      else {
+        // default to off
+        setAllLEDs(Color.kBlack);
+      }
     }
 
     // Check that we have valid game data
@@ -248,7 +259,7 @@ public class FeedbackSubsystem extends SubsystemBase {
       }
       else if (time <= 135 && time > 130) {
         // transition shift - last 5 seconds (both alliances can score)
-        blinkPattern(allianceColor, 5);
+        blinkPattern(allianceColor, 0.35);
       }
       else if (time <= 130 && time > 110) {
         // shift 1
@@ -256,7 +267,7 @@ public class FeedbackSubsystem extends SubsystemBase {
       }
       else if (time <= 110 && time > 105) {
         // shift 1 - last 5 seconds
-        blinkPattern(isInactiveFirst ? Color.kBlack : allianceColor, 5);
+        blinkPattern(isInactiveFirst ? Color.kBlack : allianceColor, 0.35);
       }
       else if (time <= 105 && time > 85) {
         // shift 2
@@ -264,7 +275,7 @@ public class FeedbackSubsystem extends SubsystemBase {
       }
       else if (time <= 85 && time > 80) {
         // shift 2 - last 5 seconds
-        blinkPattern(isInactiveFirst ? allianceColor : Color.kBlack, 5);
+        blinkPattern(isInactiveFirst ? allianceColor : Color.kBlack, 0.35);
       }
       else if (time <= 80 && time > 60) {
         // shift 3
@@ -272,7 +283,7 @@ public class FeedbackSubsystem extends SubsystemBase {
       }
       else if (time <= 60 && time > 55) {
         // shift 3 - last 5 seconds
-        blinkPattern(isInactiveFirst ? Color.kBlack : allianceColor, 5);
+        blinkPattern(isInactiveFirst ? Color.kBlack : allianceColor, 0.35);
       }
       else if (time <= 55 && time > 35) {
         // shift 4
@@ -280,7 +291,7 @@ public class FeedbackSubsystem extends SubsystemBase {
       }
       else if (time <= 35 && time > 30) {
         // shift 4 - last 5 seconds
-        blinkPattern(isInactiveFirst ? allianceColor : Color.kBlack, 5);
+        blinkPattern(isInactiveFirst ? allianceColor : Color.kBlack, 0.35);
       }
       else if (time <= 30 && time > 5) {
         // end game (both alliances can score)
@@ -288,10 +299,10 @@ public class FeedbackSubsystem extends SubsystemBase {
       }
       else if (time <= 5 && time > 0) {
         // end game - last 5 seconds (both alliances can score)
-        blinkPattern(allianceColor, 5);
+        blinkPattern(allianceColor, 0.35);
       }
       else {
-        // default to alliance colour
+        // default to off
         setAllLEDs(Color.kBlack);
       }
     }
